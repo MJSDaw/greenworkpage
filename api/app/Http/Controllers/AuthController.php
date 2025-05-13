@@ -20,6 +20,7 @@ class AuthController extends Controller
             'surname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'dni' => 'required|string|max:20|unique:users',
+            'birth_date' => 'required|date|date_format:Y-m-d|before_or_equal:'.now()->subYears(13)->format('Y-m-d'),
             'password' => [
                 'required', 
                 'string',
@@ -27,13 +28,17 @@ class AuthController extends Controller
             ],
             'password_confirm' => 'required|same:password',
         ], [
-            'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.'
+            'password_confirm.same' => 'Password confirmation does not match the entered password.',
+            'birth_date.required' => 'Birth date is required.',
+            'birth_date.date' => 'Birth date must be a valid date.',
+            'birth_date.date_format' => 'Birth date must be in YYYY-MM-DD format.',
+            'birth_date.before_or_equal' => 'You must be at least 13 years old to register.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error de validación',
+                'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -43,6 +48,7 @@ class AuthController extends Controller
             'surname' => $request->surname,
             'email' => $request->email,
             'dni' => $request->dni,
+            'birth_date' => $request->birth_date,
             'password' => Hash::make($request->password),
         ]);
 
@@ -50,7 +56,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Usuario registrado correctamente',
+            'message' => 'User registered successfully',
             'user' => $user,
             'token' => $token
         ], 201);
@@ -69,7 +75,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error de validación',
+                'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -79,7 +85,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Credenciales incorrectas'
+                'message' => 'Invalid credentials'
             ], 401);
         }
 
@@ -91,7 +97,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Inicio de sesión exitoso',
+            'message' => 'Login successful',
             'user' => $user,
             'token' => $token
         ]);
@@ -107,7 +113,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Sesión cerrada correctamente'
+            'message' => 'Logged out successfully'
         ]);
     }
 }
