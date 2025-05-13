@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Asegurar que el directorio de vistas compiladas exista y tenga los permisos correctos
+mkdir -p /var/www/html/storage/framework/views
+chown -R www-data:www-data /var/www/html/storage/framework/views
+chmod -R 775 /var/www/html/storage/framework/views
+
 # Ejecutar composer install si vendor está vacío
 if [ ! "$(ls -A /var/www/html/vendor)" ]; then
     echo "Vendor directory is empty, running composer install..."
