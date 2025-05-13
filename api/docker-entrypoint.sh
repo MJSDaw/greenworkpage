@@ -1,11 +1,14 @@
 #!/bin/bash
 set -e
 
+<<<<<<< HEAD
 # Asegurar que el directorio de vistas compiladas exista y tenga los permisos correctos
 mkdir -p /var/www/html/storage/framework/views
 chown -R www-data:www-data /var/www/html/storage/framework/views
 chmod -R 775 /var/www/html/storage/framework/views
 
+=======
+>>>>>>> b20d44f (hotfix: updated dockerfile and *.yml)
 # Ejecutar composer install si vendor está vacío
 if [ ! "$(ls -A /var/www/html/vendor)" ]; then
     echo "Vendor directory is empty, running composer install..."
@@ -34,6 +37,7 @@ fi
 php artisan optimize:clear
 php artisan optimize
 
+<<<<<<< HEAD
 # Asegurar que existen los directorios necesarios
 mkdir -p storage/app/public \
     storage/framework/sessions \
@@ -49,6 +53,10 @@ php artisan storage:link
 # Asegurar permisos adecuados
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+=======
+# Asegurar permisos adecuados
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+>>>>>>> b20d44f (hotfix: updated dockerfile and *.yml)
 
 # Iniciar Apache en primer plano
 apache2-foreground
