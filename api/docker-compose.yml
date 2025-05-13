@@ -41,3 +41,5 @@ volumes:
   postgres_data:
   laravel_vendor:
   laravel_storage:
+  laravel_vendor:
+  laravel_storage:
