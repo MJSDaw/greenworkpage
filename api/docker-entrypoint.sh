@@ -29,8 +29,21 @@ fi
 php artisan optimize:clear
 php artisan optimize
 
+# Asegurar que existen los directorios necesarios
+mkdir -p storage/app/public \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/framework/testing \
+    storage/logs \
+    bootstrap/cache
+
+# Crear enlace simbólico para storage
+php artisan storage:link
+
 # Asegurar permisos adecuados
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Iniciar Apache en primer plano
 apache2-foreground

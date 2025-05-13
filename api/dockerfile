@@ -18,7 +18,13 @@ WORKDIR /var/www/html
 RUN a2enmod rewrite
 
 # Crea los directorios necesarios para Laravel
-RUN mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache
+RUN mkdir -p storage/app/public \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/framework/testing \
+    storage/logs \
+    bootstrap/cache
 
 # Ajusta los permisos de las carpetas necesarias
 RUN chmod -R 775 storage bootstrap/cache && \
