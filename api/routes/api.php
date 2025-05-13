@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpaceController;
+use App\Http\Controllers\ReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas para spaces
     Route::get('spaces', [SpaceController::class, 'index']);
     Route::post('spaces', [SpaceController::class, 'store']);
+    
+    // Rutas para reservations
+    Route::get('reservations', [ReservationController::class, 'index']);
+    Route::post('reservations', [ReservationController::class, 'store']);
 });
