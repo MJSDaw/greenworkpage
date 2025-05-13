@@ -18,7 +18,14 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users',
+                'unique:admins',
+            ],
             'dni' => 'required|string|max:20|unique:users',
             'birth_date' => 'required|date|date_format:Y-m-d|before_or_equal:'.now()->subYears(13)->format('Y-m-d'),
             'password' => [
@@ -28,7 +35,10 @@ class AuthController extends Controller
             ],
             'password_confirm' => 'required|same:password',
         ], [
-            'password_confirm.same' => 'Password confirmation does not match the entered password.',
+            'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.',
+            'email.format' => 'El correo electrónico debe tener un formato válido.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'dni.unique' => 'El DNI ya está en uso.'
             'birth_date.required' => 'Birth date is required.',
             'birth_date.date' => 'Birth date must be a valid date.',
             'birth_date.date_format' => 'Birth date must be in YYYY-MM-DD format.',
@@ -104,7 +114,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Cerrar sesión (opcional)
+     * Cerrar sesión
      */
     public function logout(Request $request)
     {
