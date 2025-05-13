@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -19,12 +18,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'surname',
-        'dni',
         'email',
         'password',
-        'dni',
-        'birth_date',
     ];
 
     /**
@@ -34,7 +29,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'dni',
         'remember_token',
     ];
 
@@ -46,15 +40,5 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'dni' => 'encrypted',
-        'birth_date' => 'date',
     ];
-
-    /**
-     * Get the reservations for the user.
-     */
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class);
-    }
 }

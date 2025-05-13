@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpaceController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +33,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rutas para spaces
     Route::get('spaces', [SpaceController::class, 'index']);
-    Route::post('spaces', [SpaceController::class, 'store']);
     
     // Rutas para reservations
     Route::get('reservations', [ReservationController::class, 'index']);
     Route::post('reservations', [ReservationController::class, 'store']);
+});
+
+// Ruta para administradores (protegida y solo para administradores)
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+    Route::apiResource('admins', AdminController::class);
+    Route::get('users', [UserController::class, 'index']); // Ruta para obtener todos los usuarios
+    Route::post('spaces', [SpaceController::class, 'store']); // Ruta para crear un nuevo espacio
 });
