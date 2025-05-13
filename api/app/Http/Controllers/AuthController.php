@@ -18,7 +18,14 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users',
+                'unique:admins',
+            ],
             'dni' => 'required|string|max:20|unique:users',
             'password' => [
                 'required', 
@@ -27,7 +34,9 @@ class AuthController extends Controller
             ],
             'password_confirm' => 'required|same:password',
         ], [
-            'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.'
+            'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'dni.unique' => 'El DNI ya está en uso.'
         ]);
 
         if ($validator->fails()) {
@@ -98,7 +107,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Cerrar sesión (opcional)
+     * Cerrar sesión
      */
     public function logout(Request $request)
     {
