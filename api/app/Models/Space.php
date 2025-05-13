@@ -22,4 +22,12 @@ class Space extends Model
         'description',
         'subtitle',
     ];
+
+    /**
+     * Get the reservations for the space.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

@@ -47,4 +47,12 @@ class User extends Authenticatable
         'password' => 'hashed',
         'dni' => 'encrypted',
     ];
+
+    /**
+     * Get the reservations for the user.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }
