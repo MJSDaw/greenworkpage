@@ -68,8 +68,10 @@ La configuración incluye un script de inicialización automática (`docker-entr
 Una vez que los contenedores estén funcionando, puedes acceder a la aplicación en:
 
 ```
-http://localhost:8000
+https://localhost:8443
 ```
+
+**Nota importante**: La aplicación está configurada para trabajar exclusivamente con HTTPS. Si intentas acceder mediante HTTP (http://localhost:8000), serás redirigido automáticamente a la versión segura.
 
 ## Parámetros de Configuración
 
