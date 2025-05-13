@@ -26,3 +26,13 @@ RUN chmod -R 775 storage bootstrap/cache && \
 
 # Copia la configuración de Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Instalar postgres client para pg_isready
+RUN apt-get install -y postgresql-client
+
+# Copia el script de entrada
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Establece el script de entrada como el comando predeterminado
+ENTRYPOINT ["docker-entrypoint.sh"]

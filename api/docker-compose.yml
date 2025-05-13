@@ -27,6 +27,7 @@ services:
       DB_DATABASE: greenworkdb
       DB_USERNAME: greenworkAdmin
       DB_PASSWORD: HIiDV8W7S02bO6AB3ehV
+      SEED_DB: "true"  # Establece en "true" para ejecutar seeders
     ports:
       - "8000:80"  # Mapea el puerto 80 del contenedor al puerto 8000 del host
     depends_on:
