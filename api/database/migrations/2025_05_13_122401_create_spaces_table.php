@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('space', function (Blueprint $table) {
+        Schema::create('spaces', function (Blueprint $table) {
             $table->id();
             $table->integer('places');
             $table->float('price');
