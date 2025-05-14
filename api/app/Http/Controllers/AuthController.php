@@ -38,7 +38,7 @@ class AuthController extends Controller
             'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.',
             'email.format' => 'El correo electrónico debe tener un formato válido.',
             'email.unique' => 'El correo electrónico ya está en uso.',
-            'dni.unique' => 'El DNI ya está en uso.'
+            'dni.unique' => 'El DNI ya está en uso.',
             'birth_date.required' => 'Birth date is required.',
             'birth_date.date' => 'Birth date must be a valid date.',
             'birth_date.date_format' => 'Birth date must be in YYYY-MM-DD format.',
