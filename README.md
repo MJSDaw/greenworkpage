@@ -40,6 +40,7 @@ docker-compose up -d
 Este comando iniciará los siguientes servicios:
 - **postgres**: Base de datos PostgreSQL
 - **laravel**: Aplicación Laravel con Apache y soporte para el frontend React
+- **pgadmin**: Interfaz gráfica para gestionar PostgreSQL
 
 ### 4. Verificar el Estado de los Contenedores
 
@@ -49,7 +50,7 @@ Para asegurarte de que los contenedores están funcionando correctamente:
 docker-compose ps
 ```
 
-Deberías ver los contenedores `postgres_container` y `laravel_container` en estado "Up".
+Deberías ver los contenedores `postgres_container`, `laravel_container` y `pgadmin_container` en estado "Up".
 
 ### 5. Proceso de Inicialización Automática
 
@@ -70,6 +71,7 @@ Una vez que los contenedores estén funcionando, puedes acceder a:
 
 - **Backend API (Laravel)**: `https://localhost:8443`
 - **Frontend (React)**: `http://localhost:5173`
+- **pgAdmin (Gestión de Base de Datos)**: `http://localhost:5050`
 
 **Nota importante**: La aplicación backend está configurada para trabajar exclusivamente con HTTPS. Si intentas acceder mediante HTTP (http://localhost:8000), serás redirigido automáticamente a la versión segura.
 
@@ -79,6 +81,7 @@ Los parámetros de configuración principales se encuentran en el archivo `docke
 
 - Base de datos PostgreSQL:
   - Usuario: `greenworkAdmin`
+  - Contraseña: `HIiDV8W7S02bO6AB3ehV`
   - Base de datos: `greenworkdb`
   - Puerto: `5432`
 
@@ -88,6 +91,11 @@ Los parámetros de configuración principales se encuentran en el archivo `docke
   
 - Frontend React:
   - Puerto: `5173`
+
+- pgAdmin:
+  - Puerto: `5050`
+  - Email: `admin@greenwork.com`
+  - Contraseña: `HIiDV8W7S02bO6AB3ehV`
 
 ## Resolución de Problemas
 
@@ -99,7 +107,43 @@ docker logs laravel_container
 
 # Ver logs del contenedor de PostgreSQL
 docker logs postgres_container
+
+# Ver logs del contenedor de pgAdmin
+docker logs pgadmin_container
 ```
+
+## Gestión de la Base de Datos con pgAdmin
+
+El proyecto incluye pgAdmin, una interfaz gráfica para administrar la base de datos PostgreSQL.
+
+### Acceso a pgAdmin
+
+1. Abre tu navegador web y visita: `http://localhost:5050`
+2. Inicia sesión con las siguientes credenciales:
+   - Email: `admin@greenwork.com`
+   - Contraseña: `HIiDV8W7S02bO6AB3ehV`
+
+### Configuración de la Conexión a PostgreSQL
+
+Para conectar pgAdmin a la base de datos, sigue estos pasos:
+
+1. Haz clic derecho en "Servers" en el panel izquierdo y selecciona "Register > Server..."
+2. En la pestaña "General":
+   - Name: `GreenWorkDB` (o cualquier nombre descriptivo)
+
+3. En la pestaña "Connection":
+   - Host name/address: `postgres` (importante: usa "postgres" como nombre de host, no "localhost" ni "127.0.0.1")
+   - Port: `5432`
+   - Maintenance database: `greenworkdb`
+   - Username: `greenworkAdmin`
+   - Password: `HIiDV8W7S02bO6AB3ehV`
+   - Marca la opción "Save password" si deseas guardar la contraseña
+
+4. Haz clic en "Save" para guardar la configuración
+
+### Nota Importante
+
+Es fundamental usar `postgres` como nombre del host en la configuración de pgAdmin, ya que este es el nombre del servicio definido en el `docker-compose.yml`. Dentro de la red de Docker, los contenedores se comunican entre sí usando estos nombres de servicio, no mediante "localhost" ni direcciones IP.
 
 Para reiniciar los contenedores:
 
