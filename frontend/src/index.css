@@ -126,12 +126,23 @@ button, .link__button, .link__button--variant1 {
 }
 
 .nav__menu {
+  list-style: none;
   display: flex;
   gap: 3rem;
 }
 
 .nav__hamburger {
   display: none;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--color1);
+  color: var(--color4);
+  text-align: center;
+  padding: 1rem;
 }
 
 @media (max-width: 76.8rem) {
