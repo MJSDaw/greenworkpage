@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'dni',
         'birthdate',
+        'termsAndConditions',
     ];
 
     /**
@@ -48,6 +49,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'dni' => 'encrypted',
         'birthdate' => 'date',
+        'termsAndConditions' => 'boolean',
     ];
 
     /**

@@ -35,6 +35,7 @@ class AuthController extends Controller
                 Password::min(8),
             ],
             'password_confirm' => 'required|same:password',
+            'termsAndConditions' => 'required|boolean|accepted',
         ], [
             'password_confirm.same' => 'La confirmación de contraseña no coincide con la contraseña ingresada.',
             'email.format' => 'El correo electrónico debe tener un formato válido.',
@@ -43,7 +44,9 @@ class AuthController extends Controller
             'birthdate.required' => 'Birth date is required.',
             'birthdate.date' => 'Birth date must be a valid date.',
             'birthdate.date_format' => 'Birth date must be in YYYY-MM-DD format.',
-            'birthdate.before_or_equal' => 'You must be at least 13 years old to register.'
+            'birthdate.before_or_equal' => 'You must be at least 13 years old to register.',
+            'termsAndConditions.required' => 'You must accept the terms and conditions.',
+            'termsAndConditions.accepted' => 'You must accept the terms and conditions.',
         ]);
 
         if ($validator->fails()) {
@@ -61,6 +64,7 @@ class AuthController extends Controller
             'dni' => $request->dni,
             'birthdate' => $request->birthdate,
             'password' => Hash::make($request->password),
+            'termsAndConditions' => $request->termsAndConditions,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
