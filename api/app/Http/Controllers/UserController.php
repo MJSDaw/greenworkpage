@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\AuditController;
 
 class UserController extends Controller
 {
@@ -34,6 +35,9 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        
+        // Guardar los valores originales para la auditoría
+        $originalUser = $user->toArray();
         
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -77,6 +81,15 @@ class UserController extends Controller
         
         $user->save();
         
+        // Registrar la acción en la auditoría
+        AuditController::registerAudit(
+            'update',
+            'users',
+            $user->id,
+            $originalUser,
+            $user->toArray()
+        );
+        
         return response()->json([
             'success' => true,
             'message' => 'Usuario actualizado correctamente',
@@ -91,6 +104,15 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+        
+        // Registrar la acción en la auditoría
+        AuditController::registerAudit(
+            'delete',
+            'users',
+            $id,
+            $user->toArray(),
+            null
+        );
         
         return response()->json([
             'success' => true,
