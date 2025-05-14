@@ -7,6 +7,7 @@ use App\Http\Controllers\SpaceController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas para reservations
     Route::get('reservations', [ReservationController::class, 'index']);
     Route::post('reservations', [ReservationController::class, 'store']);
+    
+    // Rutas públicas para contactos
+    Route::post('contacts', [ContactController::class, 'store']);
+    Route::get('contacts', [ContactController::class, 'index']);
 });
+
 
 // Ruta para administradores (protegida y solo para administradores)
 Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
