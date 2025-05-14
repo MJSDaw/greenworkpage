@@ -1,12 +1,14 @@
 # Usa una imagen oficial de PHP con soporte para Apache
 FROM php:8.2-apache
 
-# Instala las extensiones necesarias para Laravel y PostgreSQL
+# Instala las extensiones necesarias para Laravel, PostgreSQL, Node.js y npm
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip \
     git \
     ssl-cert \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Habilitar el módulo SSL en Apache

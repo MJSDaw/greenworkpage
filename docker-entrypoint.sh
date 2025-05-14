@@ -49,8 +49,18 @@ php artisan storage:link
 # Asegurar permisos adecuados
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-# Asegurar permisos adecuados
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Instalar dependencias del frontend y levantar el servidor de React
+if [ -d "/var/www/frontend" ]; then
+    echo "Installing frontend dependencies..."
+    cd /var/www/frontend
+    npm install --no-fund --no-audit
+
+    # Iniciar el servidor de React en segundo plano
+    echo "Starting React development server..."
+    npm run dev -- --host 0.0.0.0 &
+    cd /var/www/html
+fi
 
 # Iniciar Apache en primer plano
 apache2-foreground

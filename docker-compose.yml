@@ -31,12 +31,14 @@ services:
     ports:
       - "8000:80"   # Mapea el puerto 80 del contenedor al puerto 8000 del host (redirección)
       - "8443:443"  # Mapea el puerto 443 del contenedor al puerto 8443 del host (HTTPS)
+      - "5173:5173" # Mapea el puerto 5173 del servidor de React
     depends_on:
       - postgres
     volumes:
-      - .:/var/www/html
+      - ./api:/var/www/html
       - laravel_vendor:/var/www/html/vendor
       - laravel_storage:/var/www/html/storage
+      - ./frontend:/var/www/frontend
 
 volumes:
   postgres_data:
