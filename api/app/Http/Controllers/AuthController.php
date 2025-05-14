@@ -119,6 +119,47 @@ class AuthController extends Controller
     }
 
     /**
+     * Iniciar sesión de administrador
+     */
+    public function adminLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $admin = \App\Models\Admin::where('email', $request->email)->first();
+
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid admin credentials'
+            ], 401);
+        }
+
+        // Revocar tokens anteriores
+        $admin->tokens()->delete();
+
+        // Crear nuevo token con guard de admin
+        $token = $admin->createToken('admin_token', ['admin'])->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Admin login successful',
+            'user' => $admin,
+            'token' => $token
+        ]);
+    }
+
+    /**
      * Cerrar sesión
      */
     public function logout(Request $request)

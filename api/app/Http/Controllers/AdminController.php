@@ -7,9 +7,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\AuditController;
 
 class AdminController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $admins = Admin::all();
+        return response()->json($admins);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -40,6 +50,15 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Registrar la acción en la auditoría
+        AuditController::registerAudit(
+            'create',
+            'admins',
+            $admin->id,
+            null,
+            $admin->toArray()
+        );
 
         return response()->json($admin, 201);
     }
