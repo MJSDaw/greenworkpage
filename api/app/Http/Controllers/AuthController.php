@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
+
 class AuthController extends Controller
 {
     /**
@@ -27,7 +28,7 @@ class AuthController extends Controller
                 'unique:admins',
             ],
             'dni' => 'required|string|max:20|unique:users',
-            'birth_date' => 'required|date|date_format:Y-m-d|before_or_equal:'.now()->subYears(13)->format('Y-m-d'),
+            'birthdate' => 'required|date|date_format:Y-m-d|before_or_equal:' . now()->subYears(13)->format('Y-m-d'),
             'password' => [
                 'required', 
                 'string',
@@ -39,10 +40,10 @@ class AuthController extends Controller
             'email.format' => 'El correo electrónico debe tener un formato válido.',
             'email.unique' => 'El correo electrónico ya está en uso.',
             'dni.unique' => 'El DNI ya está en uso.',
-            'birth_date.required' => 'Birth date is required.',
-            'birth_date.date' => 'Birth date must be a valid date.',
-            'birth_date.date_format' => 'Birth date must be in YYYY-MM-DD format.',
-            'birth_date.before_or_equal' => 'You must be at least 13 years old to register.'
+            'birthdate.required' => 'Birth date is required.',
+            'birthdate.date' => 'Birth date must be a valid date.',
+            'birthdate.date_format' => 'Birth date must be in YYYY-MM-DD format.',
+            'birthdate.before_or_equal' => 'You must be at least 13 years old to register.'
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +59,7 @@ class AuthController extends Controller
             'surname' => $request->surname,
             'email' => $request->email,
             'dni' => $request->dni,
-            'birth_date' => $request->birth_date,
+            'birthdate' => $request->birthdate,
             'password' => Hash::make($request->password),
         ]);
 
