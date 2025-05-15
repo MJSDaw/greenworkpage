@@ -7,12 +7,14 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Signin from './pages/Signin'
 import Login from './pages/Login'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
 
 const App = () => {
   return (
     <Router>
       <Header />
-      <main>
+      <>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/spaces" element={<Spaces />} />
@@ -20,8 +22,10 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
-      </main>
+      </>
     </Router>
   )
 }

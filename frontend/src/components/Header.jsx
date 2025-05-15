@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className='header__container'>
       <Link to="/" title="Go to Home Page" className='header__logo'>
-        <img className='header__logo__icon' src={logo} alt='GreenWork Logo' title="GreenWork Logo" />
+        <img className='header__logo__icon' src={logo} alt='GreenWork' title="GreenWork Logo" />
       </Link>
       <nav className='nav__container'>
         <ul className={`nav__container__menu ${menuActive ? 'active' : ''}`}>

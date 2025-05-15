@@ -26,11 +26,13 @@ html {
 }
 
 main {
-  margin: 0 15.5rem;
+  padding: 20rem 15.5rem;
 }
 
 h1 {
   font-size: 3.6rem;
+  color: var(--color1);
+  text-align: left;
 }
 
 h2 {
@@ -45,7 +47,7 @@ h4 {
   font-size: 2.2rem;
 }
 
-button, label, a {
+button, a {
   font-size: 2rem;
   font-weight: bold;
 }
@@ -60,6 +62,92 @@ p {
   font-size: 1.8rem;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+label {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+input, .checkbox {
+  border: 3px solid var(--color1);
+  border-radius: 1.5rem;
+  box-shadow: 0 .4rem .4rem 0 var(--shadow__light);
+}
+
+input {
+  font-size: 2rem;
+  padding: 1.5rem 3rem;
+  min-width: 80rem;
+  color: var(--color1);
+}
+
+input:focus {
+  background-color: var(--color3);
+}
+
+input::placeholder {
+  color: var(--color1);
+  opacity: 1;
+}
+
+.checkbox {
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 3px solid var(--color1);
+  border-radius: 1.5rem;
+  width: 5rem;
+  height: 5rem;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  box-shadow: 0 .4rem .4rem 0 var(--shadow__light);
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
+  margin-right: 1.5rem;
+}
+
+.checkbox:checked {
+  border-radius: 100%;
+  background-color: var(--color1);
+}
+
+.checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  transform: translate(-50%, -50%);
+  background-image: url('./assets/img/check.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.checkbox__label {
+  cursor: pointer;
+}
+
+.form__checkbox {
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 0 .5rem;
+}
+
+.cheakpeas {
+  position: absolute;
+  top: 7rem;
+  right: 10rem;
+  z-index: 10;
+  height: 30rem;
+}
+
 /* Header */
 
 .header__container {
@@ -70,6 +158,9 @@ p {
   padding: 1.5rem 15.5rem;
   height: 8rem;
   box-shadow: 0 .4rem .4rem 0 var(--shadow__dark);
+  z-index: 2;
+  position: relative;
+  background-color: var(--color4);
 }
 
 .header__logo {
@@ -99,6 +190,7 @@ p {
   text-decoration: none;
   padding: 1.5rem 1.5rem;
   border-radius: 1.5rem;
+  color: #1C4624;
 }
 
 .nav__container__menu__anchor:hover {
@@ -127,8 +219,8 @@ button, .nav__container__menu__anchor--button, .nav__container__menu__anchor--bu
 }
 
 .nav__container__menu__anchor--button--variant__link {
-  outline: 0.2rem solid var(--color2);
-  outline-offset: -0.2rem;
+  outline: .3rem solid var(--color2);
+  outline-offset: -.3rem;
   color: var(--color2);
 }
 
@@ -154,6 +246,36 @@ button, .nav__container__menu__anchor--button, .nav__container__menu__anchor--bu
   width: 3rem;
 }
 
+/* Login */
+
+.login__background {
+  background-image: url('./assets/img/backgroundLoginRegister.svg'); /* si estás usando CSS puro */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  width: 100vw;
+  height: 100vh;
+
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login__container {
+  background-color: var(--color4);
+  padding: 6rem;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 1.5rem;
+  box-shadow: 0 .4rem .4rem 0 var(--shadow__dark);
+}
+
 /* Footer */
 
 footer {
@@ -171,7 +293,11 @@ footer {
   /* All */
 
   main {
-    margin: 0 3rem;
+    padding: 20rem 3rem;
+  }
+
+  input {
+    min-width: 4rem;
   }
 
   /* Header */
@@ -203,4 +329,6 @@ footer {
   .nav__container__hamburger {
     display: block;
   }
+
+  /* Sign In */
 }
