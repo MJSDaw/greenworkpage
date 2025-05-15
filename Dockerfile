@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     ssl-cert \
     nodejs \
     npm \
+    dos2unix \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Habilitar el módulo SSL en Apache
@@ -43,8 +44,11 @@ COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN apt-get install -y postgresql-client
 
 # Copia el script de entrada
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh
+# Verificar que el archivo existe
+RUN ls -la /usr/local/bin/docker-entrypoint.sh
 
 # Establece el script de entrada como el comando predeterminado
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
