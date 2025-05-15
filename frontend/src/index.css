@@ -62,6 +62,8 @@ p {
   font-size: 1.8rem;
 }
 
+/* Form */
+
 form {
   display: flex;
   flex-direction: column;
@@ -72,6 +74,7 @@ label {
   font-size: 2rem;
   display: flex;
   align-items: center;
+  font-weight: bold;
 }
 
 input, .checkbox {
@@ -131,21 +134,63 @@ input::placeholder {
 }
 
 .checkbox__label {
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 1rem;
+}
+
+.checkbox__text {
+  display: block;
+  flex: 1;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
 .form__checkbox {
   font-weight: bold;
   text-decoration: underline;
-  margin: 0 .5rem;
 }
 
 .cheakpeas {
   position: absolute;
-  top: 7rem;
-  right: 10rem;
-  z-index: 10;
+  top: -13rem;
+  right: -15rem;
   height: 30rem;
+  z-index: 10;
+}
+
+.link__text, .form__link {
+  color: var(--color1);
+}
+
+.link__text {
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.form__link {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.form__submit {
+  display: flex;
+  align-self: center;
+  padding: 1.5rem 3rem;
+  background-color: var(--color3);
+  color: var(--color1);
+  font-weight: bold;
+  border-radius: 1.5rem;
+  box-shadow: 0 .4rem .4rem 0 var(--shadow__light);
+  cursor: pointer;
+  min-width: fit-content;
+  border: none;
 }
 
 /* Header */
@@ -249,25 +294,23 @@ button, .nav__container__menu__anchor--button, .nav__container__menu__anchor--bu
 /* Login */
 
 .login__background {
-  background-image: url('./assets/img/backgroundLoginRegister.svg'); /* si estás usando CSS puro */
+  background-image: url('./assets/img/backgroundLoginRegister.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-
   position: relative;
   top: 0;
   left: 0;
   z-index: 1;
-
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .login__container {
+  position: relative;
   background-color: var(--color4);
   padding: 6rem;
   width: fit-content;
@@ -296,8 +339,10 @@ footer {
     padding: 20rem 3rem;
   }
 
+  /* Form */
+
   input {
-    min-width: 4rem;
+    min-width: 0;
   }
 
   /* Header */
@@ -330,5 +375,12 @@ footer {
     display: block;
   }
 
-  /* Sign In */
+  /* Sign in */
+
+  .cheakpeas {
+    position: absolute;
+    top: -9rem;
+    right: 0rem;
+    height: 20rem;
+  }
 }
