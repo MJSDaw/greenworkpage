@@ -3,8 +3,16 @@
     "title": "Greenwork - Tu espacio de coworking",
     "description": "Reserva espacios de coworking flexibles con GreenWork — reservas rápidas, soporte dedicado y herramientas inteligentes para impulsar tu crecimiento diario."
   },
+  "actions": {
+    "goToGithub": "Ir a GitHub",
+    "goToLinkedIn": "Ir a LinkedIn",
+    "goToTwitter": "Ir a Twitter",
+    "goToFacebook": "Ir a Facebook",
+    "goToInstagram": "Ir a Instagram"
+  },
   "common": {
     "home": "Inicio",
+    "goToHomePage": "Ir a la página de inicio",
     "spaces": "Espacios",
     "about": "Nosotros",
     "contact": "Contacto",
@@ -26,5 +34,9 @@
     "email": "Correo electrónico",
     "message": "Mensaje",
     "send": "Enviar Mensaje"
+  },
+  "footer": {
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio"
   }
 }
