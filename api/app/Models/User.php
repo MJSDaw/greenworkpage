@@ -24,7 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'dni',
-        'birth_date',
+        'birthdate',
+        'termsAndConditions',
     ];
 
     /**
@@ -47,7 +48,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'dni' => 'encrypted',
-        'birth_date' => 'date',
+        'birthdate' => 'date',
+        'termsAndConditions' => 'boolean',
     ];
 
     /**
