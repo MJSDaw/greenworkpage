@@ -23,11 +23,14 @@ class DatabaseRestore extends Command
     protected $description = 'Restore the database from a backup file';
 
     /**
-     * The backup directory path
+     * The backup directory paths
      * 
-     * @var string
+     * @var array
      */
-    protected $backupDir = '/var/www/html/storage/app/backups';
+    protected $backupDirs = [
+        '/var/www/html/storage/app/backups',
+        '/var/www/html/backups'
+    ];
 
     /**
      * Execute the console command.
@@ -42,11 +45,27 @@ class DatabaseRestore extends Command
             $filename = $this->ask('Enter the backup file name to restore:');
         }
         
-        // Full path to the backup file
-        $backupPath = $this->backupDir . '/' . $filename;
+        // Find the backup file in any of the possible directories
+        $backupPath = null;
+        foreach ($this->backupDirs as $dir) {
+            $path = $dir . '/' . $filename;
+            if (file_exists($path)) {
+                $backupPath = $path;
+                break;
+            }
+        }
         
-        if (!file_exists($backupPath)) {
+        // If not found, try to use the filename directly as it might be a full path
+        if (!$backupPath && file_exists($filename)) {
+            $backupPath = $filename;
+        }
+        
+        if (!$backupPath) {
             $this->error("Backup file not found: {$filename}");
+            $this->info("Directories checked:");
+            foreach ($this->backupDirs as $dir) {
+                $this->info("- {$dir}" . (file_exists($dir) ? ' (exists)' : ' (not found)'));
+            }
             return 1;
         }
 
@@ -93,23 +112,36 @@ class DatabaseRestore extends Command
      */
     protected function listAvailableBackups()
     {
-        $files = glob($this->backupDir . '/*.sql');
+        $allFiles = [];
         
-        if (count($files) === 0) {
+        // Check all possible backup directories
+        foreach ($this->backupDirs as $dir) {
+            if (file_exists($dir)) {
+                $files = glob($dir . '/*.sql');
+                $allFiles = array_merge($allFiles, $files);
+            }
+        }
+        
+        if (count($allFiles) === 0) {
             $this->info('No backup files found.');
+            $this->info('Directories checked:');
+            foreach ($this->backupDirs as $dir) {
+                $this->info("- {$dir}" . (file_exists($dir) ? ' (exists)' : ' (not found)'));
+            }
             return;
         }
         
         $this->info('Available backup files:');
         
-        $headers = ['Filename', 'Size', 'Last Modified'];
+        $headers = ['Filename', 'Size', 'Last Modified', 'Location'];
         $rows = [];
         
-        foreach ($files as $file) {
+        foreach ($allFiles as $file) {
             $rows[] = [
                 basename($file),
                 $this->formatSize(filesize($file)),
-                date('Y-m-d H:i:s', filemtime($file))
+                date('Y-m-d H:i:s', filemtime($file)),
+                dirname($file)
             ];
         }
         

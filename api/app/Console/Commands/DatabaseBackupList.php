@@ -23,11 +23,14 @@ class DatabaseBackupList extends Command
     protected $description = 'List all database backups';
 
     /**
-     * The backup directory path
+     * The backup directory paths
      * 
-     * @var string
+     * @var array
      */
-    protected $backupDir = '/var/www/html/storage/app/backups';
+    protected $backupDirs = [
+        '/var/www/html/storage/app/backups',  // Inside container storage
+        '/var/www/html/backups'               // Project root backups folder
+    ];
 
     /**
      * Execute the console command.
@@ -36,36 +39,80 @@ class DatabaseBackupList extends Command
     {
         $this->info('Checking for database backups...');
         
-        // Check project backups directory
-        if (file_exists($this->backupDir)) {
-            $backupFiles = glob($this->backupDir . '/*.sql');
-            
-            if (count($backupFiles) > 0) {
-                $this->info('Found ' . count($backupFiles) . ' backup files in project directory:');
-                $rows = [];
-                foreach ($backupFiles as $file) {
-                    $rows[] = [
-                        basename($file),
-                        $this->formatSize(filesize($file)),
-                        date('Y-m-d H:i:s', filemtime($file))
-                    ];
+        $totalBackups = 0;
+        $allFiles = [];
+        
+        // Check all backup directories
+        foreach ($this->backupDirs as $dir) {
+            // Check directory exists
+            if (file_exists($dir)) {
+                $backupFiles = glob($dir . '/*.sql');
+                $count = count($backupFiles);
+                $totalBackups += $count;
+                
+                $this->info("Directory: {$dir}");
+                if ($count > 0) {
+                    $this->info('Found ' . $count . ' backup files:');
+                    $rows = [];
+                    foreach ($backupFiles as $file) {
+                        $rows[] = [
+                            basename($file),
+                            $this->formatSize(filesize($file)),
+                            date('Y-m-d H:i:s', filemtime($file)),
+                            $dir
+                        ];
+                        
+                        // Add to all files array for consolidation
+                        $allFiles[] = $file;
+                    }
+                    $this->table(['Filename', 'Size', 'Last Modified', 'Location'], $rows);
+                } else {
+                    $this->warn('No backup files found in this directory.');
                 }
-                $this->table(['Filename', 'Size', 'Last Modified'], $rows);
             } else {
-                $this->warn('No backup files found in project directory.');
-            }
-        } else {
-            $this->warn('Project backup directory does not exist: ' . $this->backupDir);
-            
-            // Try to create it
-            if (mkdir($this->backupDir, 0755, true)) {
-                $this->info('Created project backup directory: ' . $this->backupDir);
-            } else {
-                $this->error('Failed to create project backup directory: ' . $this->backupDir);
+                $this->warn('Backup directory does not exist: ' . $dir);
+                
+                // Try to create it
+                if (mkdir($dir, 0755, true)) {
+                    $this->info('Created backup directory: ' . $dir);
+                } else {
+                    $this->error('Failed to create backup directory: ' . $dir);
+                }
             }
         }
         
+        // Show consolidated list if backups found in multiple directories
+        if ($totalBackups > 0 && count($this->backupDirs) > 1) {
+            $this->info('=============================');
+            $this->info('Consolidated backup list: ' . $totalBackups . ' total backup(s)');
+            
+            // Group duplicate backups (same filename in different directories)
+            $groupedFiles = [];
+            foreach ($allFiles as $file) {
+                $basename = basename($file);
+                if (!isset($groupedFiles[$basename])) {
+                    $groupedFiles[$basename] = [];
+                }
+                $groupedFiles[$basename][] = $file;
+            }
+            
+            $consolidatedRows = [];
+            foreach ($groupedFiles as $filename => $locations) {
+                $consolidatedRows[] = [
+                    $filename,
+                    $this->formatSize(filesize($locations[0])),
+                    date('Y-m-d H:i:s', filemtime($locations[0])),
+                    count($locations) > 1 ? 'Multiple locations (' . count($locations) . ')' : dirname($locations[0])
+                ];
+            }
+            
+            $this->table(['Filename', 'Size', 'Last Modified', 'Location'], $consolidatedRows);
+        } elseif ($totalBackups == 0) {
+            $this->error('No backup files found in any directory.');
+        }
+        
         // Check Docker permissions
+        $this->info('=============================');
         $this->info('Checking Docker container environment...');
         
         try {
@@ -83,14 +130,20 @@ class DatabaseBackupList extends Command
             $this->info("Storage directory: {$storagePath} (Permissions: {$storagePermissions})");
             $this->info("App directory: {$appPath} (Permissions: {$appPermissions})");
             
-            // Try to check if we can write to the directory
-            $testFile = $this->backupDir . '/test_write_' . time() . '.txt';
-            if (file_put_contents($testFile, 'test')) {
-                $this->info("Successfully wrote test file: {$testFile}");
-                unlink($testFile);
-                $this->info("Successfully deleted test file");
-            } else {
-                $this->error("Failed to write test file to: {$this->backupDir}");
+            // Try to check if we can write to each directory
+            foreach ($this->backupDirs as $dir) {
+                if (file_exists($dir)) {
+                    $testFile = $dir . '/test_write_' . time() . '.txt';
+                    if (file_put_contents($testFile, 'test')) {
+                        $this->info("Successfully wrote test file to: {$dir}");
+                        unlink($testFile);
+                        $this->info("Successfully deleted test file from: {$dir}");
+                    } else {
+                        $this->error("Failed to write test file to: {$dir}");
+                    }
+                } else {
+                    $this->warn("Cannot test write permissions - directory does not exist: {$dir}");
+                }
             }
         } catch (\Exception $e) {
             $this->error("Error checking environment: " . $e->getMessage());

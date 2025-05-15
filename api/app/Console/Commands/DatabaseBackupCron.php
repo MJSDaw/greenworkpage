@@ -26,10 +26,20 @@ class DatabaseBackupCron extends Command
      */
     public function handle()
     {
-        // Create backup directory if it doesn't exist
-        $backupDir = storage_path('app/backups');
-        if (!file_exists($backupDir)) {
-            mkdir($backupDir, 0755, true);
+        // Create both backup directories if they don't exist
+        $backupDirs = [
+            storage_path('app/backups'),
+            base_path('../backups')
+        ];
+        
+        foreach ($backupDirs as $backupDir) {
+            if (!file_exists($backupDir)) {
+                if (mkdir($backupDir, 0755, true)) {
+                    $this->info("Created backup directory: {$backupDir}");
+                } else {
+                    $this->warn("Failed to create backup directory: {$backupDir}");
+                }
+            }
         }
         
         // Run the db:backup command

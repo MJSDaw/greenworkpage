@@ -25,6 +25,16 @@ class DatabaseBackup extends Command
     protected $description = 'Create a backup of the database';
 
     /**
+     * The backup directory paths
+     * 
+     * @var array
+     */
+    protected $backupDirs = [
+        '/var/www/html/storage/app/backups',  // Inside container storage
+        '/var/www/html/backups'               // Project root backups folder
+    ];
+
+    /**
      * The maximum number of backups to keep
      * 
      * @var int
@@ -32,28 +42,26 @@ class DatabaseBackup extends Command
     protected $maxBackups = 2;
 
     /**
-     * The backup directory path
-     * 
-     * @var string
-     */
-    protected $backupDir = '/var/www/html/storage/app/backups';
-
-    /**
      * Execute the console command.
      */
     public function handle()
     {
-        // Create backups directory if it doesn't exist
-        if (!is_dir($this->backupDir)) {
-            mkdir($this->backupDir, 0755, true);
-            $this->info("Created project backups directory: {$this->backupDir}");
-        }
-
         // Set backup file name with current date
         $filename = 'backup_' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
         
-        // Path where the backup will be stored
-        $backupPath = $this->backupDir . '/' . $filename;
+        // Create backups directories if they don't exist
+        foreach ($this->backupDirs as $dir) {
+            if (!is_dir($dir)) {
+                if (mkdir($dir, 0755, true)) {
+                    $this->info("Created backup directory: {$dir}");
+                } else {
+                    $this->warn("Failed to create backup directory: {$dir}");
+                }
+            }
+        }
+        
+        // Primary backup path (first in the array)
+        $primaryBackupPath = $this->backupDirs[0] . '/' . $filename;
         
         // Get database configuration
         $dbHost = config('database.connections.pgsql.host');
@@ -63,7 +71,7 @@ class DatabaseBackup extends Command
         $dbPassword = config('database.connections.pgsql.password');
         
         // Command to create backup
-        $command = "PGPASSWORD={$dbPassword} pg_dump -h {$dbHost} -p {$dbPort} -U {$dbUsername} -d {$dbName} -F p -f {$backupPath}";
+        $command = "PGPASSWORD={$dbPassword} pg_dump -h {$dbHost} -p {$dbPort} -U {$dbUsername} -d {$dbName} -F p -f {$primaryBackupPath}";
         
         try {
             // Execute backup command
@@ -72,14 +80,26 @@ class DatabaseBackup extends Command
             
             if ($returnVar === 0) {
                 $this->info('Database backup completed successfully.');
-                $this->info("Backup stored at: {$backupPath}");
+                $this->info("Primary backup stored at: {$primaryBackupPath}");
                 
-                // Double-check the file exists
-                if (file_exists($backupPath)) {
-                    $fileSize = $this->formatSize(filesize($backupPath));
-                    $this->info("Backup file exists with size: {$fileSize}");
+                // Check if the primary backup file exists
+                if (file_exists($primaryBackupPath)) {
+                    $fileSize = $this->formatSize(filesize($primaryBackupPath));
+                    $this->info("Backup file created with size: {$fileSize}");
+                    
+                    // Copy to additional backup locations
+                    for ($i = 1; $i < count($this->backupDirs); $i++) {
+                        $additionalPath = $this->backupDirs[$i] . '/' . $filename;
+                        if (copy($primaryBackupPath, $additionalPath)) {
+                            $this->info("Backup copied to: {$additionalPath}");
+                        } else {
+                            $this->warn("Failed to copy backup to: {$additionalPath}");
+                        }
+                    }
+                    
+                    Log::info("Database backup completed successfully. File: {$filename}");
                 } else {
-                    $this->warn("Warning: Backup file was not found at: {$backupPath}");
+                    $this->warn("Warning: Backup file was not found at: {$primaryBackupPath}");
                     // Try to find where the file might have been created
                     $this->info("Searching for the backup file...");
                     $possibleLocations = [
@@ -122,40 +142,42 @@ class DatabaseBackup extends Command
     {
         $this->info('Cleaning old backups...');
         
-        // Get all backup files in the project backups directory
-        $files = glob($this->backupDir . '/*.sql');
-        
-        $this->info("Found " . count($files) . " backup files in directory");
-        
-        // Display information about found backups
-        foreach ($files as $file) {
-            $this->info("Found backup: " . basename($file) . " (Modified: " . date('Y-m-d H:i:s', filemtime($file)) . ")");
-        }
-        
-        // If we have more files than the max limit, delete the oldest ones
-        if (count($files) > $this->maxBackups) {
-            // Sort files by last modified time (oldest first)
-            usort($files, function($a, $b) {
-                // Check if files exist before trying to get mtime
-                $timeA = file_exists($a) ? filemtime($a) : 0;
-                $timeB = file_exists($b) ? filemtime($b) : 0;
-                return $timeA - $timeB;
-            });
-            
-            // Delete oldest files until we're at the limit
-            $filesToDelete = array_slice($files, 0, count($files) - $this->maxBackups);
-            
-            foreach ($filesToDelete as $file) {
-                if (unlink($file)) {
-                    $this->info("Deleted old backup: " . basename($file));
-                    Log::info("Deleted old backup: " . basename($file));
-                } else {
-                    $this->error("Failed to delete old backup: " . basename($file));
-                    Log::error("Failed to delete old backup: " . basename($file));
-                }
+        foreach ($this->backupDirs as $dir) {
+            if (!file_exists($dir)) {
+                $this->warn("Backup directory does not exist: {$dir}");
+                continue;
             }
-        } else {
-            $this->info("No old backups to clean. Current count: " . count($files) . ", Max allowed: {$this->maxBackups}");
+            
+            // Get all backup files in the backup directory
+            $files = glob($dir . '/*.sql');
+            
+            $this->info("Found " . count($files) . " backup files in directory: {$dir}");
+            
+            // If we have more files than the max limit, delete the oldest ones
+            if (count($files) > $this->maxBackups) {
+                // Sort files by last modified time (oldest first)
+                usort($files, function($a, $b) {
+                    // Check if files exist before trying to get mtime
+                    $timeA = file_exists($a) ? filemtime($a) : 0;
+                    $timeB = file_exists($b) ? filemtime($b) : 0;
+                    return $timeA - $timeB;
+                });
+                
+                // Delete oldest files until we're at the limit
+                $filesToDelete = array_slice($files, 0, count($files) - $this->maxBackups);
+                
+                foreach ($filesToDelete as $file) {
+                    if (unlink($file)) {
+                        $this->info("Deleted old backup: " . basename($file) . " from {$dir}");
+                        Log::info("Deleted old backup: " . basename($file) . " from {$dir}");
+                    } else {
+                        $this->error("Failed to delete old backup: " . basename($file) . " from {$dir}");
+                        Log::error("Failed to delete old backup: " . basename($file) . " from {$dir}");
+                    }
+                }
+            } else {
+                $this->info("No old backups to clean in {$dir}. Current count: " . count($files) . ", Max allowed: {$this->maxBackups}");
+            }
         }
     }
     
