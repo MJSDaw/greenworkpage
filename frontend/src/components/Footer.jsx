@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 import logo from '../assets/img/logoVariant1.png'
 import github from '../assets/img/githubLogo.svg'
 import instagram from '../assets/img/instagramLogo.svg'
@@ -7,22 +8,24 @@ import facebook from '../assets/img/facebookLogo.svg'
 import twitter from '../assets/img/twitterLogo.svg'
 import linkedin from '../assets/img/linkedinLogo.svg'
 
+
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="footer__container">
       <section className="footer__container__content">
-        <Link to="/" title="Go to Home Page" className="header__logo">
+        <Link to="/" title={t('actions.goToHomePage')} className="header__logo">
           <img
             className="header__logo__icon"
             src={logo}
             alt="GreenWork Logo Variant 1"
-            title="GreenWork Logo"
+            title={t('common.goToHomePage')}
           />
         </Link>
         <article className="icons__container">
           <Link
             to="https://github.com/MJSDaw/greenworkpage"
-            title="Go to Github"
+            title={t('footer.goToGithub')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -31,12 +34,12 @@ const Footer = () => {
               className="icon__svg"
               src={github}
               alt="Github"
-              title="Github Logo"
+              title={t('footer.goToGithub')}
             />
           </Link>
           <Link
             to="https://www.instagram.com/"
-            title="Go to Instagram"
+            title={t('footer.goToInstagram')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -45,12 +48,12 @@ const Footer = () => {
               className="icon__svg"
               src={instagram}
               alt="Instagram"
-              title="Instagram Logo"
+              title={t('footer.goToInstagram')}
             />
           </Link>
           <Link
             to="https://www.facebook.com/"
-            title="Go to Facebook"
+            title={t('footer.goToFacebook')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -59,12 +62,12 @@ const Footer = () => {
               className="icon__svg"
               src={facebook}
               alt="Facebook"
-              title="Facebook Logo"
+              title={t('footer.goToFacebook')}
             />
           </Link>
           <Link
             to="https://x.com/"
-            title="Go to Twitter"
+            title={t('footer.goToTwitter')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -73,12 +76,12 @@ const Footer = () => {
               className="icon__svg"
               src={twitter}
               alt="Twitter"
-              title="Twitter Logo"
+              title={t('footer.goToTwitter')}
             />
           </Link>
           <Link
             to="https://www.linkedin.com/"
-            title="Go to LinkedIn"
+            title={t('footer.linkedIn')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -87,7 +90,7 @@ const Footer = () => {
               className="icon__svg"
               src={linkedin}
               alt="LinkedIn"
-              title="LinkedIn Logo"
+              title={t('footer.linkedIn')}
             />
           </Link>
         </article>

@@ -1,9 +1,8 @@
 import 'normalize.css'
 import './index.css'
-
+import './locales/i18n';
 import { React, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './i18n';
 
 import App from './App.jsx'
 

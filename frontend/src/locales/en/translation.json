@@ -5,6 +5,7 @@
   },
   "common": {
     "home": "Home",
+    "goToHomePage": "Go to home page",
     "spaces": "Spaces",
     "about": "About Us",
     "contact": "Contact",
@@ -26,5 +27,14 @@
     "email": "Email",
     "message": "Message",
     "send": "Send Message"
+  },
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms and Conditions",
+    "goToGithub": "Go to GitHub",
+    "goToLinkedIn": "Go to LinkedIn",
+    "goToTwitter": "Go to Twitter",
+    "goToFacebook": "Go to Facebook",
+    "goToInstagram": "Go to Instagram"
   }
 }
