@@ -50,15 +50,8 @@ button, label, a {
 
 a {
   text-decoration: none;
-  padding: 1.5rem 3rem;
   color: var(--color1);
   text-align: center;
-}
-
-nav a:hover {
-  background-color: var(--color3);
-  border-radius: 1.5rem;
-  color: var(--color0);
 }
 
 p {
@@ -66,11 +59,27 @@ p {
 }
 
 button, .link__button, .link__button--variant1 {
+  text-align: center;
+}
+
+.link__anchor, .link__anchor--variant1, .link__anchor--variant2 {
+  display: block;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
   padding: 1.5rem 3rem;
+  border-radius: 1.5rem;
+}
+
+.link__anchor:hover {
+  background-color: var(--color3);
+  color: var(--color0);
+}
+
+button, .link__button, .link__button--variant1 {
   text-decoration: none;
   box-shadow: 0 .4rem .4rem 0 var(--shadow__light);
   border-radius: 1.5rem;
-  text-align: center;
 }
 
 .button--icon {
@@ -93,18 +102,18 @@ button, .link__button, .link__button--variant1 {
   background-color: var(--color3);
 }
 
-.link__button:hover {
+.link__anchor--variant1:hover {
   background-color: var(--color2);
   color: var(--color0);
 }
 
-.link__button--variant1 {
+.link__anchor--variant2 {
   outline: 0.2rem solid var(--color2);
   outline-offset: -0.2rem;
   color: var(--color2);
 }
 
-.link__button--variant1:hover {
+.link__anchor--variant2:hover {
   background-color: var(--color2);
   color: var(--color0);
 }
@@ -114,7 +123,7 @@ button, .link__button, .link__button--variant1 {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 17.5rem;
+  padding: 1.5rem 15.5rem;
   height: 8rem;
   box-shadow: 0 .4rem .4rem 0 var(--shadow__dark);
 }
@@ -145,9 +154,13 @@ footer {
   padding: 1rem;
 }
 
-@media (max-width: 76.8rem) {
+@media (max-width: 90rem) {
   .header__container {
     padding: 1.5rem 3rem;
+  }
+
+  main {
+    margin: 0 3rem;
   }
 
   .nav__hamburger {
@@ -161,7 +174,7 @@ footer {
     transform: translateY(-1rem);
     flex-direction: column;
     position: absolute;
-    top: 8em;
+    top: 7em;
     right: 0;
     background-color: var(--color4);
     padding: 3rem;
