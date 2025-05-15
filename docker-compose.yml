@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -40,7 +38,22 @@ services:
       - laravel_storage:/var/www/html/storage
       - ./frontend:/var/www/frontend
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@greenwork.com
+      PGADMIN_DEFAULT_PASSWORD: HIiDV8W7S02bO6AB3ehV
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
   laravel_vendor:
   laravel_storage:
+  pgadmin_data:

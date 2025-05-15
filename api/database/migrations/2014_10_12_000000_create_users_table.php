@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('surname');
             $table->string('dni')->unique();
             $table->string('email')->unique();
+            $table->date('birthdate');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('termsAndConditions')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
