@@ -13,6 +13,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        
+        // Run database backup daily at 13:00 (1:00 PM)
+        $schedule->command('db:backup')->dailyAt('13:00');
     }
 
     /**
