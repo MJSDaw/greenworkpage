@@ -14,18 +14,22 @@
     "goToAbout": "Ver más sobre nosotros",
     "goToContact": "Contáctanos",
     "goToTerms": "Ver términos y condiciones",
-    "goToPrivacy": "Ver política de privacidad"
+    "goToPrivacy": "Ver política de privacidad",
+    "register": "Registrarme",
+    "login": "Iniciar sesión"
   },
   "alt": {
     "logo": "Logo de Greenwork",
-    "logoVariant1": "Logo de Greenwork en blanco"
+    "logoVariant1": "Logo de Greenwork en blanco",
+    "donatello": "Donatello el guisante"
   },
   "common": {
     "github": "Logo de Github",
     "instagram": "Logo de Instagram",
     "facebook": "Logo de Facebook",
     "twitter": "Logo de Twitter",
-    "linkedin": "Logo de Linkedin"
+    "linkedin": "Logo de Linkedin",
+    "donatello": "Donatello"
   },
   "links": {
     "home": "Inicio",
@@ -35,5 +39,75 @@
     "terms": "Términos y condiciones",
     "privacy": "Política de privacidad",
     "problemSolvers": "Creado por ProblemSolvers con amor 💚"
+  },
+  "form":{
+    "name": {
+      "label": "Nombre",
+      "placeholder": "Nombre",
+      "error": {
+        "required": "El nombre es obligatorio",
+        "invalid": "El nombre no es válido"
+      }
+    },
+    "surname": {
+      "label": "Apellidos",
+      "placeholder": "Apellidos",
+      "error": {
+        "required": "Los apellidos son obligatorios",
+        "invalid": "Los apellidos no son válidos"
+      }
+    },
+    "birthday": {
+      "label": "Fecha de nacimiento",
+      "placeholder": "Fecha de nacimiento",
+      "error": {
+        "required": "La fecha de nacimiento es obligatoria",
+        "invalid": "La fecha de nacimiento no es válida"
+      }
+    },
+    "nif": {
+      "label": "NIF",
+      "placeholder": "Número de identificación fiscal",
+      "error": {
+        "required": "El NIF es obligatorio",
+        "invalid": "El NIF no es válido"
+      }
+    },
+    "email": {
+      "label": "Correo electrónico:",
+      "placeholder": "Correo electrónico",
+      "error": {
+        "required": "El correo electrónico es obligatorio",
+        "invalid": "El correo electrónico no es válido"
+      }
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Contraseña",
+      "error": {
+        "required": "La contraseña es obligatoria",
+        "minLength": "La contraseña debe tener al menos 6 caracteres"
+      }
+    },
+    "confirmPassword": {
+      "label": "Confirmar contraseña",
+      "placeholder": "Confirma tu contraseña",
+      "error": {
+        "required": "La confirmación de la contraseña es obligatoria",
+        "invalid": "Las contraseñas no coinciden"
+      }
+    },
+    "checkbox": {
+      "register": {
+        "msg1": "Al registrarte, aceptas nuestros ",
+        "msg2": "y nuestra "
+      }
+    },
+    "span": {
+      "msg1": "¿Ya tienes una cuenta? "
+    },
+    "submitButton": {
+      "text": "Registrarme"
+    }
   }
 }

@@ -14,18 +14,22 @@
     "goToAbout": "View more about us",
     "goToContact": "Contact us",
     "goToTerms": "View terms and conditions",
-    "goToPrivacy": "View privacy policy"
+    "goToPrivacy": "View privacy policy",
+    "register": "Register me",
+    "login": "Login"
   },
   "alt": {
     "logo": "Logo of Greenwork",
-    "logoVariant1": "Logo of Greenwork in white"
+    "logoVariant1": "Logo of Greenwork in white",
+    "donatello": "Donatello"
   },
   "common": {
     "github": "Logo of Github",
     "instagram": "Logo of Instagram",
     "facebook": "Logo of Facebook",
     "twitter": "Logo of Twitter",
-    "linkedin": "Logo of Linkedin"
+    "linkedin": "Logo of Linkedin",
+    "donatello": "Donatello the pea"
   },
   "links": {
     "home": "Home",
@@ -35,5 +39,75 @@
     "terms": "Terms and conditions",
     "privacy": "Privacy policy",
     "problemSolvers": "Created by ProblemSolvers with love 💚"
+  },
+  "form":{
+    "name": {
+      "label": "Name",
+      "placeholder": "Name",
+      "error": {
+        "required": "Name is required",
+        "invalid": "Name is invalid"
+      }
+    },
+    "surname": {
+      "label": "Surname",
+      "placeholder": "Surname",
+      "error": {
+        "required": "Surname is required",
+        "invalid": "Surname is invalid"
+      }
+    },
+    "birthday": {
+      "label": "Birthday",
+      "placeholder": "Birthday",
+      "error": {
+        "required": "Birthday is required",
+        "invalid": "Birthday is invalid"
+      }
+    },
+    "nif": {
+      "label": "NIF",
+      "placeholder": "NIF",
+      "error": {
+        "required": "NIF is required",
+        "invalid": "NIF is invalid"
+      }
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email",
+      "error": {
+        "required": "Email is required",
+        "invalid": "Email is invalid"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "error": {
+        "required": "Password is required",
+        "minLength": "Password must be at least 6 characters long"
+      }
+    },
+    "confirmPassword": {
+      "label": "Confirm password",
+      "placeholder": "Confirm password",
+      "error": {
+        "required": "Confirm password is required",
+        "invalid": "Passwords do not match"
+      }
+    },
+    "checkbox": {
+      "register": {
+        "msg1": "By registering, you agree to our ",
+        "msg2": "and our "
+      }
+    },
+    "span": {
+      "msg1": "Already have an account?"
+    },
+    "submitButton": {
+      "text": "Register"
+    }
   }
 }
