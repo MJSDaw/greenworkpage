@@ -47,9 +47,9 @@ Los servicios están disponibles en los siguientes puertos HTTPS:
 Si necesitas realizar cambios en la configuración HTTPS, puedes modificar los siguientes archivos:
 
 1. **Docker Compose**: `docker-compose.yml` para cambiar los puertos o variables de entorno
-2. **Apache**: `000-default.conf` para configuración de Apache y SSL
+2. **Apache**: `config/000-default.conf` para configuración de Apache y SSL
 3. **Vite**: `frontend/vite.config.js` para configuración del servidor de desarrollo
-4. **pgAdmin**: `pgadmin.json` para configuración de HTTPS en pgAdmin
+4. **pgAdmin**: `config/pgadmin.json` para configuración de HTTPS en pgAdmin
 
 ## Debugging de HTTPS
 

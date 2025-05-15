@@ -48,4 +48,4 @@ echo "- Frontend React: https://localhost:5173"
 echo "- pgAdmin: https://localhost:5050"
 
 echo ""
-echo "Configuración completa. Considera revisar el archivo HTTPS-CONFIG.md para más detalles sobre la configuración HTTPS."
+echo "Configuración completa. Considera revisar el archivo docs/HTTPS-CONFIG.md para más detalles sobre la configuración HTTPS."

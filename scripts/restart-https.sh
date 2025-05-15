@@ -11,7 +11,7 @@ docker-compose down
 
 # Generar certificados SSL si no existen
 echo "Verificando/generando certificados SSL..."
-./generate-ssl.sh
+./scripts/generate-ssl.sh
 
 # Reconstruir las imágenes con las nuevas configuraciones
 echo "Reconstruyendo imágenes..."

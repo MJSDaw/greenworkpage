@@ -40,13 +40,13 @@ RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache
 
 # Copia la configuración de Apache
-COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY config/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Instalar postgres client para pg_isready
 RUN apt-get install -y postgresql-client
 
 # Copia el script de entrada
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh
 # Verificar que el archivo existe

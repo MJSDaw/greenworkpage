@@ -36,4 +36,4 @@ else
 fi
 
 echo ""
-echo "Verificación completa. Para más detalles consulta HTTPS-CONFIG.md"
+echo "Verificación completa. Para más detalles consulta docs/HTTPS-CONFIG.md"
