@@ -4,39 +4,36 @@
     "description": "Reserva espacios de coworking flexibles con GreenWork — reservas rápidas, soporte dedicado y herramientas inteligentes para impulsar tu crecimiento diario."
   },
   "actions": {
-    "goToGithub": "Ir a GitHub",
-    "goToLinkedIn": "Ir a LinkedIn",
-    "goToTwitter": "Ir a Twitter",
+    "goToHomePage": "Ir a la página de inicio",
+    "goToGithub": "Ir a Github",
+    "goToInstagram": "Ir a Instagram",
     "goToFacebook": "Ir a Facebook",
-    "goToInstagram": "Ir a Instagram"
+    "goToTwitter": "Ir a Twitter",
+    "goToLinkedIn": "Ir a Linkedin",
+    "goToSpaces": "Ver espacios",
+    "goToAbout": "Ver más sobre nosotros",
+    "goToContact": "Contáctanos",
+    "goToTerms": "Ver términos y condiciones",
+    "goToPrivacy": "Ver política de privacidad"
+  },
+  "alt": {
+    "logo": "Logo de Greenwork",
+    "logoVariant1": "Logo de Greenwork en blanco"
   },
   "common": {
+    "github": "Logo de Github",
+    "instagram": "Logo de Instagram",
+    "facebook": "Logo de Facebook",
+    "twitter": "Logo de Twitter",
+    "linkedin": "Logo de Linkedin"
+  },
+  "links": {
     "home": "Inicio",
-    "goToHomePage": "Ir a la página de inicio",
-    "spaces": "Espacios",
     "about": "Nosotros",
+    "spaces": "Espacios",
     "contact": "Contacto",
-    "signin": "Registrarse",
-    "login": "Iniciar Sesión"
-  },
-  "home": {
-    "welcome": "Bienvenido a GreenWorkPage",
-    "description": "Encuentra tu espacio de trabajo sostenible perfecto"
-  },
-  "spaces": {
-    "title": "Espacios Disponibles",
-    "filter": "Filtrar",
-    "search": "Buscar"
-  },
-  "contact": {
-    "title": "Contáctanos",
-    "name": "Nombre",
-    "email": "Correo electrónico",
-    "message": "Mensaje",
-    "send": "Enviar Mensaje"
-  },
-  "footer": {
-    "privacyPolicy": "Política de Privacidad",
-    "termsOfService": "Términos de Servicio"
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad",
+    "problemSolvers": "Creado por ProblemSolvers con amor 💚"
   }
 }
