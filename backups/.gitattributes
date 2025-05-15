@@ -1,5 +1,0 @@
-º# Asegurarse de que los archivos de backup se traten como binarios (no texto)
-# para evitar problemas con los finales de línea
-*.sql binary
-
-# Este archivo asegura que los backups de la base de datos se suban correctamente a GitHub

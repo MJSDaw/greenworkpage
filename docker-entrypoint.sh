@@ -40,7 +40,6 @@ mkdir -p storage/app/public \
     storage/framework/views \
     storage/framework/cache \
     storage/framework/testing \
-    storage/app/backups \
     storage/logs \
     bootstrap/cache
 
