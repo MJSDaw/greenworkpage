@@ -97,7 +97,7 @@ p {
   width: 100%;
   color: inherit;
   text-decoration: none;
-  padding: 1.5rem 3rem;
+  padding: 1.5rem 1.5rem;
   border-radius: 1.5rem;
 }
 
@@ -115,6 +115,10 @@ button, .nav__container__menu__anchor--button, .nav__container__menu__anchor--bu
 
 .nav__container__menu__anchor--button {
   background-color: var(--color3);
+}
+
+.nav__container__menu__anchor--button__link, .nav__container__menu__anchor--button--variant__link {
+  padding: 1.5rem 3rem;
 }
 
 .nav__container__menu__anchor--button__link:hover {
