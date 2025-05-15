@@ -1,7 +1,0 @@
-{
-    "MASTER_PASSWORD_REQUIRED": false,
-    "SERVER_MODE": true,
-    "ENABLE_TLS": true,
-    "TLS_CERTIFICATE": "/certs/ssl-cert-snakeoil.pem",
-    "TLS_KEY": "/certs/ssl-cert-snakeoil.key"
-}

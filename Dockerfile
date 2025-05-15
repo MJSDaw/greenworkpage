@@ -12,10 +12,8 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Habilitar los módulos de Apache para SSL y headers
+# Habilitar el módulo SSL en Apache
 RUN a2enmod ssl
-RUN a2enmod headers
-RUN a2enmod rewrite
 
 # Instala Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -40,13 +38,13 @@ RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache
 
 # Copia la configuración de Apache
-COPY config/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Instalar postgres client para pg_isready
 RUN apt-get install -y postgresql-client
 
 # Copia el script de entrada
-COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh
 # Verificar que el archivo existe
