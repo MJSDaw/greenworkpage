@@ -60,16 +60,12 @@ const Signin = () => {
             </span>
           </label>
           <span className="link__text">
-            Already have an account? {' '}
+            Already have an account?{' '}
             <Link to="/login" className="form__link">
               Log in
             </Link>
           </span>
-          <input
-            type="submit"
-            value="Sign in"
-            className="form__submit"
-          />
+          <input type="submit" value="Sign in" className="form__submit" />
         </form>
       </section>
     </main>

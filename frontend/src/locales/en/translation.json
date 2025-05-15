@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "title": "Greenwork - Your coworking space",
+    "description": "Book flexible coworking spaces with GreenWork — fast reservations, dedicated support, and smart tools to boost your daily growth."
+  },
+  "common": {
+    "home": "Home",
+    "spaces": "Spaces",
+    "about": "About Us",
+    "contact": "Contact",
+    "signin": "Sign In",
+    "login": "Log In"
+  },
+  "home": {
+    "welcome": "Welcome to GreenWorkPage",
+    "description": "Find your perfect sustainable workspace"
+  },
+  "spaces": {
+    "title": "Available Spaces",
+    "filter": "Filter",
+    "search": "Search"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send Message"
+  }
+}

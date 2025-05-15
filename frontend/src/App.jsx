@@ -14,20 +14,22 @@ import Privacy from './pages/Privacy'
 const App = () => {
   return (
     <Router>
-      <Header />
-      <>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/spaces" element={<Spaces />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-        </Routes>
-      </>
-      <Footer />
+      <div className="app__layout">
+        <Header />
+        <div className="main__content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/spaces" element={<Spaces />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+          </Routes>
+        </div>
+        <Footer />
+      </div>
     </Router>
   )
 }
