@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Habilitar el módulo SSL en Apache
+# Habilitar los módulos de Apache para SSL y headers
 RUN a2enmod ssl
+RUN a2enmod headers
+RUN a2enmod rewrite
 
 # Instala Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
