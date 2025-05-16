@@ -37,7 +37,6 @@ services:
       - laravel_vendor:/var/www/html/vendor
       - laravel_storage:/var/www/html/storage
       - ./frontend:/var/www/frontend
-
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
@@ -51,6 +50,19 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
+  backup:
+    image: alpine:latest
+    container_name: backup_container
+    restart: always
+    environment:
+      PGPASSWORD: HIiDV8W7S02bO6AB3ehV
+    volumes:
+      - ./backup-database.sh:/backup-database.sh
+      - ./restore-database.sh:/restore-database.sh
+      - ./backups:/backups
+    depends_on:
+      - postgres
+    entrypoint: ["sh", "-c", "apk add --no-cache postgresql-client bash && chmod +x /backup-database.sh && chmod +x /restore-database.sh && mkdir -p /var/spool/cron && mkdir -p /var/spool/cron/crontabs && echo '0 13 * * * /backup-database.sh >> /backups/backup.log 2>&1' > /var/spool/cron/crontabs/root && chmod 600 /var/spool/cron/crontabs/root && crond -f -d 8"]
 
 volumes:
   postgres_data:
