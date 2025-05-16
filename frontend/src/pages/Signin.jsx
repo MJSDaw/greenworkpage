@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { data, Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
 import { setAuthToken } from '../services/authService'
 
 const Signin = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     name: '',
@@ -43,16 +44,15 @@ const Signin = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        },        body: JSON.stringify(formData),
       })
       const data = await response.json()
       console.log('Registration response:', data)
-
-      if (data && data.success && data.token) {
+        if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        // Redirect
         setErrors({})
+        // Redirect to home page
+        navigate('/')
       } else {
         setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)

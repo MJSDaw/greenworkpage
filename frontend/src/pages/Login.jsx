@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import miguelangel from '../assets/img/miguelAngel.svg'
 import { setAuthToken } from '../services/authService'
 
 const Login = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -34,11 +35,11 @@ const Login = () => {
       })
       const data = await response.json()
       console.log('Login response:', data)
-      
-      if (data && data.success && data.token) {
+        if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        // Redirect
         setErrors({})
+        // Redirect to home page
+        navigate('/')
       } else {
         setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)
