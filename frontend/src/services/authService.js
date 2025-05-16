@@ -5,6 +5,11 @@
  */
 
 /**
+ * Custom event name for auth state changes
+ */
+export const AUTH_STATE_CHANGED_EVENT = 'auth-state-changed';
+
+/**
  * Set the authentication token in localStorage
  * @param {string} token - The authentication token
  * @param {object} userData - The user data
@@ -14,6 +19,9 @@ export const setAuthToken = (token, userData = null) => {
   if (userData) {
     localStorage.setItem('userData', JSON.stringify(userData));
   }
+  
+  // Dispatch a custom event that can be listened for in other components
+  window.dispatchEvent(new CustomEvent(AUTH_STATE_CHANGED_EVENT));
 };
 
 /**
@@ -39,6 +47,9 @@ export const getUserData = () => {
 export const removeAuthToken = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('userData');
+  
+  // Dispatch a custom event that can be listened for in other components
+  window.dispatchEvent(new CustomEvent(AUTH_STATE_CHANGED_EVENT));
 };
 
 /**
