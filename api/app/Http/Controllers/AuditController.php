@@ -41,35 +41,35 @@ class AuditController extends Controller
     {
         $query = Audit::with('admin');
         
-        // Filtrar por acción
+        // Filter by action
         if ($request->has('action')) {
             $query->where('action', $request->action);
         }
         
-        // Filtrar por tabla
+        // Filter by table
         if ($request->has('table_name')) {
             $query->where('table_name', $request->table_name);
         }
         
-        // Filtrar por admin_id
+        // Filter by admin_id
         if ($request->has('admin_id')) {
             $query->where('admin_id', $request->admin_id);
         }
         
-        // Filtrar por fecha de inicio
+        // Filter by start date
         if ($request->has('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
         
-        // Filtrar por fecha de fin
+        // Filter by end date
         if ($request->has('end_date')) {
             $query->whereDate('created_at', '<=', $request->end_date);
         }
         
-        // Ordenar por fecha (más reciente primero por defecto)
+        // Sort by date (most recent first by default)
         $query->orderBy('created_at', $request->input('order', 'desc'));
         
-        // Paginar los resultados
+        // Paginate results
         $perPage = $request->input('per_page', 15);
         $audits = $query->paginate($perPage);
         
@@ -91,19 +91,19 @@ class AuditController extends Controller
      */
     public static function registerAudit($action, $tableName, $recordId = null, $oldValues = null, $newValues = null)
     {
-        // Necesitamos importar Auth al inicio del método estático
+        // Need to import Auth at the beginning of the static method
         $admin = \Illuminate\Support\Facades\Auth::user();
         
-        // Si no hay usuario autenticado o no es un administrador
+        // If no user is authenticated or user is not an admin
         if (!$admin || !($admin instanceof \App\Models\Admin)) {
-            // En entorno de desarrollo, podemos usar el primer admin para pruebas
+            // In development environment, we can use the first admin for testing
             if (app()->environment('local') || app()->environment('development')) {
                 $admin = \App\Models\Admin::first();
                 if (!$admin) {
-                    return null; // No hay administradores en la base de datos
+                    return null; // No administrators in the database
                 }
             } else {
-                return null; // En producción, no registrar sin admin autenticado
+                return null; // In production, don't register without authenticated admin
             }
         }
         
@@ -117,4 +117,3 @@ class AuditController extends Controller
         ]);
     }
 }
-

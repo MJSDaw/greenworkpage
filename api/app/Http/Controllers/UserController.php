@@ -36,7 +36,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        // Guardar los valores originales para la auditoría
+        // Save original values for audit
         $originalUser = $user->toArray();
         
         $validator = Validator::make($request->all(), [
@@ -58,14 +58,14 @@ class UserController extends Controller
             ],
             'password' => 'nullable|string|min:8',
         ], [
-            'email.unique' => 'El correo electrónico ya está en uso.',
-            'dni.unique' => 'El DNI ya está en uso.'
+            'email.unique' => 'Email address already in use.',
+            'dni.unique' => 'ID number already in use.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error de validación',
+                'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -81,7 +81,7 @@ class UserController extends Controller
         
         $user->save();
         
-        // Registrar la acción en la auditoría
+        // Register the action in the audit
         AuditController::registerAudit(
             'update',
             'users',
@@ -92,7 +92,7 @@ class UserController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Usuario actualizado correctamente',
+            'message' => 'User updated successfully',
             'user' => $user
         ]);
     }
@@ -105,7 +105,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         
-        // Registrar la acción en la auditoría
+        // Register the action in the audit
         AuditController::registerAudit(
             'delete',
             'users',
@@ -116,7 +116,7 @@ class UserController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Usuario eliminado correctamente'
+            'message' => 'User deleted successfully'
         ]);
     }
 }

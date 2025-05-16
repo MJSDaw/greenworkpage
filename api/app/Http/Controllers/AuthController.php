@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     /**
-     * Registrar un nuevo usuario
+     * Register a new user
      */
     public function register(Request $request)
     {
@@ -20,13 +20,13 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]+$/', // Letras, espacios, comillas y guiones
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]+$/', // Characters allowed: letters, spaces, hyphens, and quotes
             ],
             'surname' => [
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]+$/', // Letras, espacios, comillas y guiones
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]+$/', // Characters allowed: letters, spaces, hyphens, and quotes
             ],
             'email' => [
                 'required',
@@ -41,7 +41,7 @@ class AuthController extends Controller
                 'string',
                 'max:20',
                 'unique:users',
-                'regex:/^(([0-9]{8}[A-Za-z])|([XYZ][0-9]{7}[A-Za-z])|([XYZ][0-9]{7}))$/' // Formatos: 12345678A, X12345678L, X12345678
+                'regex:/^(([0-9]{8}[A-Za-z])|([XYZ][0-9]{7}[A-Za-z])|([XYZ][0-9]{7}))$/' // Valid formats: 12345678A, X12345678L, X12345678
             ],
             'birthdate' => 'required|date|date_format:Y-m-d|before_or_equal:' . now()->subYears(13)->format('Y-m-d'),
             'password' => [
@@ -58,160 +58,151 @@ class AuthController extends Controller
             $errors = [];
             $validationErrors = $validator->errors()->toArray();
             
-            // Procesar errores de nombre con más detalle
+            // Validation errors for name and surname
             if (isset($validationErrors['name'])) {
                 $name = $request->input('name');
                 $nameErrors = [];
                 
-                // Solo procesar si el campo no está vacío
                 if (!empty($name)) {
-                    // Comprobar si contiene números
                     if (preg_match('/[0-9]/', $name)) {
                         $nameErrors[] = 'nameContainsNumbersError';
                     }
-                    
-                    // Comprobar si contiene caracteres especiales no permitidos
-                    // Permitidos: letras, espacios, guiones y comillas
+                    // Characters allowed: letters, spaces, hyphens, and quotes
                     if (preg_match('/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]/', $name)) {
                         $nameErrors[] = 'nameContainsSpecialCharsError';
                     }
                 }
                 
-                // Si hay errores específicos, los agregamos
+                // If there are specific errors, we add them
                 if (!empty($nameErrors)) {
                     $errors['name'] = $nameErrors;
                 } else {
-                    // Si no hay errores específicos pero falla la validación, usamos mensaje genérico
+                    // If there are no specific errors but validation fails, we use the generic message
                     foreach ($validationErrors['name'] as $errorMessage) {
                         $errors['name'][] = $this->mapErrorToKey('name', $errorMessage);
                     }
                 }
                 
-                // Removemos el name del array de errores generales para evitar duplicación
+                // Remove the name from the general errors array to avoid duplication
                 unset($validationErrors['name']);
             }
             
-            // Procesar errores de apellido con más detalle
+            // Validation errors for surname
             if (isset($validationErrors['surname'])) {
                 $surname = $request->input('surname');
                 $surnameErrors = [];
                 
-                // Solo procesar si el campo no está vacío
                 if (!empty($surname)) {
-                    // Comprobar si contiene números
                     if (preg_match('/[0-9]/', $surname)) {
                         $surnameErrors[] = 'surnameContainsNumbersError';
                     }
                     
-                    // Comprobar si contiene caracteres especiales no permitidos
-                    // Permitidos: letras, espacios, guiones y comillas
+                    // Valid characters: letters, spaces, hyphens, and quotes
                     if (preg_match('/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\"\-]/', $surname)) {
                         $surnameErrors[] = 'surnameContainsSpecialCharsError';
                     }
                 }
                 
-                // Si hay errores específicos, los agregamos
+                // IF there are specific errors, we add them
                 if (!empty($surnameErrors)) {
                     $errors['surname'] = $surnameErrors;
                 } else {
-                    // Si no hay errores específicos pero falla la validación, usamos mensaje genérico
+                    // If there are no specific errors but validation fails, we use the generic message
                     foreach ($validationErrors['surname'] as $errorMessage) {
                         $errors['surname'][] = $this->mapErrorToKey('surname', $errorMessage);
                     }
                 }
                 
-                // Removemos el surname del array de errores generales para evitar duplicación
+                // Remove the surname from the general errors array to avoid duplication
                 unset($validationErrors['surname']);
             }
             
-            // Procesar errores de DNI con más detalle
+            // Process email errors
             if (isset($validationErrors['dni'])) {
                 $dni = $request->input('dni');
                 $dniErrors = [];
                 
-                // Solo procesar si el campo no está vacío
                 if (!empty($dni)) {
-                    // Comprobar longitud mínima (debe tener al menos 9 caracteres para formato nacional o 10 para extranjeros)
                     if (strlen($dni) < 9) {
                         $dniErrors[] = 'nifTooShortError';
                     }
                     
-                    // Comprobar formato para DNI nacional (8 números + 1 letra)
+                    // Format: 8 digits + 1 letter
                     if (!preg_match('/^[0-9]{8}[A-Za-z]$/', $dni)) {
-                        // Comprobar formato para NIE (X/Y/Z + 7 números + 1 letra)
+                        // Format: X + 7 digits + 1 letter
                         if (!preg_match('/^[XYZ][0-9]{7}[A-Za-z]$/', $dni) && !preg_match('/^[XYZ][0-9]{7}$/', $dni)) {
                             $dniErrors[] = 'nifFormatError';
                         }
                     }
                 }
                 
-                // Si hay errores específicos, los agregamos
+                // If there are specific errors, we add them
                 if (!empty($dniErrors)) {
                     $errors['dni'] = $dniErrors;
                 } else {
-                    // Si no hay errores específicos pero falla la validación, usamos mensaje genérico
+                    // If there are no specific errors but validation fails, we use the generic message
                     foreach ($validationErrors['dni'] as $errorMessage) {
                         $errors['dni'][] = $this->mapErrorToKey('dni', $errorMessage);
                     }
                 }
                 
-                // Removemos el dni del array de errores generales para evitar duplicación
+                // Remove the dni from the general errors array to avoid duplication
                 unset($validationErrors['dni']);
             }
             
-            // Procesar errores de contraseña con más detalle
+            // Process password errors in more detail
             if (isset($validationErrors['password'])) {
                 $password = $request->input('password');
                 $passwordErrors = [];
                 
-                // Comprobar longitud mínima (8 caracteres)
+                // Check minimum length (8 characters)
                 if ($password && strlen($password) < 8) {
                     $passwordErrors[] = 'passwordMinNumCharsError';
                 }
                 
-                // Comprobar si está vacío
+                // Check if it's empty
                 if (empty($password)) {
                     $passwordErrors[] = 'passwordRequiredError';
                 } else {
-                    // Comprobar mayúscula
+                    // Check uppercase
                     if (!preg_match('/[A-Z]/', $password)) {
                         $passwordErrors[] = 'passwordMissingUppercaseCharError';
                     }
                     
-                    // Comprobar minúscula
+                    // Check lowercase
                     if (!preg_match('/[a-z]/', $password)) {
                         $passwordErrors[] = 'passwordMissingLowercaseCharError';
                     }
                     
-                    // Comprobar números
+                    // Check numbers
                     if (!preg_match('/[0-9]/', $password)) {
                         $passwordErrors[] = 'passwordMissingNumberError';
                     }
                     
-                    // Comprobar caracteres especiales
+                    // Check special characters
                     if (!preg_match('/[@$!%*?&]/', $password)) {
                         $passwordErrors[] = 'passwordMissingSpecialCharError';
                     }
                 }
                 
-                // Si hay errores específicos, los agregamos
+                // If there are specific errors, we add them
                 if (!empty($passwordErrors)) {
                     $errors['password'] = $passwordErrors;
                 } else {
-                    // Si no hay errores específicos pero falla la validación, usamos mensaje genérico
+                    // If there are no specific errors but validation fails, we use generic message
                     foreach ($validationErrors['password'] as $errorMessage) {
                         $errors['password'][] = $this->mapErrorToKey('password', $errorMessage);
                     }
                 }
                 
-                // Removemos la contraseña del array de errores generales para evitar duplicación
+                // Remove the password from the general errors array to avoid duplication
                 unset($validationErrors['password']);
             }
             
-            // Procesar el resto de errores
+            // Process the rest of the errors
             foreach ($validationErrors as $field => $errorMessages) {
                 foreach ($errorMessages as $errorMessage) {
-                    // Convertir el tipo de error a una clave específica
+                    // Convert the error type to a specific key
                     $errorKey = $this->mapErrorToKey($field, $errorMessage);
                     if (!isset($errors[$field])) {
                         $errors[$field] = [];
@@ -248,7 +239,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Iniciar sesión de usuario
+     * User login
      */
     public function login(Request $request)
     {
@@ -278,7 +269,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        // Verificar si el email existe
+        // Check if the email exists
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -287,7 +278,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Verificar si la contraseña es correcta
+        // Verify if the password is correct
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
@@ -296,10 +287,10 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Revocar tokens anteriores
+        // Revoke previous tokens
         $user->tokens()->delete();
 
-        // Crear nuevo token
+        // Create new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -311,7 +302,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Iniciar sesión de administrador
+     * Administrator login
      */
     public function adminLogin(Request $request)
     {
@@ -341,7 +332,7 @@ class AuthController extends Controller
 
         $admin = \App\Models\Admin::where('email', $request->email)->first();
 
-        // Verificar si el email de admin existe
+        // Check if the admin email exists
         if (!$admin) {
             return response()->json([
                 'success' => false,
@@ -350,7 +341,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Verificar si la contraseña de admin es correcta
+        // Verify if the admin password is correct
         if (!Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'success' => false,
@@ -359,10 +350,10 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Revocar tokens anteriores
+        // Revoke previous tokens
         $admin->tokens()->delete();
 
-        // Crear nuevo token con guard de admin
+        // Create new token with admin guard
         $token = $admin->createToken('admin_token', ['admin'])->plainTextToken;
 
         return response()->json([
@@ -374,11 +365,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Cerrar sesión
+     * Logout
      */
     public function logout(Request $request)
     {
-        // Revocar el token actual
+        // Revoke the current token
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -388,13 +379,13 @@ class AuthController extends Controller
     }
 
     /**
-     * Mapear mensajes de error a claves específicas
+     * Map error messages to specific keys
      */
     private function mapErrorToKey($field, $message)
     {
-        // Mapeo de errores comunes a claves específicas
+        // Mapping of common errors to specific keys
         $errorMappings = [
-            // Campo name
+            // Name field
             'name' => [
                 'required' => 'nameRequiredError',
                 'string' => 'nameTypeError',
@@ -403,7 +394,7 @@ class AuthController extends Controller
                 'has_numbers' => 'nameContainsNumbersError',
                 'has_special_chars' => 'nameContainsSpecialCharsError',
             ],
-            // Campo surname
+            // Surname field
             'surname' => [
                 'required' => 'surnameRequiredError',
                 'string' => 'surnameTypeError',
@@ -412,7 +403,7 @@ class AuthController extends Controller
                 'has_numbers' => 'surnameContainsNumbersError',
                 'has_special_chars' => 'surnameContainsSpecialCharsError',
             ],
-            // Campo email
+            // Email field
             'email' => [
                 'required' => 'emailRequiredError',
                 'string' => 'emailTypeError',
@@ -420,7 +411,7 @@ class AuthController extends Controller
                 'max' => 'emailLengthError',
                 'unique' => 'emailDuplicateError',
             ],
-            // Campo DNI
+            // DNI field
             'dni' => [
                 'required' => 'nifRequiredError',
                 'string' => 'nifTypeError',
@@ -428,14 +419,14 @@ class AuthController extends Controller
                 'regex' => 'nifFormatError',
                 'unique' => 'nifDuplicateError',
             ],
-            // Campo birthdate
+            // Birthdate field
             'birthdate' => [
                 'required' => 'birthdateRequiredError',
                 'date' => 'birthdateInvalidError',
                 'date_format' => 'birthdateFormatError',
                 'before_or_equal' => 'birthdateAgeError',
             ],
-            // Campo termsAndConditions
+            // Terms and conditions field
             'termsAndConditions' => [
                 'required' => 'termsRequiredError',
                 'boolean' => 'termsTypeError',
@@ -443,9 +434,9 @@ class AuthController extends Controller
             ],
         ];
         
-        // Procesamiento especial para contraseña
+        // Special processing for password
         if ($field === 'password') {
-            // Verificar diferentes tipos de errores específicos para la contraseña
+            // Check different types of specific errors for the password
             if (strpos($message, 'required') !== false) {
                 return 'passwordRequiredError';
             }
@@ -456,50 +447,50 @@ class AuthController extends Controller
                 return 'passwordMinNumCharsError';
             }
             
-            // Para errores de regex de contraseña, proporcionar errores específicos
+            // For password regex errors, provide specific errors
             if (strpos($message, 'regex') !== false) {
                 $password = request()->input('password');
                 $errors = [];
                 
-                // Si no hay contraseña, no continuamos con la validación
+                // If there is no password, we don't continue with validation
                 if (!$password) {
                     return 'passwordRequiredError';
                 }
                 
-                // Comprobar longitud mínima (8 caracteres)
+                // Check minimum length (8 characters)
                 if (strlen($password) < 8) {
                     return 'passwordMinNumCharsError';
                 }
                 
-                // Comprobar mayúscula
+                // Check uppercase
                 if (!preg_match('/[A-Z]/', $password)) {
                     return 'passwordMissingUppercaseCharError';
                 }
                 
-                // Comprobar minúscula
+                // Check lowercase
                 if (!preg_match('/[a-z]/', $password)) {
                     return 'passwordMissingLowercaseCharError';
                 }
                 
-                // Comprobar números
+                // Check numbers
                 if (!preg_match('/[0-9]/', $password)) {
                     return 'passwordMissingNumberError';
                 }
                 
-                // Comprobar caracteres especiales
+                // Check special characters
                 if (!preg_match('/[@$!%*?&]/', $password)) {
                     return 'passwordMissingSpecialCharError';
                 }
                 
-                // Si llegamos aquí, hay otro problema con la regex
+                // If we get here, there's another problem with the regex
                 return 'passwordComplexityError';
             }
             
-            // Cualquier otro error de contraseña
+            // Any other password error
             return 'passwordError';
         }
         
-        // Procesamiento especial para campo passwordConfirm
+        // Special processing for passwordConfirm field
         if ($field === 'passwordConfirm') {
             if (strpos($message, 'required') !== false) {
                 return 'passwordConfirmRequiredError';
@@ -510,7 +501,7 @@ class AuthController extends Controller
             return 'passwordConfirmError';
         }
 
-        // Para otros campos, usar el mapeo estándar
+        // For other fields, use the standard mapping
         if (isset($errorMappings[$field])) {
             foreach ($errorMappings[$field] as $errorType => $errorKey) {
                 if (strpos($message, $errorType) !== false) {
@@ -519,7 +510,7 @@ class AuthController extends Controller
             }
         }
 
-        // Si no se encuentra un mapeo específico, devolver una clave genérica
+        // If no specific mapping is found, return a generic key
         return $field . 'Error';
     }
 }

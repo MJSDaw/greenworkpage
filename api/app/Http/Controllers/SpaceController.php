@@ -50,7 +50,7 @@ class SpaceController extends Controller
 
         $space = Space::create($request->all());
 
-        // Registrar la acción en la auditoría
+        // Register the action in the audit
         AuditController::registerAudit(
             'create',
             'spaces',
@@ -110,12 +110,12 @@ class SpaceController extends Controller
 
         $space = Space::findOrFail($id);
         
-        // Guardar los valores originales para la auditoría
+        // Save original values for audit
         $oldValues = $space->toArray();
         
         $space->update($request->all());
         
-        // Registrar la acción en la auditoría
+        // Register the action in the audit
         AuditController::registerAudit(
             'update',
             'spaces',
@@ -141,12 +141,12 @@ class SpaceController extends Controller
     {
         $space = Space::findOrFail($id);
         
-        // Guardar los valores originales para la auditoría
+        // Save original values for audit
         $oldValues = $space->toArray();
         
         $space->delete();
         
-        // Registrar la acción en la auditoría
+        // Register the action in the audit
         AuditController::registerAudit(
             'delete',
             'spaces',

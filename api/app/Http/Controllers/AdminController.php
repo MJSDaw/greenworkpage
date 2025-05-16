@@ -33,12 +33,11 @@ class AdminController extends Controller
                 'email',
                 'max:255',
                 'unique:admins',
-                // Verifica que el email no exista en la tabla de usuarios
                 'unique:users,email'
             ],
             'password' => 'required|string|min:8',
         ], [
-            'email.unique' => 'El correo electrónico ya está en uso.'
+            'email.unique' => 'Email address already in use.'
         ]);
 
         if ($validator->fails()) {
@@ -51,7 +50,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Registrar la acción en la auditoría
+        // Create a corresponding admin record
         AuditController::registerAudit(
             'create',
             'admins',
