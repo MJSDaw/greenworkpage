@@ -43,59 +43,31 @@
   "form":{
     "name": {
       "label": "Name",
-      "placeholder": "Name",
-      "error": {
-        "required": "Name is required",
-        "invalid": "Name is invalid"
-      }
+      "placeholder": "Name"
     },
     "surname": {
       "label": "Surname",
-      "placeholder": "Surname",
-      "error": {
-        "required": "Surname is required",
-        "invalid": "Surname is invalid"
-      }
+      "placeholder": "Surname"
     },
     "birthday": {
       "label": "Birthday",
-      "placeholder": "Birthday",
-      "error": {
-        "required": "Birthday is required",
-        "invalid": "Birthday is invalid"
-      }
+      "placeholder": "Birthday"
     },
     "nif": {
       "label": "NIF",
-      "placeholder": "NIF",
-      "error": {
-        "required": "NIF is required",
-        "invalid": "NIF is invalid"
-      }
+      "placeholder": "NIF"
     },
     "email": {
       "label": "Email",
-      "placeholder": "Email",
-      "error": {
-        "required": "Email is required",
-        "invalid": "Email is invalid"
-      }
+      "placeholder": "Email"
     },
     "password": {
       "label": "Password",
-      "placeholder": "Password",
-      "error": {
-        "required": "Password is required",
-        "minLength": "Password must be at least 6 characters long"
-      }
+      "placeholder": "Password"
     },
     "confirmPassword": {
       "label": "Confirm password",
-      "placeholder": "Confirm password",
-      "error": {
-        "required": "Confirm password is required",
-        "invalid": "Passwords do not match"
-      }
+      "placeholder": "Confirm password"
     },
     "checkbox": {
       "register": {

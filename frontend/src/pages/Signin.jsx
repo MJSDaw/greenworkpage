@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { data, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
 import { setAuthToken } from '../services/authService'
@@ -18,6 +18,10 @@ const Signin = () => {
     termsAndConditions: false,
   })
 
+  // ...existing code...
+  const [errors, setErrors] = useState({})
+  // ...existing code...
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
@@ -27,11 +31,11 @@ const Signin = () => {
   }
 
   const handleTermsChange = (e) => {
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      termsAndConditions: e.target.checked
-    }));
-  };
+      termsAndConditions: e.target.checked,
+    }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -44,13 +48,15 @@ const Signin = () => {
         },
         body: JSON.stringify(formData),
       })
-        const data = await response.json()
+      const data = await response.json()
       console.log('Registration response:', data)
-      // Store the token in localStorage if registration was successful
+
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
         // Redirect
+        setErrors({})
       } else {
+        setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)
       }
     } catch (error) {
@@ -138,7 +144,9 @@ const Signin = () => {
             />
           </div>
           <div className="form__input">
-            <label htmlFor="confirmPassword">{t('form.confirmPassword.label')}</label>
+            <label htmlFor="confirmPassword">
+              {t('form.confirmPassword.label')}
+            </label>
             <input
               id="confirmPassword"
               name="password_confirm"
@@ -148,7 +156,11 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.password_confirm && (
+              <span className="form__error">{errors.password_confirm[0]}</span>
+            )}
           </div>
+          <div className="form__input"></div>
           <label className="checkbox__label">
             <input
               className="checkbox"
@@ -160,11 +172,19 @@ const Signin = () => {
             />
             <span className="checkbox__text">
               {t('form.checkbox.register.msg1')}
-              <Link to="/terms" className="form__checkbox" title={t('actions.goToTerms')}>
+              <Link
+                to="/terms"
+                className="form__checkbox"
+                title={t('actions.goToTerms')}
+              >
                 {t('links.terms')}
               </Link>{' '}
               {t('form.checkbox.register.msg2')}
-              <Link to="/privacy" className="form__checkbox" title={t('actions.goToPrivacy')}>
+              <Link
+                to="/privacy"
+                className="form__checkbox"
+                title={t('actions.goToPrivacy')}
+              >
                 {t('links.privacy')}
               </Link>
             </span>
@@ -175,7 +195,11 @@ const Signin = () => {
               {t('actions.login')}
             </Link>
           </span>
-          <input type="submit" value={t('actions.register')} className="form__submit" />
+          <input
+            type="submit"
+            value={t('actions.register')}
+            className="form__submit"
+          />
         </form>
       </section>
     </main>
