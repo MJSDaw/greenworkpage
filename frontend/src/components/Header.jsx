@@ -13,7 +13,7 @@ const Header = () => {
   }
 
   return (
-    <header className="header__container">
+    <header>
       <Link to="/" title={t('actions.goToHomePage')} className="header__logo">
         <img
           className="header__logo__icon"
@@ -23,12 +23,12 @@ const Header = () => {
         />
       </Link>
       <nav className="nav__container">
-        <ul className={`nav__container__menu ${menuActive ? 'active' : ''}`}>
+        <ul className={`nav__menu ${menuActive ? 'active' : ''}`}>
           <li>
             <Link
               to="/spaces"
               title={t('actions.goToSpaces')}
-              className="nav__container__menu__anchor"
+              className="nav__link"
             >
               {t('links.spaces')}
             </Link>
@@ -37,7 +37,7 @@ const Header = () => {
             <Link
               to="/about"
               title={t('actions.goToAbout')}
-              className="nav__container__menu__anchor"
+              className="nav__link"
             >
               {t('links.about')}
             </Link>
@@ -46,32 +46,32 @@ const Header = () => {
             <Link
               to="/contact"
               title={t('actions.goToContact')}
-              className="nav__container__menu__anchor"
+              className="nav__link"
             >
               {t('links.contact')}
             </Link>
           </li>
-          <li className="nav__container__menu__anchor--button--variant">
+          <li>
             <Link
               to="/signin"
               title={t('actions.register')}
-              className="nav__container__menu__anchor--button--variant__link"
+              className="nav__button--white"
             >
               {t('actions.register')}
             </Link>
           </li>
-          <li className="nav__container__menu__anchor--button">
+          <li>
             <Link
               to="/login"
               title={t('actions.login')}
-              className="nav__container__menu__anchor--button__link"
+              className="nav__button"
             >
               {t('actions.login')}
             </Link>
           </li>
         </ul>
         <button
-          className={`nav__container__hamburger ${menuActive ? 'active' : ''}`}
+          className={`nav__menu--button ${menuActive ? 'active' : ''}`}
           onClick={toggleMenu}
           aria-label={t('actions.menu')}
           title={t('actions.menu')}
@@ -80,7 +80,7 @@ const Header = () => {
             src={menuHamburger}
             alt={t('alt.menu')}
             title={t('common.menu')}
-            className="nav__hamburguer__icon"
+            className="nav__menu--button__icon"
           />
         </button>
       </nav>

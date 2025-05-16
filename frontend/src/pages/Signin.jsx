@@ -63,17 +63,17 @@ const Signin = () => {
   }
 
   return (
-    <main className="login__background">
-      <section className="login__container">
+    <main className="register__background">
+      <section className="white__container">
         <img
-          className="peas"
+          className="peas--donatello"
           src={donatello}
           alt={t('alt.donatello')}
           title={t('common.donatello')}
         />
         <h1>{t('actions.register')}</h1>
         <form onSubmit={handleSubmit}>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="name">{t('form.name.label')}</label>
             <input
               id="name"
@@ -84,7 +84,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="surname">{t('form.surname.label')}</label>
             <input
               id="surname"
@@ -95,7 +95,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="birthday">{t('form.birthday.label')}</label>
             <input
               id="birthday"
@@ -107,7 +107,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="nif">{t('form.nif.label')}</label>
             <input
               id="nif"
@@ -118,7 +118,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="email">{t('form.email.label')}</label>
             <input
               id="email"
@@ -129,7 +129,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="password">{t('form.password.label')}</label>
             <input
               id="password"
@@ -141,7 +141,7 @@ const Signin = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="confirmPassword">
               {t('form.confirmPassword.label')}
             </label>
@@ -158,21 +158,21 @@ const Signin = () => {
               <span className="form__error">{errors.passwordConfirm[0]}</span>
             )}
           </div>
-          <div className="form__input"></div>
-          <label className="checkbox__label">
+          <div className="form__section"></div>
+          <label className="input--checkbox__label">
             <input
-              className="checkbox"
+              className="input--checkbox"
               type="checkbox"
               name="termsAndConditions"
               checked={formData.termsAndConditions}
               onChange={handleTermsChange}
               required
             />
-            <span className="checkbox__text">
+            <span className="input--checkbox__text">
               {t('form.checkbox.register.msg1')}
               <Link
                 to="/terms"
-                className="form__checkbox"
+                className="input--checkbox__text--link"
                 title={t('actions.goToTerms')}
               >
                 {t('links.terms')}
@@ -180,19 +180,17 @@ const Signin = () => {
               {t('form.checkbox.register.msg2')}
               <Link
                 to="/privacy"
-                className="form__checkbox"
+                className="input--checkbox__text--link"
                 title={t('actions.goToPrivacy')}
               >
                 {t('links.privacy')}
               </Link>
             </span>
           </label>
-          <span className="link__text">
-            {t('form.span.msg1')}
-            <Link to="/login" className="form__link">
-              {t('actions.login')}
-            </Link>
-          </span>
+          <Link to="/login" className="form__span">
+            <span>{t('form.span.msg1')}</span>
+            {t('actions.login')}
+          </Link>
           <input
             type="submit"
             value={t('actions.register')}

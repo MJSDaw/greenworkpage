@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -14,9 +15,9 @@ import Privacy from './pages/Privacy'
 const App = () => {
   return (
     <Router>
-      <div className="app__layout">
+      <div className="app">
         <Header />
-        <div className="main__content">
+        <div className="app__content">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/spaces" element={<Spaces />} />

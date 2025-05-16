@@ -17,14 +17,17 @@
     "goToPrivacy": "Ver política de privacidad",
     "register": "Registrarme",
     "login": "Iniciar sesión",
-    "menu": "Abrir el menú"
+    "menu": "Abrir el menú",
+    "search": "Buscar"
   },
   "alt": {
     "logo": "Logo de Greenwork",
     "logoVariant1": "Logo de Greenwork en blanco",
+    "groupPeas": "Grupo de guisantes",
     "donatello": "Donatello el guisante",
     "miguelangel": "Miguel Ángel el guisante",
-    "menu": "Menú de navegación"
+    "menu": "Menú de navegación",
+    "search": "Icono de búsqueda"
   },
   "common": {
     "github": "Logo de Github",
@@ -34,7 +37,12 @@
     "linkedin": "Logo de Linkedin",
     "donatello": "Donatello",
     "miguelangel": "Miguel Ángel",
-    "menu": "Icono de menú"
+    "groupPeas": "Guisantes",
+    "menu": "Icono de menú",
+    "slogan": "Tu espacio de hoy, tu éxito de mañana",
+    "proximity": "Encuentra nuestros espacios más cercanos a ti",
+    "ourSpaces": "Nuestros espacios",
+    "contactUs": "Contáctanos"
   },
   "links": {
     "home": "Inicio",
@@ -79,6 +87,10 @@
         "msg1": "Al registrarte, aceptas nuestros ",
         "msg2": "y nuestra "
       }
+    },
+    "postalCode": {
+      "label": "Código postal",
+      "placeholder": "Código postal"
     },
     "span": {
       "msg1": "¿Ya tienes una cuenta? ",
