@@ -21,12 +21,12 @@ use App\Http\Controllers\AuditController;
 |
 */
 
-// Rutas públicas de autenticación
+// Public authentication routes
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('admin/login', [AuthController::class, 'adminLogin']);
 
-// Rutas protegidas
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
@@ -34,28 +34,28 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('logout', [AuthController::class, 'logout']);
 
-    // Rutas para spaces
+    // Routes for spaces
     Route::get('spaces', [SpaceController::class, 'index']);
     
-    // Rutas para reservations
+    // Routes for reservations
     Route::get('reservations', [ReservationController::class, 'index']);
     Route::post('reservations', [ReservationController::class, 'store']);
     
-    // Rutas públicas para contactos
+    // Public routes for contacts
     Route::post('contacts', [ContactController::class, 'store']);
     Route::get('contacts', [ContactController::class, 'index']);
 });
 
 
-// Ruta para administradores (protegida y solo para administradores)
+// Routes for administrators (protected and admin-only)
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::apiResource('admins', AdminController::class);
-    Route::get('users', [UserController::class, 'index']); // Ruta para obtener todos los usuarios
+    Route::get('users', [UserController::class, 'index']); // Route to get all users
     
-    // Rutas para espacios
+    // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);
     
-    // Rutas para auditorías
+    // Routes for audits
     Route::get('audits', [AuditController::class, 'index']);
     Route::get('audits/filter', [AuditController::class, 'filter']);
     Route::get('audits/{id}', [AuditController::class, 'show']);

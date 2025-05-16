@@ -1,10 +1,9 @@
 import React from 'react'
 
-const SpacesCarousel = () => {
-  // Aquí iría la lógica y el renderizado del carrusel
+const SpacesCarousel = () => {  // Logic and rendering of the carousel
   return (
     <div className="spaces-carousel">
-      {/* Ejemplo de slides */}
+      {/* Slide examples */}
       <div className="slide">Espacio 1</div>
       <div className="slide">Espacio 2</div>
       <div className="slide">Espacio 3</div>

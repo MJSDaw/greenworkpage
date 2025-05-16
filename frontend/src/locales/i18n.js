@@ -3,72 +3,64 @@ import { initReactI18next } from 'react-i18next';
 import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Función para actualizar los metadatos del HTML según el idioma actual
+// Function to update HTML metadata according to the current language
 const updateMetadata = () => {
-  // Primero asegurarnos que el namespace esté cargado antes de intentar acceder a las traducciones
+  // First make sure the namespace is loaded before trying to access translations
   if (!i18n.hasLoadedNamespace('translation')) {
-    // Cargar el namespace y esperar a que esté disponible
+    // Load the namespace and wait for it to be available
     i18n.loadNamespaces('translation').then(() => {
-      updateMetadataContent();
-    }).catch(error => {
-      // Silenciar el error de carga de namespace
-    });
-  } else {
-    // Si el namespace ya está cargado, actualizar directamente
+      updateMetadataContent();    }).catch(error => {
+      // Silence namespace loading error
+    });} else {
+    // If the namespace is already loaded, update directly
     updateMetadataContent();
   }
 };
 
-// Función auxiliar para actualizar el contenido de los metadatos
+// Helper function to update metadata content
 const updateMetadataContent = () => {
   try {
-    const metadata = i18n.t('metadata', { returnObjects: true });
-    if (metadata) {
-      // Actualizar título
+    const metadata = i18n.t('metadata', { returnObjects: true });    if (metadata) {
+      // Update title
       if (metadata.title) {
         document.title = metadata.title;
       }
       
-      // Actualizar descripción
+      // Update description
       if (metadata.description) {
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription) {
           metaDescription.setAttribute('content', metadata.description);
         }
-      }
-      
-      // Actualizar el atributo lang del HTML
+      }      
+      // Update the lang attribute of HTML
       const htmlElement = document.getElementById('htmlRoot');
       if (htmlElement) {
         htmlElement.setAttribute('lang', i18n.language);
       }
-    }
-  } catch (error) {
-    // Silenciar el error de actualización de metadatos
+    }  } catch (error) {
+    // Silence metadata update error
   }
 };
 
 i18n
-  // Carga las traducciones utilizando http (puede también usar archivos estáticos)
-  .use(Backend)
-  // Detecta el idioma del usuario
+  // Load translations using http (can also use static files)
+  .use(Backend)  // Detect user language
   .use(LanguageDetector)
-  // Pasa i18n a react-i18next
+  // Pass i18n to react-i18next
   .use(initReactI18next)
-  // Inicializa i18next
+  // Initialize i18next
   .init({
     fallbackLng: 'en',
-    debug: false,
-    interpolation: {
-      escapeValue: false, // No es necesario para React
+    debug: false,    interpolation: {
+      escapeValue: false, // Not needed for React
     },
     backend: {
       loadPath: '/src/locales/{{lng}}/{{ns}}.json',
     },
     react: {
       useSuspense: true,
-    },
-    // Deshabilitar todos los logs de i18n
+    },    // Disable all i18n logs
     logger: {
       warn: () => {},
       error: () => {},
@@ -76,25 +68,25 @@ i18n
     }
   });
 
-// Actualizar metadatos al cambiar el idioma
+// Update metadata when language changes
 i18n.on('languageChanged', () => {
-  setTimeout(updateMetadata, 100); // Pequeño retraso para asegurar que las traducciones estén listas
+  setTimeout(updateMetadata, 100); // Small delay to ensure translations are ready
 });
 
-// Manejar la actualización de metadatos después de que i18n se inicialice
+// Handle metadata updates after i18n initialization
 i18n.on('initialized', () => {
-  // Esperar un momento para dar tiempo a que se carguen las traducciones
+  // Wait a moment to give time for translations to load
   setTimeout(updateMetadata, 200);
 });
 
-// Intentar actualizar los metadatos inmediatamente después de cargar i18n
-// Si i18n ya está inicializado (cuando se carga desde caché, por ejemplo)
+// Try to update metadata immediately after loading i18n
+// If i18n is already initialized (when loaded from cache, for example)
 if (i18n.isInitialized) {
-  // Esperar un momento para dar tiempo a que se carguen las traducciones
+  // Wait a moment to give time for translations to load
   setTimeout(updateMetadata, 100);
 } 
 
-// También actualizar cuando el DOM esté completamente cargado
+// Also update when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
   if (i18n.isInitialized && document.querySelector('meta[name="description"]')) {
     updateMetadata();
