@@ -14,7 +14,7 @@ const Signin = () => {
     dni: '',
     email: '',
     password: '',
-    password_confirm: '',
+    passwordConfirm: '',
     termsAndConditions: false,
   })
 
@@ -147,15 +147,15 @@ const Signin = () => {
             </label>
             <input
               id="confirmPassword"
-              name="password_confirm"
+              name="passwordConfirm"
               type="password"
               placeholder={t('form.confirmPassword.placeholder')}
-              value={formData.password_confirm}
+              value={formData.passwordConfirm}
               onChange={handleChange}
               required
             />
-            {errors.password_confirm && (
-              <span className="form__error">{errors.password_confirm[0]}</span>
+            {errors.passwordConfirm && (
+              <span className="form__error">{errors.passwordConfirm[0]}</span>
             )}
           </div>
           <div className="form__input"></div>

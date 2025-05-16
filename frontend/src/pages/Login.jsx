@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { data, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import miguelangel from '../assets/img/miguelAngel.svg'
 import { setAuthToken } from '../services/authService'
@@ -13,19 +13,19 @@ const Login = () => {
   })
 
   const [errors, setErrors] = useState({})
-
   const handleChange = (e) => {
-    const { name, value, type } = e.target
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
+      [name]: value
     }))
   }
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+    
     try {
-      const response = await fetch('https://localhost:8443/api/register', {
+      const response = await fetch('https://localhost:8443/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,8 +33,8 @@ const Login = () => {
         body: JSON.stringify(formData),
       })
       const data = await response.json()
-      console.log('Registration response:', data)
-
+      console.log('Login response:', data)
+      
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
         // Redirect
@@ -44,7 +44,7 @@ const Login = () => {
         console.log('Token not saved. Response data structure:', data)
       }
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('Login error:', error)
     }
   }
 
@@ -81,8 +81,8 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            {errors.password_confirm && (
-              <span className="form__error">{errors.password_confirm[0]}</span>
+            {errors.password && (
+              <span className="form__error">{errors.password[0]}</span>
             )}
           </div>
           <span className="link__text">
