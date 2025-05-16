@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Verificar que se proporcionó un archivo de backup
+# verify that the script is run with correct arguments
 if [ "$#" -ne 1 ]; then
-    echo "Uso: $0 nombre_del_archivo_backup.sql.gz"
-    echo "Ejemplo: $0 greenworkdb_backup_20250516_084943.sql.gz"
-    echo "Archivos disponibles:"
+    echo "Usage: $0 backup_file_name.sql.gz"
+    echo "Example: $0 greenworkdb_backup_20250516_084943.sql.gz"
+    echo "Available files:"
     ls -la /backups/*.gz
     exit 1
 fi
@@ -13,21 +13,21 @@ BACKUP_FILE="$1"
 BACKUP_PATH="/backups/$BACKUP_FILE"
 SQL_FILE="${BACKUP_PATH%.gz}"
 
-# Verificar que el archivo existe
+# verify that the backup file exists
 if [ ! -f "$BACKUP_PATH" ]; then
-    echo "Error: El archivo $BACKUP_PATH no existe"
-    echo "Archivos disponibles:"
+    echo "Error: The file $BACKUP_PATH does not exist"
+    echo "Available files:"
     ls -la /backups/*.gz
     exit 1
 fi
 
-echo "Descomprimiendo $BACKUP_PATH..."
+echo "Decompressing $BACKUP_PATH..."
 gunzip -c "$BACKUP_PATH" > "$SQL_FILE"
 
-echo "Restaurando la base de datos desde $SQL_FILE..."
+echo "Restoring database from $SQL_FILE..."
 PGPASSWORD=$PGPASSWORD psql -h postgres -U greenworkAdmin -d greenworkdb -f "$SQL_FILE"
 
-echo "Limpiando archivos temporales..."
+echo "Cleaning up temporary files..."
 rm "$SQL_FILE"
 
-echo "Restauración completada con éxito!"
+echo "Restoration completed successfully!"

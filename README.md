@@ -1,49 +1,49 @@
 # Green Work Page
 
-Este proyecto consta de una aplicación completa con un backend en Laravel + PostgreSQL y un frontend en React + Vite para gestionar un sistema de espacios de trabajo ecológicos y sus reservas. La plataforma permite a los usuarios buscar, visualizar y reservar espacios de trabajo comprometidos con prácticas sostenibles.
+This project consists of a complete application with a Laravel + PostgreSQL backend and a React + Vite frontend to manage a system of eco-friendly workspaces and their reservations. The platform allows users to search, view, and reserve workspaces committed to sustainable practices.
 
-## Descripción General
+## Overview
 
-Green Work Page es una plataforma que conecta a profesionales y empresas con espacios de trabajo ecológicos. Estos espacios se caracterizan por implementar prácticas sostenibles como:
+Green Work Page is a platform that connects professionals and companies with eco-friendly workspaces. These spaces are characterized by implementing sustainable practices such as:
 
-- Uso de energías renovables
-- Mobiliario ergonómico y ecológico
-- Sistemas de gestión de residuos eficientes
-- Ubicaciones accesibles mediante transporte público
+- Use of renewable energy
+- Ergonomic and eco-friendly furniture
+- Efficient waste management systems
+- Locations accessible by public transportation
 
-## Requisitos Previos
+## Prerequisites
 
-Para ejecutar este proyecto necesitarás:
+To run this project you will need:
 
 - Git
-- Docker (versión 20.10.0 o superior)
-- Docker Compose (versión 2.0.0 o superior)
-- Navegador moderno compatible con ES6
+- Docker (version 20.10.0 or higher)
+- Docker Compose (version 2.0.0 or higher)
+- Modern browser compatible with ES6
 
-## Guía de Instalación
+## Installation Guide
 
-### 1. Clonar el Repositorio
+### 1. Clone the Repository
 
-Primero, clona el repositorio desde GitHub:
+First, clone the repository from GitHub:
 
 ```bash
 git clone https://github.com/MJSDaw/greenworkpage.git
 cd greenworkpage
 ```
 
-### 2. Configuración del Proyecto
+### 2. Project Configuration
 
-El proyecto utiliza Docker para el entorno de desarrollo. Todo está configurado en los archivos que se encuentran en la carpeta raíz.
+The project uses Docker for the development environment. Everything is configured in the files located in the root folder.
 
-### 3. Configuración de Variables de Entorno
+### 3. Environment Variables Configuration
 
-Copia el archivo de configuración de ejemplo para crear el archivo `.env` en la carpeta `api/`:
+Copy the example configuration file to create the `.env` file in the `api/` folder:
 
 ```bash
 cp api/.env.example api/.env
 ```
 
-Edita el archivo `api/.env` y configura las siguientes variables esenciales:
+Edit the `api/.env` file and configure the following essential variables:
 
 ```
 DB_CONNECTION=pgsql
@@ -57,190 +57,190 @@ APP_URL=https://localhost:8443
 FRONTEND_URL=http://localhost:5173
 ```
 
-### 4. Iniciar los Contenedores Docker
+### 4. Start Docker Containers
 
-Desde la carpeta raíz del proyecto, ejecuta los contenedores:
+From the project's root folder, run the containers:
 
 ```bash
 docker-compose up -d
 ```
 
-Este comando iniciará los siguientes servicios:
-- **postgres**: Base de datos PostgreSQL
-- **laravel**: Aplicación Laravel con Apache y soporte para el frontend React
-- **pgadmin**: Interfaz gráfica para gestionar PostgreSQL
+This command will start the following services:
+- **postgres**: PostgreSQL database
+- **laravel**: Laravel application with Apache and support for the React frontend
+- **pgadmin**: Graphical interface to manage PostgreSQL
 
-### 4. Verificar el Estado de los Contenedores
+### 4. Verify Container Status
 
-Para asegurarte de que los contenedores están funcionando correctamente:
+To ensure that the containers are running correctly:
 
 ```bash
 docker-compose ps
 ```
 
-Deberías ver los contenedores `postgres_container`, `laravel_container` y `pgadmin_container` en estado "Up".
+You should see the `postgres_container`, `laravel_container`, and `pgadmin_container` containers in "Up" state.
 
-### 5. Proceso de Inicialización Automática
+### 5. Automatic Initialization Process
 
-La configuración incluye un script de inicialización automática (`docker-entrypoint.sh`) que realiza:
+The configuration includes an automatic initialization script (`docker-entrypoint.sh`) that performs:
 
-- Instalación de dependencias con Composer (si es necesario)
-- Espera a que PostgreSQL esté listo
-- Ejecución de migraciones de base de datos
-- Carga de datos iniciales (seeders) si `SEED_DB=true`
-- Optimización de la aplicación
-- Instalación de dependencias de React (frontend)
-- Inicio del servidor de desarrollo de React
-- Configuración de permisos adecuados
+- Installation of dependencies with Composer (if necessary)
+- Waiting for PostgreSQL to be ready
+- Execution of database migrations
+- Loading initial data (seeders) if `SEED_DB=true`
+- Optimization of the application
+- Installation of React dependencies (frontend)
+- Starting the React development server
+- Configuration of appropriate permissions
 
-### 6. Acceder a la Aplicación
+### 6. Access the Application
 
-Una vez que los contenedores estén funcionando, puedes acceder a:
+Once the containers are running, you can access:
 
 - **Backend API (Laravel)**: `https://localhost:8443`
 - **Frontend (React)**: `http://localhost:5173`
-- **pgAdmin (Gestión de Base de Datos)**: `http://localhost:5050`
+- **pgAdmin (Database Management)**: `http://localhost:5050`
 
-Credenciales para acceso inicial (si has ejecutado los seeders):
+Credentials for initial access (if you have run the seeders):
 
-| Tipo de usuario | Email               | Contraseña |
+| User type      | Email               | Password   |
 |----------------|---------------------|------------|
-| Administrador  | admin@greenwork.com | password   |
-| Usuario        | user@example.com    | password   |
+| Administrator  | admin@greenwork.com | password   |
+| User           | user@example.com    | password   |
 
-**Nota importante**: La aplicación backend está configurada para trabajar exclusivamente con HTTPS. Si intentas acceder mediante HTTP (http://localhost:8000), serás redirigido automáticamente a la versión segura. Acepte el certificado autofirmado en su navegador cuando se le solicite.
+**Important note**: The backend application is configured to work exclusively with HTTPS. If you try to access via HTTP (http://localhost:8000), you will be automatically redirected to the secure version. Accept the self-signed certificate in your browser when prompted.
 
-## Parámetros de Configuración
+## Configuration Parameters
 
-Los parámetros de configuración principales se encuentran en el archivo `docker-compose.yml`:
+The main configuration parameters are located in the `docker-compose.yml` file:
 
-- Base de datos PostgreSQL:
-  - Usuario: `greenworkAdmin`
-  - Contraseña: `HIiDV8W7S02bO6AB3ehV`
-  - Base de datos: `greenworkdb`
-  - Puerto: `5432`
-  - Volumen: `postgres_data` (persistencia de datos)
+- PostgreSQL Database:
+  - User: `greenworkAdmin`
+  - Password: `HIiDV8W7S02bO6AB3ehV`
+  - Database: `greenworkdb`
+  - Port: `5432`
+  - Volume: `postgres_data` (data persistence)
 
-- Aplicación Laravel:
-  - Puerto HTTP: `8000` (redirige a HTTPS)
-  - Puerto HTTPS: `8443` (seguro)
-  - Volumen: `./api:/var/www/html` (código fuente)
+- Laravel Application:
+  - HTTP Port: `8000` (redirects to HTTPS)
+  - HTTPS Port: `8443` (secure)
+  - Volume: `./api:/var/www/html` (source code)
   
-- Frontend React:
-  - Puerto: `5173` (desarrollo)
-  - Construcción: `npm run build` (producción)
+- React Frontend:
+  - Port: `5173` (development)
+  - Build: `npm run build` (production)
 
-## Seguridad
+## Security
 
-La aplicación implementa las siguientes medidas de seguridad:
+The application implements the following security measures:
 
-- Autenticación mediante Laravel Sanctum (API tokens)
-- HTTPS forzado para todas las comunicaciones con el backend
-- Validación de entradas en todos los formularios
-- Protección CSRF en formularios web
-- Políticas de autorización basadas en roles
-- Sanitización de datos de entrada y salida
+- Authentication using Laravel Sanctum (API tokens)
+- Forced HTTPS for all communications with the backend
+- Input validation in all forms
+- CSRF protection in web forms
+- Role-based authorization policies
+- Sanitization of input and output data
 
 - pgAdmin:
-  - Puerto: `5050`
+  - Port: `5050`
   - Email: `admin@greenwork.com`
-  - Contraseña: `HIiDV8W7S02bO6AB3ehV`
+  - Password: `HIiDV8W7S02bO6AB3ehV`
 
-## Resolución de Problemas
+## Troubleshooting
 
-Si encuentras algún problema con los contenedores, puedes verificar sus logs:
+If you encounter any issues with the containers, you can check their logs:
 
 ```bash
-# Ver logs del contenedor de Laravel
+# View Laravel container logs
 docker logs laravel_container
 
-# Ver logs del contenedor de PostgreSQL
+# View PostgreSQL container logs
 docker logs postgres_container
 
-# Ver logs del contenedor de pgAdmin
+# View pgAdmin container logs
 docker logs pgadmin_container
 ```
 
-## Gestión de la Base de Datos con pgAdmin
+## Database Management with pgAdmin
 
-El proyecto incluye pgAdmin, una interfaz gráfica para administrar la base de datos PostgreSQL.
+The project includes pgAdmin, a graphical interface to manage the PostgreSQL database.
 
-### Acceso a pgAdmin
+### Accessing pgAdmin
 
-1. Abre tu navegador web y visita: `http://localhost:5050`
-2. Inicia sesión con las siguientes credenciales:
+1. Open your web browser and visit: `http://localhost:5050`
+2. Log in with the following credentials:
    - Email: `admin@greenwork.com`
-   - Contraseña: `HIiDV8W7S02bO6AB3ehV`
+   - Password: `HIiDV8W7S02bO6AB3ehV`
 
-### Configuración de la Conexión a PostgreSQL
+### PostgreSQL Connection Configuration
 
-Para conectar pgAdmin a la base de datos, sigue estos pasos:
+To connect pgAdmin to the database, follow these steps:
 
-1. Haz clic derecho en "Servers" en el panel izquierdo y selecciona "Register > Server..."
-2. En la pestaña "General":
-   - Name: `GreenWorkDB` (o cualquier nombre descriptivo)
+1. Right-click on "Servers" in the left panel and select "Register > Server..."
+2. In the "General" tab:
+   - Name: `GreenWorkDB` (or any descriptive name)
 
-3. En la pestaña "Connection":
-   - Host name/address: `postgres` (importante: usa "postgres" como nombre de host, no "localhost" ni "127.0.0.1")
+3. In the "Connection" tab:
+   - Host name/address: `postgres` (important: use "postgres" as the hostname, not "localhost" or "127.0.0.1")
    - Port: `5432`
    - Maintenance database: `greenworkdb`
    - Username: `greenworkAdmin`
    - Password: `HIiDV8W7S02bO6AB3ehV`
-   - Marca la opción "Save password" si deseas guardar la contraseña
+   - Check the "Save password" option if you want to save the password
 
-4. Haz clic en "Save" para guardar la configuración
+4. Click "Save" to save the configuration
 
-### Nota Importante
+### Important Note
 
-Es fundamental usar `postgres` como nombre del host en la configuración de pgAdmin, ya que este es el nombre del servicio definido en el `docker-compose.yml`. Dentro de la red de Docker, los contenedores se comunican entre sí usando estos nombres de servicio, no mediante "localhost" ni direcciones IP.
+It is essential to use `postgres` as the hostname in the pgAdmin configuration, as this is the service name defined in `docker-compose.yml`. Within the Docker network, containers communicate with each other using these service names, not "localhost" or IP addresses.
 
-Para reiniciar los contenedores:
+To restart the containers:
 
-1. **Error de conexión a la base de datos**:
-   - Verifica que el contenedor de PostgreSQL esté funcionando: `docker ps`
-   - Comprueba que las credenciales en el `.env` coinciden con las del `docker-compose.yml`
-   - Reinicia el contenedor: `docker-compose restart postgres`
+1. **Database connection error**:
+   - Verify that the PostgreSQL container is running: `docker ps`
+   - Check that the credentials in `.env` match those in `docker-compose.yml`
+   - Restart the container: `docker-compose restart postgres`
 
-2. **Error 500 en la API**:
-   - Verifica los logs de Laravel: `docker logs laravel_container`
-   - Comprueba los permisos de almacenamiento: `docker exec -it laravel_container chmod -R 777 storage`
-   - Limpia la caché: `docker exec -it laravel_container php artisan cache:clear`
+2. **500 Error in the API**:
+   - Check Laravel logs: `docker logs laravel_container`
+   - Check storage permissions: `docker exec -it laravel_container chmod -R 777 storage`
+   - Clear cache: `docker exec -it laravel_container php artisan cache:clear`
 
-3. **Frontend no puede conectar con el backend**:
-   - Verifica que las URLs en el frontend apuntan correctamente a `https://localhost:8443`
-   - Comprueba que CORS está configurado correctamente en `api/config/cors.php`
+3. **Frontend cannot connect to backend**:
+   - Verify that the URLs in the frontend correctly point to `https://localhost:8443`
+   - Check that CORS is properly configured in `api/config/cors.php`
 
-4. **Certificado HTTPS no reconocido**:
-   - Acepta el certificado autofirmado en tu navegador
-   - Para entornos de producción, reemplaza el certificado por uno válido en la configuración Apache
+4. **HTTPS certificate not recognized**:
+   - Accept the self-signed certificate in your browser
+   - For production environments, replace the certificate with a valid one in the Apache configuration
 
-## Estructura del Proyecto
+## Project Structure
 
-El proyecto está organizado en las siguientes carpetas principales:
+The project is organized in the following main folders:
 
-- **api/**: Contiene la aplicación backend construida con Laravel
-  - `app/`: Lógica principal de la aplicación
-    - `Http/Controllers/`: Controladores de la API
-    - `Models/`: Modelos de datos
-    - `Providers/`: Proveedores de servicios
-  - `routes/`: Definición de rutas de la API
-  - `database/`: Migraciones y seeders
-  - `config/`: Archivos de configuración
-  - `public/`: Punto de entrada de la aplicación
+- **api/**: Contains the backend application built with Laravel
+  - `app/`: Main application logic
+    - `Http/Controllers/`: API controllers
+    - `Models/`: Data models
+    - `Providers/`: Service providers
+  - `routes/`: API route definitions
+  - `database/`: Migrations and seeders
+  - `config/`: Configuration files
+  - `public/`: Application entry point
 
-- **frontend/**: Contiene la aplicación frontend construida con React y Vite
-  - `src/`: Código fuente de React
-    - `components/`: Componentes reutilizables
-    - `pages/`: Páginas principales
-    - `services/`: Servicios para conexión con API
-    - `assets/`: Imágenes y recursos estáticos
-  - `public/`: Archivos estáticos
+- **frontend/**: Contains the frontend application built with React and Vite
+  - `src/`: React source code
+    - `components/`: Reusable components
+    - `pages/`: Main pages
+    - `services/`: Services for API connection
+    - `assets/`: Images and static resources
+  - `public/`: Static files
 
-## Desarrollo
+## Development
 
 ### Frontend
 
-Para trabajar en el frontend de forma independiente, puedes ejecutar:
+To work on the frontend independently, you can run:
 
 ```bash
 cd frontend
@@ -248,28 +248,28 @@ npm install
 npm run dev
 ```
 
-Esto iniciará el servidor de desarrollo de Vite en http://localhost:5173 con recarga en caliente para cambios en el código.
+This will start the Vite development server at http://localhost:5173 with hot reload for code changes.
 
 ### Backend
 
-Puedes realizar cambios en el código de Laravel directamente en la carpeta `api/`. Los cambios se reflejarán automáticamente en el servidor gracias al volumen montado.
+You can make changes to Laravel code directly in the `api/` folder. The changes will be automatically reflected on the server thanks to the mounted volume.
 
-Para ejecutar comandos específicos de Laravel, puedes usar:
+To run specific Laravel commands, you can use:
 
 ```bash
-# Ejecutar migraciones
+# Run migrations
 docker exec -it laravel_container php artisan migrate
 
-# Crear un controlador
-docker exec -it laravel_container php artisan make:controller NuevoController
+# Create a controller
+docker exec -it laravel_container php artisan make:controller NewController
 
-# Crear un modelo con migración
-docker exec -it laravel_container php artisan make:model NuevoModelo -m
+# Create a model with migration
+docker exec -it laravel_container php artisan make:model NewModel -m
 ```
 
-### Reconstrucción de Contenedores
+### Rebuilding Containers
 
-Si necesitas reconstruir los contenedores después de cambiar la configuración de Docker:
+If you need to rebuild the containers after changing the Docker configuration:
 
 ```bash
 docker-compose down
@@ -277,60 +277,60 @@ docker-compose build --no-cache
 docker-compose up -d
 ```
 
-## Modelos de Datos
+## Data Models
 
-El sistema utiliza los siguientes modelos principales:
+The system uses the following main models:
 
 ### User
-Representa a los usuarios registrados en la plataforma.
-- Atributos: nombre, email, contraseña, rol
+Represents registered users on the platform.
+- Attributes: name, email, password, role
 
 ### Admin
-Extiende la funcionalidad de usuarios para administradores del sistema.
-- Funcionalidad: gestión completa de espacios y reservas
+Extends user functionality for system administrators.
+- Functionality: complete management of spaces and reservations
 
 ### Space
-Representa los espacios de trabajo disponibles para reserva.
-- Atributos: nombre, descripción, ubicación, capacidad, precio, características ecológicas
+Represents workspaces available for reservation.
+- Attributes: name, description, location, capacity, price, eco-friendly features
 
 ### Reservation
-Gestiona las reservas de espacios por parte de los usuarios.
-- Atributos: usuario, espacio, fecha inicio, fecha fin, estado
+Manages space reservations by users.
+- Attributes: user, space, start date, end date, status
 
 ### Contact
-Almacena los mensajes de contacto enviados a través del formulario.
-- Atributos: nombre, email, asunto, mensaje
+Stores contact messages sent through the form.
+- Attributes: name, email, subject, message
 
 ## API Endpoints
 
-La API RESTful proporciona los siguientes endpoints principales:
+The RESTful API provides the following main endpoints:
 
-| Método | Ruta | Descripción | Autenticación |
+| Method | Route | Description | Authentication |
 |--------|------|-------------|---------------|
-| GET | /api/spaces | Listar todos los espacios | No |
-| GET | /api/spaces/{id} | Obtener detalles de un espacio | No |
-| POST | /api/spaces | Crear nuevo espacio | Admin |
-| PUT | /api/spaces/{id} | Actualizar espacio | Admin |
-| DELETE | /api/spaces/{id} | Eliminar espacio | Admin |
-| GET | /api/reservations | Listar reservas del usuario | Usuario |
-| POST | /api/reservations | Crear nueva reserva | Usuario |
-| GET | /api/admin/reservations | Listar todas las reservas | Admin |
-| POST | /api/contact | Enviar mensaje de contacto | No |
-| POST | /api/login | Iniciar sesión | No |
-| POST | /api/register | Registrar usuario | No |
+| GET | /api/spaces | List all spaces | No |
+| GET | /api/spaces/{id} | Get space details | No |
+| POST | /api/spaces | Create new space | Admin |
+| PUT | /api/spaces/{id} | Update space | Admin |
+| DELETE | /api/spaces/{id} | Delete space | Admin |
+| GET | /api/reservations | List user's reservations | User |
+| POST | /api/reservations | Create new reservation | User |
+| GET | /api/admin/reservations | List all reservations | Admin |
+| POST | /api/contact | Send contact message | No |
+| POST | /api/login | Login | No |
+| POST | /api/register | Register user | No |
 
-Para más detalles sobre los endpoints disponibles, consulta la documentación en `/api/documentation` (cuando esté disponible).
+For more details about available endpoints, check the documentation at `/api/documentation` (when available).
 
-## Contribuciones
+## Contributions
 
-Si deseas contribuir al proyecto:
+If you want to contribute to the project:
 
-1. Haz un fork del repositorio
-2. Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
-3. Haz commit de tus cambios (`git commit -am 'Añade una nueva característica'`)
-4. Sube la rama (`git push origin feature/nueva-caracteristica`)
-5. Abre un Pull Request
+1. Fork the repository
+2. Create a branch for your feature (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -am 'Add a new feature'`)
+4. Push the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-## Contacto
+## Contact
 
-Si encuentras algún error crítico o tienes sugerencias para mejorar el proyecto, por favor notifícalo al correo: mjsdaw@gmail.com
+If you find any critical errors or have suggestions to improve the project, please notify via email: mjsdaw@gmail.com

@@ -1,23 +1,23 @@
-# Internacionalización (i18n) en la Aplicación Frontend
+# Internationalization (i18n) in the Frontend Application
 
-Este documento explica cómo implementar y utilizar múltiples idiomas en la aplicación frontend utilizando la biblioteca react-i18next.
+This document explains how to implement and use multiple languages in the frontend application using the react-i18next library.
 
-## Estructura de archivos
+## File Structure
 
-La aplicación ya cuenta con una estructura base para la internacionalización:
+The application already has a basic structure for internationalization:
 
 ```
 src/
   locales/
-    en/   # Archivos de traducción en inglés
-    es/   # Archivos de traducción en español
+    en/   # English translation files
+    es/   # Spanish translation files
 ```
 
-## Configuración básica
+## Basic Configuration
 
-### 1. Crear archivos de traducción
+### 1. Create Translation Files
 
-Para cada idioma, crea un archivo de traducción JSON en la carpeta correspondiente:
+For each language, create a JSON translation file in the corresponding folder:
 
 **src/locales/en/translation.json**:
 ```json
@@ -47,9 +47,9 @@ Para cada idioma, crea un archivo de traducción JSON en la carpeta correspondie
 }
 ```
 
-### 2. Configurar i18next
+### 2. Configure i18next
 
-Crea un archivo de configuración para i18next:
+Create a configuration file for i18next:
 
 **src/i18n.js**:
 ```javascript
@@ -59,13 +59,13 @@ import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18n
-  // Carga las traducciones utilizando http (puede también usar archivos estáticos)
+  // Load translations using http (can also use static files)
   .use(Backend)
-  // Detecta el idioma del usuario
+  // Detect user language
   .use(LanguageDetector)
-  // Pasa i18n a react-i18next
+  // Pass i18n to react-i18next
   .use(initReactI18next)
-  // Inicializa i18next
+  // Initialize i18next
   .init({
     fallbackLng: 'en',
     debug: process.env.NODE_ENV === 'development',
@@ -83,9 +83,9 @@ i18n
 export default i18n;
 ```
 
-### 3. Integrar i18n en la aplicación
+### 3. Integrate i18n into the Application
 
-Modifica tu archivo principal (main.jsx) para incluir la configuración i18n:
+Modify your main file (main.jsx) to include the i18n configuration:
 
 **src/main.jsx**:
 ```javascript
@@ -93,7 +93,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
-import './i18n'; // Importar la configuración de i18n
+import './i18n'; // Import i18n configuration
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -102,9 +102,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 );
 ```
 
-## Uso
+## Usage
 
-### Uso básico en componentes
+### Basic Usage in Components
 
 ```jsx
 import { useTranslation } from 'react-i18next';
@@ -121,7 +121,7 @@ function MyComponent() {
 }
 ```
 
-### Cambiar el idioma
+### Changing the Language
 
 ```jsx
 import { useTranslation } from 'react-i18next';
@@ -142,9 +142,9 @@ function LanguageSwitcher() {
 }
 ```
 
-## Ejemplo práctico: Header con soporte multilenguaje
+## Practical Example: Header with Multilanguage Support
 
-En tu componente Header, puedes implementar el cambio de idioma de la siguiente manera:
+In your Header component, you can implement language switching as follows:
 
 ```jsx
 import { useTranslation } from 'react-i18next';
@@ -176,9 +176,9 @@ function Header() {
 }
 ```
 
-## Características avanzadas
+## Advanced Features
 
-### Pluralización
+### Pluralization
 
 ```json
 {
@@ -192,21 +192,21 @@ t('item', { count: 1 }); // "1 item"
 t('item', { count: 2 }); // "2 items"
 ```
 
-### Interpolación
+### Interpolation
 
 ```json
 {
-  "welcome": "Bienvenido, {{name}}!"
+  "welcome": "Welcome, {{name}}!"
 }
 ```
 
 ```jsx
-t('welcome', { name: 'Juan' }); // "Bienvenido, Juan!"
+t('welcome', { name: 'John' }); // "Welcome, John!"
 ```
 
-### Formatos de fecha y números
+### Date and Number Formats
 
-Para formatear fechas y números según el idioma, puedes utilizar Intl.DateTimeFormat y Intl.NumberFormat:
+To format dates and numbers according to the language, you can use Intl.DateTimeFormat and Intl.NumberFormat:
 
 ```jsx
 const formatDate = (date) => {
@@ -218,14 +218,14 @@ const formatDate = (date) => {
 };
 ```
 
-## Buenas prácticas
+## Best Practices
 
-1. Organiza tus traducciones en categorías lógicas (common, form, errors, etc.)
-2. Utiliza claves de traducción descriptivas
-3. Mantén las traducciones actualizadas cuando agregues nuevas características
-4. Guarda el idioma seleccionado en localStorage para recordar la preferencia del usuario
+1. Organize your translations in logical categories (common, form, errors, etc.)
+2. Use descriptive translation keys
+3. Keep translations updated when adding new features
+4. Store the selected language in localStorage to remember user preferences
 
-## Recursos Adicionales
+## Additional Resources
 
-- [Documentación oficial de react-i18next](https://react.i18next.com/)
+- [Official react-i18next documentation](https://react.i18next.com/)
 - [i18next documentation](https://www.i18next.com/)

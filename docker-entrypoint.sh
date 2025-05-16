@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-# Asegurar que el directorio de vistas compiladas exista y tenga los permisos correctos
+# Ensure the compiled views directory exists and has the correct permissions
 mkdir -p /var/www/html/storage/framework/views
 chown -R www-data:www-data /var/www/html/storage/framework/views
 chmod -R 775 /var/www/html/storage/framework/views
 
-# Ejecutar composer install si vendor est?? vac??o
+# Run composer install if vendor directory is empty
 if [ ! "$(ls -A /var/www/html/vendor)" ]; then
     echo "Vendor directory is empty, running composer install..."
     composer install --no-interaction --optimize-autoloader
@@ -14,27 +14,27 @@ else
     echo "Vendor directory already populated, skipping composer install."
 fi
 
-# Esperar a que PostgreSQL est?? listo
+# Wait until PostgreSQL is ready
 until pg_isready -h postgres -p 5432 -U greenworkAdmin; do
     echo "Waiting for PostgreSQL to be ready..."
     sleep 2
 done
 
-# Ejecutar migraciones
+# Run migrations
 echo "Running database migrations..."
 php artisan migrate --force
 
-# Ejecutar seeders si es necesario
+# Run seeders if necessary
 if [ "$SEED_DB" = "true" ]; then
     echo "Seeding database..."
     php artisan db:seed --force
 fi
 
-# Limpiar y optimizar la aplicaci??n
+# Clear and optimize the application
 php artisan optimize:clear
 php artisan optimize
 
-# Asegurar que existen los directorios necesarios
+# Ensure necessary directories exist
 mkdir -p storage/app/public \
     storage/framework/sessions \
     storage/framework/views \
@@ -43,30 +43,29 @@ mkdir -p storage/app/public \
     storage/logs \
     bootstrap/cache
 
-# Crear enlace simb??lico para storage
+# Create symbolic link for storage
 php artisan storage:link
 
-# Asegurar permisos adecuados
+# Ensure proper permissions
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Instalar dependencias del frontend y levantar el servidor de React
+# Install frontend dependencies and start the React server
 if [ -d "/var/www/frontend" ]; then
     echo "Installing frontend dependencies..."
     cd /var/www/frontend
     
-    # Instalar dependencias con manejo de errores
+    # Install dependencies with error handling
     if ! npm install --no-fund --no-audit; then
         echo "WARNING: Failed to install frontend dependencies. Continuing without frontend."
-    else
-        # Iniciar el servidor de React en segundo plano
+    else        # Start the React server in the background
         echo "Starting React development server..."
         npm run dev -- --host 0.0.0.0 &
         
-        # Esperar a que el servidor est?? listo
+        # Wait for the server to be ready
         sleep 3
         
-        # Verificar si el servidor est?? ejecut??ndose
+        # Check if the server is running
         if ! netstat -tulpn | grep :5173 > /dev/null; then
             echo "WARNING: React server may not have started correctly. Check logs."
         else
@@ -76,5 +75,5 @@ if [ -d "/var/www/frontend" ]; then
     cd /var/www/html
 fi
 
-# Iniciar Apache en primer plano
+# Start Apache in the foreground
 apache2-foreground

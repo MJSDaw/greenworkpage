@@ -1,7 +1,7 @@
-# Usa una imagen oficial de PHP con soporte para Apache
+# Use an official PHP image with Apache support
 FROM php:8.2-apache
 
-# Instala las extensiones necesarias para Laravel, PostgreSQL, Node.js y npm
+# Install necessary extensions for Laravel, PostgreSQL, Node.js and npm
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip \
@@ -12,19 +12,19 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Habilitar el módulo SSL en Apache
+# Enable SSL module in Apache
 RUN a2enmod ssl
 
-# Instala Composer
+# Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Configura el directorio de trabajo en el contenedor
+# Configure the working directory in the container
 WORKDIR /var/www/html
 
-# Copia el archivo de configuración de Apache para Laravel
+# Copy Apache configuration file for Laravel
 RUN a2enmod rewrite
 
-# Crea los directorios necesarios para Laravel
+# Create necessary directories for Laravel
 RUN mkdir -p storage/app/public \
     storage/framework/sessions \
     storage/framework/views \
@@ -33,22 +33,22 @@ RUN mkdir -p storage/app/public \
     storage/logs \
     bootstrap/cache
 
-# Ajusta los permisos de las carpetas necesarias
+# Adjust permissions for necessary folders
 RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache
 
-# Copia la configuración de Apache
+# Copy Apache configuration
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Instalar postgres client para pg_isready
+# Install postgres client for pg_isready
 RUN apt-get install -y postgresql-client
 
-# Copia el script de entrada
+# Copy the entry script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh
-# Verificar que el archivo existe
+# Verify that the file exists
 RUN ls -la /usr/local/bin/docker-entrypoint.sh
 
-# Establece el script de entrada como el comando predeterminado
+# Set the entry script as the default command
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

@@ -25,11 +25,11 @@ services:
       DB_DATABASE: greenworkdb
       DB_USERNAME: greenworkAdmin
       DB_PASSWORD: HIiDV8W7S02bO6AB3ehV
-      SEED_DB: "true"  # Establece en "true" para ejecutar seeders
-    ports:
-      - "8000:80"   # Mapea el puerto 80 del contenedor al puerto 8000 del host (redirección)
-      - "8443:443"  # Mapea el puerto 443 del contenedor al puerto 8443 del host (HTTPS)
-      - "5173:5173" # Mapea el puerto 5173 del servidor de React
+      SEED_DB: "true"  # Set to "true" to run seeders
+      ports:
+      - "8000:80"   # Maps container port 80 to host port 8000 (redirection)
+      - "8443:443"  # Maps container port 443 to host port 8443 (HTTPS)
+      - "5173:5173" # Maps port 5173 of the React server
     depends_on:
       - postgres
     volumes:

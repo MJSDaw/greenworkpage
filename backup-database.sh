@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# Configuración de variables
+# Variables configuration
 BACKUP_DIR="/backups"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_FILE="$BACKUP_DIR/greenworkdb_backup_$TIMESTAMP.sql"
 
-# Asegurar que el directorio de backups existe
+# Make sure the backup directory exists
 mkdir -p $BACKUP_DIR
 
-# Realizar el backup de la base de datos usando la herramienta pg_dump de PostgreSQL
+# Backup the database
 pg_dump -h postgres -U greenworkAdmin -d greenworkdb -F p > $BACKUP_FILE
 
-# Comprimir el archivo de backup para ahorrar espacio
+# Zip the backup file
 gzip $BACKUP_FILE
 
-echo "Backup completado: ${BACKUP_FILE}.gz"
+echo "Backup completed: ${BACKUP_FILE}.gz"
 
-# Eliminar backups antiguos (mantener solo los últimos 7 días)
+# Delete backups older than 7 days
 find $BACKUP_DIR -name "greenworkdb_backup_*.sql.gz" -type f -mtime +7 -delete
