@@ -3,38 +3,83 @@
     "title": "Greenwork - Your coworking space",
     "description": "Book flexible coworking spaces with GreenWork — fast reservations, dedicated support, and smart tools to boost your daily growth."
   },
-  "common": {
-    "home": "Home",
-    "goToHomePage": "Go to home page",
-    "spaces": "Spaces",
-    "about": "About Us",
-    "contact": "Contact",
-    "signin": "Sign In",
-    "login": "Log In"
-  },
-  "home": {
-    "welcome": "Welcome to GreenWorkPage",
-    "description": "Find your perfect sustainable workspace"
-  },
-  "spaces": {
-    "title": "Available Spaces",
-    "filter": "Filter",
-    "search": "Search"
-  },
-  "contact": {
-    "title": "Contact Us",
-    "name": "Name",
-    "email": "Email",
-    "message": "Message",
-    "send": "Send Message"
-  },
-  "footer": {
-    "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms and Conditions",
-    "goToGithub": "Go to GitHub",
-    "goToLinkedIn": "Go to LinkedIn",
-    "goToTwitter": "Go to Twitter",
+  "actions": {
+    "goToHomePage": "Go to homepage",
+    "goToGithub": "Go to Github",
+    "goToInstagram": "Go to Instagram",
     "goToFacebook": "Go to Facebook",
-    "goToInstagram": "Go to Instagram"
+    "goToTwitter": "Go to Twitter",
+    "goToLinkedIn": "Go to Linkedin",
+    "goToSpaces": "View spaces",
+    "goToAbout": "View more about us",
+    "goToContact": "Contact us",
+    "goToTerms": "View terms and conditions",
+    "goToPrivacy": "View privacy policy",
+    "register": "Register me",
+    "login": "Login"
+  },
+  "alt": {
+    "logo": "Logo of Greenwork",
+    "logoVariant1": "Logo of Greenwork in white",
+    "donatello": "Donatello"
+  },
+  "common": {
+    "github": "Logo of Github",
+    "instagram": "Logo of Instagram",
+    "facebook": "Logo of Facebook",
+    "twitter": "Logo of Twitter",
+    "linkedin": "Logo of Linkedin",
+    "donatello": "Donatello the pea"
+  },
+  "links": {
+    "home": "Home",
+    "about": "About",
+    "spaces": "Spaces",
+    "contact": "Contact",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
+    "problemSolvers": "Created by ProblemSolvers with love 💚"
+  },
+  "form":{
+    "name": {
+      "label": "Name",
+      "placeholder": "Name"
+    },
+    "surname": {
+      "label": "Surname",
+      "placeholder": "Surname"
+    },
+    "birthday": {
+      "label": "Birthday",
+      "placeholder": "Birthday"
+    },
+    "nif": {
+      "label": "NIF",
+      "placeholder": "NIF"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password"
+    },
+    "confirmPassword": {
+      "label": "Confirm password",
+      "placeholder": "Confirm password"
+    },
+    "checkbox": {
+      "register": {
+        "msg1": "By registering, you agree to our ",
+        "msg2": "and our "
+      }
+    },
+    "span": {
+      "msg1": "Already have an account?"
+    },
+    "submitButton": {
+      "text": "Register"
+    }
   }
 }

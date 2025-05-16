@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { data, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
 import { setAuthToken } from '../services/authService'
 
 const Signin = () => {
+  const { t } = useTranslation()
+
   const [formData, setFormData] = useState({
     name: '',
     surname: '',
@@ -15,6 +18,10 @@ const Signin = () => {
     termsAndConditions: false,
   })
 
+  // ...existing code...
+  const [errors, setErrors] = useState({})
+  // ...existing code...
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
@@ -22,12 +29,15 @@ const Signin = () => {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
+
   const handleTermsChange = (e) => {
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      termsAndConditions: e.target.checked
-    }));
-  };  const handleSubmit = async (e) => {
+      termsAndConditions: e.target.checked,
+    }))
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
@@ -38,15 +48,15 @@ const Signin = () => {
         },
         body: JSON.stringify(formData),
       })
-        const data = await response.json()
+      const data = await response.json()
       console.log('Registration response:', data)
-      
-      // Store the token in localStorage if registration was successful
+
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        
         // Redirect
+        setErrors({})
       } else {
+        setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)
       }
     } catch (error) {
@@ -60,110 +70,136 @@ const Signin = () => {
         <img
           className="cheakpeas"
           src={donatello}
-          alt="Donatello"
-          title="Donatello Cheakpeas"
+          alt={t('alt.donatello')}
+          title={t('common.donatello')}
         />
-        <h1>Sign in</h1>
+        <h1>{t('actions.register')}</h1>
         <form onSubmit={handleSubmit}>
-          <>
-            <label htmlFor="name">Name:</label>
+          <div className="form__input">
+            <label htmlFor="name">{t('form.name.label')}</label>
             <input
               id="name"
               name="name"
-              placeholder="Name"
+              placeholder={t('form.name.placeholder')}
               value={formData.name}
               onChange={handleChange}
+              required
             />
-          </>
-          <>
-            <label htmlFor="surname">Surname:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="surname">{t('form.surname.label')}</label>
             <input
               id="surname"
               name="surname"
-              placeholder="Surname"
+              placeholder={t('form.surname.placeholder')}
               value={formData.surname}
               onChange={handleChange}
+              required
             />
-          </>
-          <>
-            <label htmlFor="birthday">Birthday:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="birthday">{t('form.birthday.label')}</label>
             <input
               id="birthday"
               name="birthdate"
-              placeholder="Birthday"
+              placeholder={t('form.birthday.placeholder')}
               type="date"
               value={formData.birthdate}
               onChange={handleChange}
+              required
             />
-          </>
-          <>
-            <label htmlFor="nif">NIF:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="nif">{t('form.nif.label')}</label>
             <input
               id="nif"
               name="dni"
-              placeholder="NIF"
+              placeholder={t('form.nif.placeholder')}
               value={formData.dni}
               onChange={handleChange}
+              required
             />
-          </>
-          <>
-            <label htmlFor="email">Email:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="email">{t('form.email.label')}</label>
             <input
               id="email"
               name="email"
-              placeholder="Email"
+              placeholder={t('form.email.placeholder')}
               value={formData.email}
               onChange={handleChange}
+              required
             />
-          </>
-          <>
-            <label htmlFor="password">Password:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="password">{t('form.password.label')}</label>
             <input
               id="password"
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder={t('form.password.placeholder')}
               value={formData.password}
               onChange={handleChange}
+              required
             />
-          </>{' '}
-          <>
-            <label htmlFor="confirmPassword">Repeat password:</label>
+          </div>
+          <div className="form__input">
+            <label htmlFor="confirmPassword">
+              {t('form.confirmPassword.label')}
+            </label>
             <input
               id="confirmPassword"
               name="password_confirm"
               type="password"
-              placeholder="Repeat password"
+              placeholder={t('form.confirmPassword.placeholder')}
               value={formData.password_confirm}
               onChange={handleChange}
+              required
             />
-          </>
-            <label className="checkbox__label">
+            {errors.password_confirm && (
+              <span className="form__error">{errors.password_confirm[0]}</span>
+            )}
+          </div>
+          <div className="form__input"></div>
+          <label className="checkbox__label">
             <input
               className="checkbox"
               type="checkbox"
               name="termsAndConditions"
               checked={formData.termsAndConditions}
               onChange={handleTermsChange}
+              required
             />
             <span className="checkbox__text">
-              I accept the{' '}
-              <Link to="/terms" className="form__checkbox">
-                Terms and Conditions
+              {t('form.checkbox.register.msg1')}
+              <Link
+                to="/terms"
+                className="form__checkbox"
+                title={t('actions.goToTerms')}
+              >
+                {t('links.terms')}
               </Link>{' '}
-              and the{' '}
-              <Link to="/privacy" className="form__checkbox">
-                Privacy Policy
+              {t('form.checkbox.register.msg2')}
+              <Link
+                to="/privacy"
+                className="form__checkbox"
+                title={t('actions.goToPrivacy')}
+              >
+                {t('links.privacy')}
               </Link>
             </span>
           </label>
           <span className="link__text">
-            Already have an account?{' '}
+            {t('form.span.msg1')}
             <Link to="/login" className="form__link">
-              Log in
+              {t('actions.login')}
             </Link>
           </span>
-          <input type="submit" value="Sign in" className="form__submit" />
+          <input
+            type="submit"
+            value={t('actions.register')}
+            className="form__submit"
+          />
         </form>
       </section>
     </main>

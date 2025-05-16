@@ -18,14 +18,14 @@ const Footer = () => {
           <img
             className="header__logo__icon"
             src={logo}
-            alt="GreenWork Logo Variant 1"
-            title={t('common.goToHomePage')}
+            alt={t('alt.logoVariant1')}
+            title={t('actions.goToHomePage')}
           />
         </Link>
         <article className="icons__container">
           <Link
             to="https://github.com/MJSDaw/greenworkpage"
-            title={t('footer.goToGithub')}
+            title={t('actions.goToGithub')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -33,13 +33,13 @@ const Footer = () => {
             <img
               className="icon__svg"
               src={github}
-              alt="Github"
-              title={t('footer.goToGithub')}
+              alt={t('common.goToGithub')}
+              title={t('actions.goToGithub')}
             />
           </Link>
           <Link
             to="https://www.instagram.com/"
-            title={t('footer.goToInstagram')}
+            title={t('actions.goToInstagram')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -47,13 +47,13 @@ const Footer = () => {
             <img
               className="icon__svg"
               src={instagram}
-              alt="Instagram"
-              title={t('footer.goToInstagram')}
+              alt={t('common.instagram')}
+              title={t('actions.goToInstagram')}
             />
           </Link>
           <Link
             to="https://www.facebook.com/"
-            title={t('footer.goToFacebook')}
+            title={t('actions.goToFacebook')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -61,13 +61,13 @@ const Footer = () => {
             <img
               className="icon__svg"
               src={facebook}
-              alt="Facebook"
-              title={t('footer.goToFacebook')}
+              alt={t('common.facebook')}
+              title={t('actions.goToFacebook')}
             />
           </Link>
           <Link
             to="https://x.com/"
-            title={t('footer.goToTwitter')}
+            title={t('actions.goToTwitter')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -75,13 +75,13 @@ const Footer = () => {
             <img
               className="icon__svg"
               src={twitter}
-              alt="Twitter"
-              title={t('footer.goToTwitter')}
+              alt={t('common.twitter')}
+              title={t('actions.goToTwitter')}
             />
           </Link>
           <Link
             to="https://www.linkedin.com/"
-            title={t('footer.linkedIn')}
+            title={t('actions.goToLinkedIn')}
             className="icon"
             target="_blank"
             rel="noopener noreferrer"
@@ -89,8 +89,8 @@ const Footer = () => {
             <img
               className="icon__svg"
               src={linkedin}
-              alt="LinkedIn"
-              title={t('footer.linkedIn')}
+              alt={t('common.linkedIn')}
+              title={t('actions.goToLinkedIn')}
             />
           </Link>
         </article>
@@ -98,52 +98,52 @@ const Footer = () => {
       <section className="footer__container__content--variant1">
         <Link
           to="/spaces"
-          title="View coworking spaces"
+          title={t('actions.goToSpaces')}
           className="footer__anchor"
         >
-          Spaces
+          {t('links.spaces')}
         </Link>
 
         <Link
           to="/about"
-          title="Learn more about GreenWork"
+          title={t('actions.goToAbout')}
           className="footer__anchor"
         >
-          About
+          {t('links.about')}
         </Link>
         <Link
           to="/contact"
-          title="Contact GreenWork"
+          title={t('actions.goToContact')}
           className="footer__anchor"
         >
-          Contact
+          {t('links.contact')}
         </Link>
       </section>
       <section className="footer__container__content">
         <Link
           to="https://github.com/MJSDaw/greenworkpage"
-          title="ProblemSolvers"
+          title={t('actions.goToGithub')}
           className="footer__anchor"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Creado por ProblemSolvers con amor 💚
+          {t('links.problemSolvers')}
         </Link>
         <article className='links_container'>
           <Link
             to="/terms"
-            title="Terms and Conditions"
+            title={t('actions.goToTerms')}
             className="footer__anchor"
           >
-            Terms and conditions
+            {t('links.terms')}
           </Link>
           <div className='decorator'></div>
           <Link
             to="/privacy"
-            title="Privacy Policy"
+            title={t('actions.goToPrivacy')}
             className="footer__anchor"
           >
-            Privacy policy
+            {t('links.privacy')}
           </Link>
         </article>
       </section>

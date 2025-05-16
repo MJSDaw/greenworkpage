@@ -4,39 +4,82 @@
     "description": "Reserva espacios de coworking flexibles con GreenWork — reservas rápidas, soporte dedicado y herramientas inteligentes para impulsar tu crecimiento diario."
   },
   "actions": {
-    "goToGithub": "Ir a GitHub",
-    "goToLinkedIn": "Ir a LinkedIn",
-    "goToTwitter": "Ir a Twitter",
+    "goToHomePage": "Ir a la página de inicio",
+    "goToGithub": "Ir a Github",
+    "goToInstagram": "Ir a Instagram",
     "goToFacebook": "Ir a Facebook",
-    "goToInstagram": "Ir a Instagram"
+    "goToTwitter": "Ir a Twitter",
+    "goToLinkedIn": "Ir a Linkedin",
+    "goToSpaces": "Ver espacios",
+    "goToAbout": "Ver más sobre nosotros",
+    "goToContact": "Contáctanos",
+    "goToTerms": "Ver términos y condiciones",
+    "goToPrivacy": "Ver política de privacidad",
+    "register": "Registrarme",
+    "login": "Iniciar sesión"
+  },
+  "alt": {
+    "logo": "Logo de Greenwork",
+    "logoVariant1": "Logo de Greenwork en blanco",
+    "donatello": "Donatello el guisante"
   },
   "common": {
+    "github": "Logo de Github",
+    "instagram": "Logo de Instagram",
+    "facebook": "Logo de Facebook",
+    "twitter": "Logo de Twitter",
+    "linkedin": "Logo de Linkedin",
+    "donatello": "Donatello"
+  },
+  "links": {
     "home": "Inicio",
-    "goToHomePage": "Ir a la página de inicio",
-    "spaces": "Espacios",
     "about": "Nosotros",
+    "spaces": "Espacios",
     "contact": "Contacto",
-    "signin": "Registrarse",
-    "login": "Iniciar Sesión"
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad",
+    "problemSolvers": "Creado por ProblemSolvers con amor 💚"
   },
-  "home": {
-    "welcome": "Bienvenido a GreenWorkPage",
-    "description": "Encuentra tu espacio de trabajo sostenible perfecto"
-  },
-  "spaces": {
-    "title": "Espacios Disponibles",
-    "filter": "Filtrar",
-    "search": "Buscar"
-  },
-  "contact": {
-    "title": "Contáctanos",
-    "name": "Nombre",
-    "email": "Correo electrónico",
-    "message": "Mensaje",
-    "send": "Enviar Mensaje"
-  },
-  "footer": {
-    "privacyPolicy": "Política de Privacidad",
-    "termsOfService": "Términos de Servicio"
+  "form":{
+    "name": {
+      "label": "Nombre",
+      "placeholder": "Nombre"
+    },
+    "surname": {
+      "label": "Apellidos",
+      "placeholder": "Apellidos"
+    },
+    "birthday": {
+      "label": "Fecha de nacimiento",
+      "placeholder": "Fecha de nacimiento"
+    },
+    "nif": {
+      "label": "NIF",
+      "placeholder": "Número de identificación fiscal"
+    },
+    "email": {
+      "label": "Correo electrónico:",
+      "placeholder": "Correo electrónico"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Contraseña"
+    },
+    "confirmPassword": {
+      "label": "Confirmar contraseña",
+      "placeholder": "Confirma tu contraseña"
+    },
+    "checkbox": {
+      "register": {
+        "msg1": "Al registrarte, aceptas nuestros ",
+        "msg2": "y nuestra "
+      }
+    },
+    "span": {
+      "msg1": "¿Ya tienes una cuenta? "
+    },
+    "submitButton": {
+      "text": "Registrarme"
+    }
   }
 }

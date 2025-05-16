@@ -108,6 +108,12 @@ label {
   font-weight: bold;
 }
 
+.form__input {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
 input, .checkbox {
   border: 2px solid var(--color1);
   border-radius: 1.5rem;
