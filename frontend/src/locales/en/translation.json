@@ -42,7 +42,13 @@
     "slogan": "Your space today, your success tomorrow",
     "proximity": "Encuentra nuestros espacios más cercanos a ti",
     "ourSpaces": "Our spaces",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "terms": "Terms and conditions",
+    "contact": {
+      "title": "Do you have questions? We are here to help you",
+      "msg1": "Our support team will respond to you as soon as possible.",
+      "msg2": "At GreenWork, we value your time and are committed to providing you with a quick and clear solution."
+    }
   },
   "links": {
     "home": "Home",
@@ -51,7 +57,9 @@
     "contact": "Contact",
     "terms": "Terms and conditions",
     "privacy": "Privacy policy",
-    "problemSolvers": "Created by ProblemSolvers with love 💚"
+    "problemSolvers": "Created by ProblemSolvers with love 💚",
+    "register": "Registrarme",
+    "login": "Iniciar sesión"
   },
   "form":{
     "name": {
@@ -86,11 +94,19 @@
       "register": {
         "msg1": "By registering, you agree to our ",
         "msg2": "and our "
+      },
+      "contact": {
+        "msg1": "By sending us a message, you accept our ",
+        "msg2": "and our "
       }
     },
     "postalCode": {
       "label": "Postal code",
       "placeholder": "Postal code"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Write your message here"
     },
     "span": {
       "msg1": "Already have an account? ",
@@ -99,5 +115,46 @@
     "submitButton": {
       "text": "Register"
     }
+  },
+  "terms": {
+    "title1": "Access to the service and responsibilities",
+    "title2": "Intellectual and industrial property of the service",
+    "title3": "Applicable law and jurisdiction",
+    "title4": "Sales policy",
+    "title5": "Return policy",
+    "msg1": "greenwork.com is a website owned by GREENWORK, which contains a directory of coworking spaces, business centers, shared offices, and similar spaces throughout Spain and the rest of the world, through which users can post ads promoting these spaces, publish logos, their location, contact phone, description of the different spaces, rates, etc.",
+    "msg2": "Users can search for and request information and even book spaces advertised on the coworkingspain.es website by filling out a form that collects the applicants' data. Such data may be provided to users who manage those spaces advertised on the website.",
+    "msg3": "These Terms of Use govern access to and use of the service hosted under the domain name www.greenwork.com as well as all content displayed on it or made available to users. When accessing the website, the user declares that they have read and agree to comply with these Terms of Use.",
+    "msg4": "GREENWORK reserves the right to review and modify these Terms of Use for legal, technical, or corporate strategy reasons.",
+    "msg5": "Furthermore, the collection and processing of users' personal data, as well as the exercise of their rights over them, will be governed by these Terms of Use and by the previously described Privacy Policy.",
+    "msg6": "Access to the service is permitted to all users who own coworking centers and accept these Terms of Use.",
+    "msg7": "When accessing this service, the user must provide greenwork.com with the following personal data: name of the center owner or space seekers, phone number, and email address, which will be processed in accordance with our Privacy Policy.",
+    "msg8": "greenwork.es offers various services related to the use of coworking spaces, including, but not limited to, the publication of ads by users related to their activity, contacting advertisers, etc.",
+    "msg9": "By accepting these Terms of Use, users declare and guarantee that the information published is lawful, truthful, and that they have the necessary authorizations, when required, for such publication. Otherwise, GREENWORK is not responsible for the legality or truthfulness of the information published by users.",
+    "msg10": "In cases where a user freely decides to contact another user, they do so at their own risk, excluding GREENWORK from any liability arising from the relationship between both users.",
+    "msg11": "Access to the service implies the user's commitment to use it correctly, in accordance with these Terms of Use and current legislation, as well as the principles of good faith and public order. In any case, the user is obliged to make reasonable use of the service, according to the purposes for which it is intended.",
+    "msg12": "In particular, GREENWORK cannot be considered an editorial responsible party, and expressly states that it does not identify with any of the opinions that users may express through the service.",
+    "msg13": "The dissemination of content or opinions that are xenophobic, defamatory, discriminatory, sexist, pornographic, or in any way contrary to current legislation is expressly prohibited.",
+    "msg14": "It is also prohibited to host, store, disclose, or distribute any content that may be considered a violation of fundamental rights to honor, image, and personal privacy.",
+    "msg15": "It is also forbidden to use the service to insult, defame, intimidate, violate the image, or harass other users.",
+    "msg16": "It is prohibited to introduce computer viruses, defective files, or to host, store, distribute, or share material or software that may cause damage or alterations to the contents, programs, or systems of GREENWORK.",
+    "msg17": "Likewise, it is forbidden to host, store, disclose, publish, distribute, or facilitate unsolicited or unauthorized advertising, junk mail, spam, or similar communications.",
+    "msg18": "GREENWORK is a registered trademark.",
+    "msg19": "GREENWORK owns all industrial and intellectual property rights related to the service.",
+    "msg20": "By these Terms of Use, GREENWORK grants a limited, revocable, and non-sublicensable license to use the service strictly for personal purposes.",
+    "msg21": "The user may not commercially exploit any of the contents of greenwork.com without the express written authorization of GREENWORK.",
+    "msg22": "These Terms of Use are governed entirely by Spanish law, and for those cases where the regulations allow, the parties voluntarily submit to the Courts and Tribunals of Ficticias (Barcelona).",
+    "msg23": "The user may contract subscriptions and services on the website.",
+    "msg24": "Subscriptions are treated as recurring payments billed monthly, quarterly, or annually, at the user's choice.",
+    "msg25": "Services are treated as one-time payments.",
+    "msg26": "Payments can be made through our virtual POS using VISA and MASTERCARD cards.",
+    "msg27": "They can also be made at the reserved space by card or cash.",
+    "msg28": "Once payment is made, the user will receive a notification and a payment receipt.",
+    "msg29": "All recurring subscriptions that have not been paid within two days will be canceled.",
+    "msg30": "The user has the right to a refund of the amount of subscriptions and/or services under the following terms and conditions:",
+    "msg31": "1. Subscription cancellations can be made 5 days before the subscription renewal, in the following ways:",
+    "msg32": "Through the user's control panel, within the website.",
+    "msg33": "By writing an email in the contact form, starting the message with “subscription cancellation”.",
+    "msg34": "2. Cancellations communicated by any other means are not accepted."
   }
 }

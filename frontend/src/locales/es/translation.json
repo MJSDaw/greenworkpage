@@ -15,8 +15,8 @@
     "goToContact": "Contáctanos",
     "goToTerms": "Ver términos y condiciones",
     "goToPrivacy": "Ver política de privacidad",
-    "register": "Registrarme",
-    "login": "Iniciar sesión",
+    "register": "Ir a registrarme",
+    "login": "Ir a iniciar sesión",
     "menu": "Abrir el menú",
     "search": "Buscar"
   },
@@ -42,7 +42,13 @@
     "slogan": "Tu espacio de hoy, tu éxito de mañana",
     "proximity": "Encuentra nuestros espacios más cercanos a ti",
     "ourSpaces": "Nuestros espacios",
-    "contactUs": "Contáctanos"
+    "contactUs": "Contáctanos",
+    "terms": "Términos y condiciones",
+    "contact": {
+      "title": "¿Tienes dudas? Estamos para ayudarte",
+      "msg1": "Nuestro equipo de soporte te responderá lo antes posible.",
+      "msg2": "En GreenWork valoramos tu tiempo y estamos comprometidos con darte una solución rápida y clara."
+    }
   },
   "links": {
     "home": "Inicio",
@@ -51,7 +57,9 @@
     "contact": "Contacto",
     "terms": "Términos y condiciones",
     "privacy": "Política de privacidad",
-    "problemSolvers": "Creado por ProblemSolvers con amor 💚"
+    "problemSolvers": "Creado por ProblemSolvers con amor 💚",
+    "register": "Registrarme",
+    "login": "Iniciar sesión"
   },
   "form":{
     "name": {
@@ -86,11 +94,19 @@
       "register": {
         "msg1": "Al registrarte, aceptas nuestros ",
         "msg2": "y nuestra "
+      },
+      "contact": {
+        "msg1": "Al enviarnos un mensaje, aceptas nuestra ",
+        "msg2": "y nuestra "
       }
     },
     "postalCode": {
       "label": "Código postal",
       "placeholder": "Código postal"
+    },
+    "message": {
+      "label": "Mensaje",
+      "placeholder": "Escribe tu mensaje aquí"
     },
     "span": {
       "msg1": "¿Ya tienes una cuenta? ",
@@ -99,5 +115,46 @@
     "submitButton": {
       "text": "Registrarme"
     }
+  },
+  "terms": {
+    "title1": "Acceso al servicio y responsabilidades",
+    "title2": "Propiedad intelectual e industrial del servicio",
+    "title3": "Ley aplicable y jurisdicción",
+    "title4": "Política de ventas",
+    "title5": "Política de devolución",
+    "msg1": "greenwork.com es un portal web de titularidad de GREENWORK, que contiene un directorio de espacios de coworking, centros de negocio, business centers, oficinas compartidas y espacios similares de toda España y el resto del mundo, a través del cual los usuarios podrán insertar anuncios publicitando estos espacios, publicar logos, su ubicación, teléfono de contacto, descripción de los distintos espacios, tarifas, etc.",
+    "msg2": "Los usuarios pueden buscar y solicitar información e incluso reservar espacios publicitados en la web coworkingspain.es, cumplimentando un formulario en el que se recogen los datos de los solicitantes. Tales datos podrán ser entregados a los usuarios que gestionan dichos espacios publicitados en la web.",
+    "msg3": "Las presentes Condiciones de Uso regulan el acceso y la utilización del servicio alojado con el nombre de dominio www.greenwork.com así como de todos los contenidos que se muestran en el mismo o se pongan a disposición de los usuarios. En el momento en que se accede al sitio web, el usuario manifiesta que ha leído y que acepta cumplir con estas Condiciones de Uso.",
+    "msg4": "GREENWORK se reserva el derecho de revisar y modificar estas Condiciones de Uso, por motivos legales, técnicos o de estrategia corporativa.",
+    "msg5": "Por otro lado, la recogida y tratamiento de los datos personales de los usuarios, así como el ejercicio de sus derechos sobre los mismos, se regirán por estas Condiciones de Uso, y por la Política de Privacidad descrita con anterioridad.",
+    "msg6": "El acceso al servicio está permitido a todos los usuarios titulares de centros de coworking que acepten las presentes Condiciones de Uso.",
+    "msg7": "Al acceder a este servicio, el usuario tiene que facilitar a greenwork.com los siguientes datos personales: nombre del titular del centro o de los demandantes de espacios, teléfono y dirección de correo electrónico, cuyo tratamiento se desarrollará de conformidad con lo señalado en nuestra Política de Privacidad.",
+    "msg8": "Desde greenwork.es se ofrecen diversos servicios relacionados con el uso de espacios de coworking, incluyendo, sin carácter limitativo, la publicación de anuncios por parte de los usuarios relacionados con su actividad, contactos con anunciantes, etc.",
+    "msg9": "Mediante la aceptación de las presentes Condiciones de Uso, los usuarios manifiestan y garantizan que la información publicada es lícita, veraz y que cuentan con las autorizaciones pertinentes, cuando sean necesarias para dicha publicación. En caso contrario, GREENWORK no se responsabiliza de la licitud o veracidad de la información publicada por los usuarios.",
+    "msg10": "En aquellos supuestos en que un usuario decida libremente contactar con otro usuario, lo hará por su propia cuenta y riesgo, excluyendo a GREENWORK de cualquier responsabilidad derivada de la relación entre ambos usuarios.",
+    "msg11": "El acceso al servicio implica el compromiso del usuario de hacer un uso correcto del mismo, con observancia a las presentes Condiciones de Uso y a la legalidad vigente, así como a los principios de buena fe y orden público. En todo caso, el usuario está obligado a hacer un uso razonable del servicio, según los fines para los que está concebido.",
+    "msg12": "En especial, GREENWORK no podrá ser considerado responsable editorial, para lo cual manifiesta expresamente que no se identifica con ninguna de las opiniones que los usuarios puedan emitir a través del servicio.",
+    "msg13": "Queda expresamente prohibida la difusión de contenidos u opiniones que resulten xenófobos, difamatorios, discriminatorios, sexistas, pornográficos o que, de cualquier modo, resulten contrarios a la legalidad vigente.",
+    "msg14": "Asimismo, queda prohibido alojar, almacenar, divulgar o distribuir cualquier contenido que pueda ser considerado como una vulneración de los derechos fundamentales al honor, imagen e intimidad personal.",
+    "msg15": "También se prohíbe usar el servicio para injuriar, difamar, intimidar, violar la propia imagen o acosar a otros usuarios.",
+    "msg16": "Queda prohibido introducir virus informáticos, archivos defectuosos o alojar, almacenar, distribuir o compartir material o programas informáticos que pueda provocar daños o alteraciones en los contenidos, programas o sistemas de GREENWORK.",
+    "msg17": "Igualmente, está prohibido alojar, almacenar, divulgar, publicar, distribuir o facilitar publicidad no solicitada o no autorizada, correo basura, spam, o comunicaciones similares.",
+    "msg18": "GREENWORK es una marca registrada.",
+    "msg19": "GREENWORK es el titular de todos los derechos de propiedad industrial e intelectual relativos al servicio.",
+    "msg20": "Por las presentes Condiciones de Uso, GREENWORK concede una licencia limitada, revocable y no sub-licenciable para usar el servicio de forma estrictamente personal.",
+    "msg21": "El usuario no podrá explotar comercialmente ninguno de los contenidos de greenwork.com sin la autorización expresa y por escrito de GREENWORK.",
+    "msg22": "Estas Condiciones de Uso se rigen en su totalidad por la legislación española, y para aquellos casos en que la normativa lo permita, las partes se someten voluntariamente a los Juzgados y Tribunales de Ficticias (Barcelona).",
+    "msg23": "El usuario podrá contratar en la web suscripciones y servicios.",
+    "msg24": "Las suscripciones se tratan como pagos recurrentes facturados mensual, trimestral o anualmente, a elección del usuario.",
+    "msg25": "Los servicios se tratan como pagos únicos.",
+    "msg26": "Los pagos podrán realizarse mediante nuestro TPV virtual utilizando las tarjetas VISA y MASTERCARD.",
+    "msg27": "También podrán realizarse en el espacio reservado mediante tarjeta o efectivo.",
+    "msg28": "Una vez realizado el pago, el usuario recibirá una notificación y un comprobante de pago.",
+    "msg29": "Todas las suscripciones recurrentes que no hayan sido abonadas en un plazo de dos días serán anuladas.",
+    "msg30": "El usuario tiene derecho a la devolución del importe de las suscripciones y/o servicios en los términos y en las condiciones siguientes:",
+    "msg31": "1. Las cancelaciones de las suscripciones se pueden realizar 5 días antes de la renovación de la suscripción, de las siguientes formas:",
+    "msg32": "A través del panel de control del usuario, dentro de la web.",
+    "msg33": "Escribiendo un email en el formulario de contacto, con el inicio del mensaje siendo “baja de suscripción”.",
+    "msg34": "2. No se aceptan cancelaciones comunicadas por ninguna otra vía."
   }
 }

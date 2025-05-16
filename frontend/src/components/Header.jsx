@@ -57,7 +57,7 @@ const Header = () => {
               title={t('actions.register')}
               className="nav__button--white"
             >
-              {t('actions.register')}
+              {t('links.register')}
             </Link>
           </li>
           <li>
@@ -66,7 +66,7 @@ const Header = () => {
               title={t('actions.login')}
               className="nav__button"
             >
-              {t('actions.login')}
+              {t('links.login')}
             </Link>
           </li>
         </ul>
