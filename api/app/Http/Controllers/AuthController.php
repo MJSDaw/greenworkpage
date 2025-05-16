@@ -278,7 +278,17 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        // Verificar si el email existe
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => ['email' => ['emailNotExistsError']]
+            ], 401);
+        }
+
+        // Verificar si la contraseña es correcta
+        if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
@@ -331,7 +341,17 @@ class AuthController extends Controller
 
         $admin = \App\Models\Admin::where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        // Verificar si el email de admin existe
+        if (!$admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => ['email' => ['emailNotExistsError']]
+            ], 401);
+        }
+
+        // Verificar si la contraseña de admin es correcta
+        if (!Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
