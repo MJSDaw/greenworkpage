@@ -18,15 +18,13 @@ const Signin = () => {
     termsAndConditions: false,
   })
 
-  // ...existing code...
   const [errors, setErrors] = useState({})
-  // ...existing code...
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : value
     }))
   }
 
@@ -68,7 +66,7 @@ const Signin = () => {
     <main className="login__background">
       <section className="login__container">
         <img
-          className="cheakpeas"
+          className="peas"
           src={donatello}
           alt={t('alt.donatello')}
           title={t('common.donatello')}

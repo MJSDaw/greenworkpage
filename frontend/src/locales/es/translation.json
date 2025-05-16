@@ -21,7 +21,8 @@
   "alt": {
     "logo": "Logo de Greenwork",
     "logoVariant1": "Logo de Greenwork en blanco",
-    "donatello": "Donatello el guisante"
+    "donatello": "Donatello el guisante",
+    "miguelangel": "Miguel Ángel el guisante"
   },
   "common": {
     "github": "Logo de Github",
@@ -29,7 +30,8 @@
     "facebook": "Logo de Facebook",
     "twitter": "Logo de Twitter",
     "linkedin": "Logo de Linkedin",
-    "donatello": "Donatello"
+    "donatello": "Donatello",
+    "miguelangel": "Miguel Ángel"
   },
   "links": {
     "home": "Inicio",
@@ -58,7 +60,7 @@
       "placeholder": "Número de identificación fiscal"
     },
     "email": {
-      "label": "Correo electrónico:",
+      "label": "Correo electrónico",
       "placeholder": "Correo electrónico"
     },
     "password": {
@@ -76,7 +78,8 @@
       }
     },
     "span": {
-      "msg1": "¿Ya tienes una cuenta? "
+      "msg1": "¿Ya tienes una cuenta? ",
+      "msg2": "¿No tienes una cuenta? "
     },
     "submitButton": {
       "text": "Registrarme"
