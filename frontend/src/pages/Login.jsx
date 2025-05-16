@@ -9,7 +9,7 @@ const Login = () => {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   })
 
   const [errors, setErrors] = useState({})
@@ -87,7 +87,7 @@ const Login = () => {
           </div>
           <span className="link__text">
             {t('form.span.msg2')}
-            <Link to="/login" className="form__link">
+            <Link to="/signin" className="form__link">
               {t('actions.register')}
             </Link>
           </span>
