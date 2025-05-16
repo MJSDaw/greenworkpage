@@ -16,13 +16,15 @@
     "goToTerms": "Ver términos y condiciones",
     "goToPrivacy": "Ver política de privacidad",
     "register": "Registrarme",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "menu": "Abrir el menú"
   },
   "alt": {
     "logo": "Logo de Greenwork",
     "logoVariant1": "Logo de Greenwork en blanco",
     "donatello": "Donatello el guisante",
-    "miguelangel": "Miguel Ángel el guisante"
+    "miguelangel": "Miguel Ángel el guisante",
+    "menu": "Menú de navegación"
   },
   "common": {
     "github": "Logo de Github",
@@ -31,7 +33,8 @@
     "twitter": "Logo de Twitter",
     "linkedin": "Logo de Linkedin",
     "donatello": "Donatello",
-    "miguelangel": "Miguel Ángel"
+    "miguelangel": "Miguel Ángel",
+    "menu": "Icono de menú"
   },
   "links": {
     "home": "Inicio",

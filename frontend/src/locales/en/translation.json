@@ -16,13 +16,15 @@
     "goToTerms": "View terms and conditions",
     "goToPrivacy": "View privacy policy",
     "register": "Register me",
-    "login": "Login"
+    "login": "Login",
+    "menu": "Open menu"
   },
   "alt": {
     "logo": "Logo of Greenwork",
     "logoVariant1": "Logo of Greenwork in white",
     "donatello": "Donatello the pea",
-    "miguelangel": "Miguel Ángel the pea"
+    "miguelangel": "Miguel Ángel the pea",
+    "menu": "Navigation menu"
   },
   "common": {
     "github": "Logo of Github",
@@ -31,7 +33,8 @@
     "twitter": "Logo of Twitter",
     "linkedin": "Logo of Linkedin",
     "donatello": "Donatello",
-    "miguelangel": "Miguel Ángel"
+    "miguelangel": "Miguel Ángel",
+    "menu": "Menu icon"
   },
   "links": {
     "home": "Home",
