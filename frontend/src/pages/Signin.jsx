@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import donatello from '../assets/img/donatello.svg'
+import { setAuthToken } from '../services/authService'
 
 const Signin = () => {
   const [formData, setFormData] = useState({
@@ -26,9 +27,7 @@ const Signin = () => {
       ...prevData,
       termsAndConditions: e.target.checked
     }));
-  };
-
-  const handleSubmit = async (e) => {
+  };  const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
@@ -39,9 +38,17 @@ const Signin = () => {
         },
         body: JSON.stringify(formData),
       })
-
-      const data = await response.json()
+        const data = await response.json()
       console.log('Registration response:', data)
+      
+      // Store the token in localStorage if registration was successful
+      if (data && data.success && data.token) {
+        setAuthToken(data.token, data.user)
+        
+        // Redirect
+      } else {
+        console.log('Token not saved. Response data structure:', data)
+      }
     } catch (error) {
       console.error('Registration error:', error)
     }
