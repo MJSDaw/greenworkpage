@@ -21,7 +21,8 @@
   "alt": {
     "logo": "Logo of Greenwork",
     "logoVariant1": "Logo of Greenwork in white",
-    "donatello": "Donatello"
+    "donatello": "Donatello the pea",
+    "miguelangel": "Miguel Ángel the pea"
   },
   "common": {
     "github": "Logo of Github",
@@ -29,7 +30,8 @@
     "facebook": "Logo of Facebook",
     "twitter": "Logo of Twitter",
     "linkedin": "Logo of Linkedin",
-    "donatello": "Donatello the pea"
+    "donatello": "Donatello",
+    "miguelangel": "Miguel Ángel"
   },
   "links": {
     "home": "Home",
@@ -50,8 +52,8 @@
       "placeholder": "Surname"
     },
     "birthday": {
-      "label": "Birthday",
-      "placeholder": "Birthday"
+      "label": "Birthdate",
+      "placeholder": "Birthdate"
     },
     "nif": {
       "label": "NIF",
@@ -76,7 +78,8 @@
       }
     },
     "span": {
-      "msg1": "Already have an account?"
+      "msg1": "Already have an account? ",
+      "msg2": "Don't have an account? "
     },
     "submitButton": {
       "text": "Register"
