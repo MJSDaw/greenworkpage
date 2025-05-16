@@ -1,10 +1,63 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
+import { setAuthToken } from '../services/authService'
 
 const Signin = () => {
   const { t } = useTranslation()
+
+  const [formData, setFormData] = useState({
+    name: '',
+    surname: '',
+    birthdate: '',
+    dni: '',
+    email: '',
+    password: '',
+    password_confirm: '',
+    termsAndConditions: false,
+  })
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
+  }
+
+  const handleTermsChange = (e) => {
+    setFormData(prevData => ({
+      ...prevData,
+      termsAndConditions: e.target.checked
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch('https://localhost:8443/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        const data = await response.json()
+      console.log('Registration response:', data)
+      // Store the token in localStorage if registration was successful
+      if (data && data.success && data.token) {
+        setAuthToken(data.token, data.user)
+        // Redirect
+      } else {
+        console.log('Token not saved. Response data structure:', data)
+      }
+    } catch (error) {
+      console.error('Registration error:', error)
+    }
+  }
+
   return (
     <main className="login__background">
       <section className="login__container">
@@ -15,13 +68,16 @@ const Signin = () => {
           title={t('common.donatello')}
         />
         <h1>{t('actions.register')}</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form__input">
             <label htmlFor="name">{t('form.name.label')}</label>
             <input
               id="name"
               name="name"
               placeholder={t('form.name.placeholder')}
+              value={formData.name}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
@@ -30,22 +86,32 @@ const Signin = () => {
               id="surname"
               name="surname"
               placeholder={t('form.surname.placeholder')}
+              value={formData.surname}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
             <label htmlFor="birthday">{t('form.birthday.label')}</label>
             <input
               id="birthday"
-              name="birthday"
+              name="birthdate"
               placeholder={t('form.birthday.placeholder')}
+              type="date"
+              value={formData.birthdate}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
             <label htmlFor="nif">{t('form.nif.label')}</label>
             <input
               id="nif"
-              name="nif"
+              name="dni"
               placeholder={t('form.nif.placeholder')}
+              value={formData.dni}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
@@ -54,6 +120,9 @@ const Signin = () => {
               id="email"
               name="email"
               placeholder={t('form.email.placeholder')}
+              value={formData.email}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
@@ -61,21 +130,34 @@ const Signin = () => {
             <input
               id="password"
               name="password"
+              type="password"
               placeholder={t('form.password.placeholder')}
+              value={formData.password}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form__input">
-            <label htmlFor="confirmPassword">
-              {t('form.confirmPassword.label')}
-            </label>
+            <label htmlFor="confirmPassword">{t('form.confirmPassword.label')}</label>
             <input
               id="confirmPassword"
-              name="confirmPassword"
+              name="password_confirm"
+              type="password"
               placeholder={t('form.confirmPassword.placeholder')}
+              value={formData.password_confirm}
+              onChange={handleChange}
+              required
             />
           </div>
           <label className="checkbox__label">
-            <input className="checkbox" type="checkbox" />
+            <input
+              className="checkbox"
+              type="checkbox"
+              name="termsAndConditions"
+              checked={formData.termsAndConditions}
+              onChange={handleTermsChange}
+              required
+            />
             <span className="checkbox__text">
               {t('form.checkbox.register.msg1')}
               <Link to="/terms" className="form__checkbox" title={t('actions.goToTerms')}>

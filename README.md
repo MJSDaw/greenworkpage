@@ -161,9 +161,6 @@ docker logs postgres_container
 docker logs pgadmin_container
 ```
 
-<<<<<<< HEAD
-### Problemas comunes y soluciones:
-=======
 ## Gestión de la Base de Datos con pgAdmin
 
 El proyecto incluye pgAdmin, una interfaz gráfica para administrar la base de datos PostgreSQL.
@@ -198,7 +195,6 @@ Para conectar pgAdmin a la base de datos, sigue estos pasos:
 Es fundamental usar `postgres` como nombre del host en la configuración de pgAdmin, ya que este es el nombre del servicio definido en el `docker-compose.yml`. Dentro de la red de Docker, los contenedores se comunican entre sí usando estos nombres de servicio, no mediante "localhost" ni direcciones IP.
 
 Para reiniciar los contenedores:
->>>>>>> 2662c56e3d9f84266efb7fe5de836de6f4463d3c
 
 1. **Error de conexión a la base de datos**:
    - Verifica que el contenedor de PostgreSQL esté funcionando: `docker ps`
