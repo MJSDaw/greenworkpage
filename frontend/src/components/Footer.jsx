@@ -11,8 +11,8 @@ import linkedin from '../assets/img/linkedinLogo.svg'
 const Footer = () => {
   const { t } = useTranslation()
   return (
-    <footer className="footer__container">
-      <section className="footer__container__content">
+    <footer>
+      <section className="footer__content">
         <Link to="/" title={t('actions.goToHomePage')} className="header__logo">
           <img
             className="header__logo__icon"
@@ -21,7 +21,7 @@ const Footer = () => {
             title={t('actions.goToHomePage')}
           />
         </Link>
-        <article className="icons__container">
+        <article className="footer__icons">
           <Link
             to="https://github.com/MJSDaw/greenworkpage"
             title={t('actions.goToGithub')}
@@ -94,7 +94,7 @@ const Footer = () => {
           </Link>
         </article>
       </section>
-      <section className="footer__container__content--variant1">
+      <section className="footer__content--links">
         <Link
           to="/spaces"
           title={t('actions.goToSpaces')}
@@ -118,7 +118,7 @@ const Footer = () => {
           {t('links.contact')}
         </Link>
       </section>
-      <section className="footer__container__content">
+      <section className="footer__content">
         <Link
           to="https://github.com/MJSDaw/greenworkpage"
           title={t('actions.goToGithub')}
@@ -128,7 +128,7 @@ const Footer = () => {
         >
           {t('links.problemSolvers')}
         </Link>
-        <article className="links_container">
+        <article className="footer__content--links">
           <Link
             to="/terms"
             title={t('actions.goToTerms')}
@@ -136,7 +136,7 @@ const Footer = () => {
           >
             {t('links.terms')}
           </Link>
-          <div className="decorator"></div>
+          <div className="footer__decorator"></div>
           <Link
             to="/privacy"
             title={t('actions.goToPrivacy')}

@@ -15,9 +15,10 @@ const Login = () => {
   const [errors, setErrors] = useState({})
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target
+    const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
       ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
     }))
   }
 
@@ -50,7 +51,7 @@ const Login = () => {
 
   return (
     <main className="login__background--login">
-      <section className="login__container">
+      <section className="white__container">
         <img
           className="peas--miguelAngel"
           src={miguelangel}
@@ -59,7 +60,7 @@ const Login = () => {
         />
         <h1>{t('actions.login')}</h1>
         <form onSubmit={handleSubmit}>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="email">{t('form.email.label')}</label>
             <input
               id="email"
@@ -70,7 +71,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="form__input">
+          <div className="form__section">
             <label htmlFor="password">{t('form.password.label')}</label>
             <input
               id="password"
@@ -85,12 +86,10 @@ const Login = () => {
               <span className="form__error">{errors.password_confirm[0]}</span>
             )}
           </div>
-          <span className="link__text">
-            {t('form.span.msg2')}
-            <Link to="/signin" className="form__link">
-              {t('actions.register')}
-            </Link>
-          </span>
+          <Link to="/signin" className="form__span">
+            <span>{t('form.span.msg2')}</span>
+            {t('actions.register')}
+          </Link>
           <input
             type="submit"
             value={t('actions.login')}
