@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
 
 const Header = () => {
+  const { t } = useTranslation()
   const [menuActive, setMenuActive] = useState(false)
 
   const toggleMenu = () => {

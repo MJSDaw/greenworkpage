@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 import logo from '../assets/img/logoVariant1.png'
 import github from '../assets/img/githubLogo.svg'
 import instagram from '../assets/img/instagramLogo.svg'
@@ -8,9 +8,8 @@ import facebook from '../assets/img/facebookLogo.svg'
 import twitter from '../assets/img/twitterLogo.svg'
 import linkedin from '../assets/img/linkedinLogo.svg'
 
-
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <footer className="footer__container">
       <section className="footer__container__content">
@@ -129,7 +128,7 @@ const Footer = () => {
         >
           {t('links.problemSolvers')}
         </Link>
-        <article className='links_container'>
+        <article className="links_container">
           <Link
             to="/terms"
             title={t('actions.goToTerms')}
@@ -137,7 +136,7 @@ const Footer = () => {
           >
             {t('links.terms')}
           </Link>
-          <div className='decorator'></div>
+          <div className="decorator"></div>
           <Link
             to="/privacy"
             title={t('actions.goToPrivacy')}
