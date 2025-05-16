@@ -525,7 +525,7 @@ textarea {
 ========================= */
 
 .terms__background {
-  background-image: url('./assets/img/termsBackground.png');
+  background-image: url('./assets/img/termsBackground.svg');
   background-size: cover;
   background-position: center -50rem;
   background-repeat: no-repeat;
@@ -541,8 +541,8 @@ textarea {
 }
 
 .contact__background {
-  background-image: url('./assets/img/contactUsBackground.png');
-  background-size: 100% 100%;
+  background-image: url('./assets/img/contactUsBackground.svg');
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
