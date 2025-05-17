@@ -83,6 +83,13 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.name &&
+              Array.isArray(errors.name) &&
+              errors.name.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
             <label htmlFor="surname">{t('form.surname.label')}</label>
@@ -94,11 +101,18 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.surname &&
+              Array.isArray(errors.surname) &&
+              errors.surname.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
-            <label htmlFor="birthday">{t('form.birthday.label')}</label>
+            <label htmlFor="birthdate">{t('form.birthday.label')}</label>
             <input
-              id="birthday"
+              id="birthdate"
               name="birthdate"
               placeholder={t('form.birthday.placeholder')}
               type="date"
@@ -106,6 +120,13 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.birthdate &&
+              Array.isArray(errors.birthdate) &&
+              errors.birthdate.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
             <label htmlFor="nif">{t('form.nif.label')}</label>
@@ -117,6 +138,13 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.dni &&
+              Array.isArray(errors.dni) &&
+              errors.dni.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
             <label htmlFor="email">{t('form.email.label')}</label>
@@ -128,6 +156,13 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.email &&
+              Array.isArray(errors.email) &&
+              errors.email.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
             <label htmlFor="password">{t('form.password.label')}</label>
@@ -140,6 +175,13 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
+            {errors.password &&
+              Array.isArray(errors.password) &&
+              errors.password.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
           <div className="form__section">
             <label htmlFor="confirmPassword">
@@ -154,43 +196,55 @@ const Signin = () => {
               onChange={handleChange}
               required
             />
-            {errors.passwordConfirm && (
-              <span className="form__error">{errors.passwordConfirm[0]}</span>
-            )}
+            {errors.confirmPassword &&
+              Array.isArray(errors.confirmPassword) &&
+              errors.confirmPassword.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
           </div>
-          <div className="form__section"></div>
-          <label className="input--checkbox__label">
-            <input
-              className="input--checkbox"
-              type="checkbox"
-              name="termsAndConditions"
-              checked={formData.termsAndConditions}
-              onChange={handleTermsChange}
-              required
-            />
-            <span className="input--checkbox__text">
-              {t('form.checkbox.register.msg1')}
-              <Link
-                to="/terms"
-                className="input--checkbox__text--link"
-                title={t('actions.goToTerms')}
-              >
-                {t('links.terms')}
-              </Link>{' '}
-              {t('form.checkbox.register.msg2')}
-              <Link
-                to="/privacy"
-                className="input--checkbox__text--link"
-                title={t('actions.goToPrivacy')}
-              >
-                {t('links.privacy')}
-              </Link>
-            </span>
-          </label>
-          <Link to="/login" className="form__span">
-            <span>{t('form.span.msg1')}</span>
-            {t('actions.login')}
-          </Link>
+          <div className="form__section">
+            <label className="input--checkbox__label">
+              <input
+                className="input--checkbox"
+                type="checkbox"
+                name="termsAndConditions"
+                checked={formData.termsAndConditions}
+                onChange={handleTermsChange}
+                required
+              />
+              <span className="input--checkbox__text">
+                {t('form.checkbox.register.msg1')}
+                <Link
+                  to="/terms"
+                  className="input--checkbox__text--link"
+                  title={t('actions.goToTerms')}
+                >
+                  {t('links.terms')}
+                </Link>{' '}
+                {t('form.checkbox.register.msg2')}
+                <Link
+                  to="/privacy"
+                  className="input--checkbox__text--link"
+                  title={t('actions.goToPrivacy')}
+                >
+                  {t('links.privacy')}
+                </Link>
+              </span>
+            </label>
+            <Link to="/login" className="form__span">
+              <span>{t('form.span.msg1')}</span>
+              {t('actions.login')}
+            </Link>
+            {errors.termsAndConditions &&
+              Array.isArray(errors.termsAndConditions) &&
+              errors.termsAndConditions.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))}
+          </div>
           <input
             type="submit"
             value={t('actions.register')}

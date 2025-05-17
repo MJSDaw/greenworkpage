@@ -21,10 +21,10 @@ const Login = () => {
 
     }))
   }
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     try {
       const response = await fetch('https://localhost:8443/api/login', {
         method: 'POST',
@@ -35,7 +35,7 @@ const Login = () => {
       })
       const data = await response.json()
       console.log('Login response:', data)
-      
+
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
         // Redirect
@@ -95,6 +95,13 @@ const Login = () => {
             value={t('actions.login')}
             className="form__submit"
           />
+          {/* {errors.confirmPassword &&
+              Array.isArray(errors.confirmPassword) &&
+              errors.confirmPassword.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {t(`errors.${err}`)}
+                </span>
+              ))} */}
         </form>
       </section>
     </main>

@@ -26,6 +26,7 @@
     "groupPeas": "Grupo de guisantes",
     "donatello": "Donatello el guisante",
     "miguelangel": "Miguel Ángel el guisante",
+    "leonardo": "Leonardo el guisante",
     "menu": "Menú de navegación",
     "search": "Icono de búsqueda"
   },
@@ -37,6 +38,7 @@
     "linkedin": "Logo de Linkedin",
     "donatello": "Donatello",
     "miguelangel": "Miguel Ángel",
+    "leonardo": "Leonardo",
     "groupPeas": "Guisantes",
     "menu": "Icono de menú",
     "slogan": "Tu espacio de hoy, tu éxito de mañana",
@@ -75,8 +77,8 @@
       "placeholder": "Fecha de nacimiento"
     },
     "nif": {
-      "label": "NIF",
-      "placeholder": "Número de identificación fiscal"
+      "label": "NIF/NIE",
+      "placeholder": "NIF/NIE"
     },
     "email": {
       "label": "Correo electrónico",
@@ -156,5 +158,50 @@
     "msg32": "A través del panel de control del usuario, dentro de la web.",
     "msg33": "Escribiendo un email en el formulario de contacto, con el inicio del mensaje siendo “baja de suscripción”.",
     "msg34": "2. No se aceptan cancelaciones comunicadas por ninguna otra vía."
+  },
+  "errors": {
+    "nameRequiredError": "El nombre es obligatorio",
+    "nameTypeError": "El nombre no es válido",
+    "nameLengthError": "El nombre excede el número máximo de caracteres permitidos (255)",
+    "nameFormatError": "El nombre no tiene un formato válido",
+    "nameContainsNumbersError": "El nombre no puede contener números",
+    "nameContainsSpecialCharsError": "El nombre no puede contener caracteres especiales no permitidos",
+    "surnameRequiredError": "El apellido es obligatorio",
+    "surnameTypeError": "El apellido no es válido",
+    "surnameLengthError": "El apellido excede el número máximo de caracteres permitidos (255)",
+    "surnameFormatError": "El apellido no tiene un formato válido",
+    "surnameContainsNumbersError": "El apellido no puede contener números",
+    "surnameContainsSpecialCharsError": "El apellido no puede contener caracteres especiales no permitidos",
+    "emailRequiredError": "El correo electrónico es obligatorio",
+    "emailTypeError": "El correo electrónico no es válido",
+    "emailLengthError": "El correo electrónico excede el número máximo de caracteres permitidos (255)",
+    "emailFormatError": "El correo electrónico no tiene un formato válido",
+    "emailDuplicateError": "El correo electrónico ya está en uso",
+    "nifRequiredError": "El NIF/NIE es obligatorio",
+    "nifTypeError": "El NIF/NIE no es válido",
+    "nifLengthError": "El NIF/NIE excede el número máximo de caracteres permitidos (20)",
+    "nifFormatError": "El NIF/NIE no tiene un formato válido",
+    "nifDuplicateError": "El NIF/NIE ya está en uso",
+    "nifTooShortError": "El NIF/NIE es demasiado corto",
+    "birthdateRequiredError": "La fecha de nacimiento es obligatoria",
+    "birthdateTypeError": "La fecha de nacimiento no es válida",
+    "birthdateInvalidError": "La fecha de nacimiento no es válida",
+    "birthdateFormatError": "La fecha de nacimiento no tiene un formato válido",
+    "birthdateAgeError": "No puedes registrarte si eres menor de 13 años",
+    "passwordRequiredError": "La contraseña es obligatoria",
+    "passwordTypeError": "La contraseña no es válida",
+    "passwordMinNumCharsError": "La contraseña debe tener al menos 8 caracteres",
+    "passwordMissingUppercaseCharError": "La contraseña debe contener al menos una letra mayúscula",
+    "passwordMissingLowercaseCharError": "La contraseña debe contener al menos una letra minúscula",
+    "passwordMissingNumberError": "La contraseña debe contener al menos un número",
+    "passwordMissingSpecialCharError": "La contraseña debe contener al menos un carácter especial",
+    "passwordComplexityError": "La contraseña no cumple con los requisitos de complejidad",
+    "passwordConfirmRequiredError": "La confirmación de la contraseña es obligatoria",
+    "passwordMismatchError": "Las contraseñas no coinciden",
+    "termsRequiredError": "Debes aceptar los términos y condiciones",
+    "termsTypeError": "Los términos y condiciones no son válidos",
+    "termsNotAcceptedError": "Debes aceptar los términos y condiciones",
+    "invalidCredentialsError": "Credenciales inválidas",
+    "invalidAdminCredentialsError": "Credenciales de administrador inválidas"
   }
 }

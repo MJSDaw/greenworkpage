@@ -25,6 +25,7 @@
     "logoVariant1": "Logo of Greenwork in white",
     "donatello": "Donatello the pea",
     "miguelangel": "Miguel Ángel the pea",
+    "leonardo": "Leonardo the pea",
     "groupPeas": "Group of peas",
     "menu": "Navigation menu",
     "search": "Search icon"
@@ -37,6 +38,7 @@
     "linkedin": "Logo of Linkedin",
     "donatello": "Donatello",
     "miguelangel": "Miguel Ángel",
+    "leonardo": "Leonardo",
     "groupPeas": "Peas",
     "menu": "Menu icon",
     "slogan": "Your space today, your success tomorrow",
@@ -75,8 +77,8 @@
       "placeholder": "Birthdate"
     },
     "nif": {
-      "label": "NIF",
-      "placeholder": "NIF"
+      "label": "NIF/NIE",
+      "placeholder": "NIF/NIE"
     },
     "email": {
       "label": "Email",
@@ -156,5 +158,50 @@
     "msg32": "Through the user's control panel, within the website.",
     "msg33": "By writing an email in the contact form, starting the message with “subscription cancellation”.",
     "msg34": "2. Cancellations communicated by any other means are not accepted."
+  },
+  "errors": {
+    "nameRequiredError": "Name is required",
+    "nameTypeError": "Name is not valid",
+    "nameLengthError": "Name exceeds the maximum allowed number of characters (255)",
+    "nameFormatError": "Name does not have a valid format",
+    "nameContainsNumbersError": "Name cannot contain numbers",
+    "nameContainsSpecialCharsError": "Name cannot contain non-allowed special characters",
+    "surnameRequiredError": "Surname is required",
+    "surnameTypeError": "Surname is not valid",
+    "surnameLengthError": "Surname exceeds the maximum allowed number of characters (255)",
+    "surnameFormatError": "Surname does not have a valid format",
+    "surnameContainsNumbersError": "Surname cannot contain numbers",
+    "surnameContainsSpecialCharsError": "Surname cannot contain non-allowed special characters",
+    "emailRequiredError": "Email is required",
+    "emailTypeError": "Email is not valid",
+    "emailLengthError": "Email exceeds the maximum allowed number of characters (255)",
+    "emailFormatError": "Email does not have a valid format",
+    "emailDuplicateError": "Email is already in use",
+    "nifRequiredError": "NIF/NIE is required",
+    "nifTypeError": "NIF/NIE is not valid",
+    "nifLengthError": "NIF/NIE exceeds the maximum allowed number of characters (20)",
+    "nifFormatError": "NIF/NIE does not have a valid format",
+    "nifDuplicateError": "NIF/NIE is already in use",
+    "nifTooShortError": "NIF/NIE is too short",
+    "birthdateRequiredError": "Birthdate is required",
+    "birthdateTypeError": "Birthdate is not valid",
+    "birthdateInvalidError": "Birthdate is not valid",
+    "birthdateFormatError": "Birthdate does not have a valid format",
+    "birthdateAgeError": "Registration is not allowed for users under 13 years old",
+    "passwordRequiredError": "Password is required",
+    "passwordTypeError": "Password is not valid",
+    "passwordMinNumCharsError": "Password must have at least 8 characters",
+    "passwordMissingUppercaseCharError": "Password must contain at least one uppercase letter",
+    "passwordMissingLowercaseCharError": "Password must contain at least one lowercase letter",
+    "passwordMissingNumberError": "Password must contain at least one number",
+    "passwordMissingSpecialCharError": "Password must contain at least one special character",
+    "passwordComplexityError": "Password does not meet complexity requirements",
+    "passwordConfirmRequiredError": "Password confirmation is required",
+    "passwordMismatchError": "Passwords do not match",
+    "termsRequiredError": "You must accept the terms and conditions",
+    "termsTypeError": "Terms and conditions are not valid",
+    "termsNotAcceptedError": "You must accept the terms and conditions",
+    "invalidCredentialsError": "Invalid credentials",
+    "invalidAdminCredentialsError": "Invalid admin credentials"
   }
 }

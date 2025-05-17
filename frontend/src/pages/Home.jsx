@@ -38,12 +38,12 @@ const Home = () => {
                 <button
                   type="submit"
                   className="icon--soft"
-                  title={t('actions.search')}
                 >
                   <img
                     src={search}
                     alt={t('alt.search')}
                     className="icon__svg"
+                    title={t('actions.search')}
                   />
                 </button>
               </div>
