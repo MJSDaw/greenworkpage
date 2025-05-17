@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 import pruebas from '../assets/img/pruebas.webp'
 import pruebas2 from '../assets/img/pruebas2.webp'
+import leonardo from '../assets/img/leonardo.svg'
 
 const Terms = () => {
   const { t } = useTranslation()
@@ -140,6 +141,12 @@ const Terms = () => {
               />
             </form>
           </section>
+          <img
+            src={leonardo}
+            alt={t('alt.leonardo')}
+            title={t('common.leonardo')}
+            className="leonardo--overForm"
+          />
         </article>
       </section>
     </>
