@@ -113,10 +113,11 @@
     "span": {
       "msg1": "Already have an account? ",
       "msg2": "Don't have an account? "
-    },
-    "submitButton": {
+    },    "submitButton": {
       "text": "Register"
-    }
+    },
+    "submitting": "Sending...",
+    "success": "Your message has been sent successfully. We will contact you as soon as possible."
   },
   "terms": {
     "title1": "Introduction",

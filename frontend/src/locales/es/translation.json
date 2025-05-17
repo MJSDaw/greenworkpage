@@ -114,10 +114,11 @@
     "span": {
       "msg1": "¿Ya tienes una cuenta? ",
       "msg2": "¿No tienes una cuenta? "
-    },
-    "submitButton": {
+    },    "submitButton": {
       "text": "Registrarme"
-    }
+    },
+    "submitting": "Enviando...",
+    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible."
   },
   "terms": {
     "title1": "Introducción",

@@ -98,3 +98,30 @@ export const deleteResource = async (id) => {
     throw error;
   }
 };
+
+/**
+ * Create a new contact (public endpoint - no auth required)
+ * @param {object} contactData - Contact information (name, email, termsAndConditions)
+ * @returns {Promise} The API response
+ */
+export const createContact = async (contactData) => {
+  try {
+    const response = await fetch('https://localhost:8443/api/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(contactData)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.errors ? JSON.stringify(errorData.errors) : 'Failed to create contact');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating contact:', error);
+    throw error;
+  }
+};
