@@ -48,7 +48,7 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]/',
             ],
             'passwordConfirm' => 'required|same:password',
             'termsAndConditions' => 'required|boolean|accepted',
@@ -180,7 +180,7 @@ class AuthController extends Controller
                     }
                     
                     // Check special characters
-                    if (!preg_match('/[@$!%*?&]/', $password)) {
+                    if (!preg_match('/[@$!%*?&.]/', $password)) {
                         $passwordErrors[] = 'passwordMissingSpecialCharError';
                     }
                 }
@@ -478,7 +478,7 @@ class AuthController extends Controller
                 }
                 
                 // Check special characters
-                if (!preg_match('/[@$!%*?&]/', $password)) {
+                if (!preg_match('/[@$!%*?&.]/', $password)) {
                     return 'passwordMissingSpecialCharError';
                 }
                 
