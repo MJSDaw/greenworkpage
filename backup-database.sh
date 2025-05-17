@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # Variables configuration
 BACKUP_DIR="/backups"
@@ -9,10 +9,20 @@ BACKUP_FILE="$BACKUP_DIR/greenworkdb_backup_$TIMESTAMP.sql"
 mkdir -p $BACKUP_DIR
 
 # Backup the database
-pg_dump -h postgres -U greenworkAdmin -d greenworkdb -F p > $BACKUP_FILE
+echo "Starting backup at $(date)"
+PGPASSWORD=${PGPASSWORD} pg_dump -h postgres -U greenworkAdmin -d greenworkdb -F p > $BACKUP_FILE
+if [ $? -ne 0 ]; then
+    echo "Error: Database backup failed!"
+    exit 1
+fi
 
 # Zip the backup file
+echo "Compressing backup file..."
 gzip $BACKUP_FILE
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to compress backup file!"
+    exit 1
+fi
 
 echo "Backup completed: ${BACKUP_FILE}.gz"
 

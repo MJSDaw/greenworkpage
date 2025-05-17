@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # verify that the script is run with correct arguments
 if [ "$#" -ne 1 ]; then
