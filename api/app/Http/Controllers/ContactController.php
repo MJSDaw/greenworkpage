@@ -27,6 +27,7 @@ class ContactController extends Controller
      */    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:contacts',
             'termsAndConditions' => 'required|boolean|accepted',
         ]);        if ($validator->fails()) {
@@ -41,6 +42,7 @@ class ContactController extends Controller
         }
 
         $contact = Contact::create([
+            'name' => $request->name,
             'email' => $request->email,
             'termsAndConditions' => $request->termsAndConditions,
         ]);
