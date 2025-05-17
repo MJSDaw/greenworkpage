@@ -95,13 +95,13 @@ const Login = () => {
             value={t('actions.login')}
             className="form__submit"
           />
-          {/* {errors.confirmPassword &&
-              Array.isArray(errors.confirmPassword) &&
-              errors.confirmPassword.map((err, idx) => (
+          {errors.auth &&
+              Array.isArray(errors.auth) &&
+              errors.auth.map((err, idx) => (
                 <span className="form__error" key={idx}>
                   {t(`errors.${err}`)}
                 </span>
-              ))} */}
+              ))}
         </form>
       </section>
     </main>
