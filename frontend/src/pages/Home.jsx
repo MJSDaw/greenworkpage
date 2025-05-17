@@ -1,5 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import ContactUs from '../components/ContactUs'
 
 import search from '../assets/img/search.svg'
 import groupPeas from '../assets/img/groupPeas.png'
@@ -57,9 +58,7 @@ const Home = () => {
           <h2>{t('common.ourSpaces')}</h2>
         </section>
       </section>
-      <section>
-        <h2>{t('common.contactUs')}</h2>
-      </section>
+      <ContactUs />
     </main>
   )
 }

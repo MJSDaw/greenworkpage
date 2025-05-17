@@ -1,13 +1,13 @@
 import React from 'react'
 import ContactUs from '../components/ContactUs'
 
-const Spaces = () => {
+const Space = () => {
   return (
     <div>
-      <h1>SPACES</h1>
+      <h1>SPACE</h1>
       <ContactUs />
     </div>
   )
 }
 
-export default Spaces
+export default Space
