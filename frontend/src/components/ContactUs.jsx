@@ -30,10 +30,10 @@ const ContactUs = () => {
     setIsSubmitting(true)
     setSubmitError(null)
     
-    try {
-      await createContact({
+    try {      await createContact({
         name: formData.name,
         email: formData.email,
+        message: formData.message,
         termsAndConditions: formData.termsAndConditions
       })
       
