@@ -12,6 +12,8 @@
   --color2: #378B47;
   --color3: #8ED29B;
   --color4: #fff;
+  --error0: #1C4969;
+  --error1: #64AADB;
 
   --shadow__dark: rgba(28, 70, 36, 0.75);
   --shadow__light: rgba(28, 70, 36, 0.25);
@@ -90,7 +92,7 @@ button, a, label, .form__submit {
   font-weight: bold;
 }
 
-button, .form__submit, .nav__link, .nav__link:hover, .nav__button, .nav__button--white {
+button, .form__submit, .nav__link, .nav__link:hover, .nav__button, .nav__button--white, .form__error{
   display: flex;
   align-self: center;
   padding: 1.2rem 1.5rem;
@@ -312,7 +314,6 @@ textarea {
   position: relative;
   display: inline-block;
   transition: background-color 0.3s ease, border-radius 0.3s ease;
-  margin-right: 1rem;
 }
 
 .input--checkbox:checked {
@@ -350,6 +351,12 @@ textarea {
 
 .input--checkbox__text--link, .form__span {
   text-decoration: underline;
+}
+
+.form__error {
+  color: var(--color0);
+  background-color: var(--error1);
+  width: 100%;
 }
 
 /* Span */
