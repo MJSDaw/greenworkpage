@@ -215,15 +215,25 @@ textarea {
   max-width: 100%;
   margin: 2rem auto;
   box-sizing: border-box;
+  position: relative;
 }
 
-.white__container--contact img,
+.white__container--contact > img:not(.leonardo--overForm),
 .white__container--contact section.white__container {
   width: 100%;
   object-fit: cover;
   border-radius: 1.5rem;
   display: block;
   box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
+}
+
+.leonardo--overForm {
+  position: absolute;
+  right: -12rem;
+  bottom: -10rem;
+  width: 30rem;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .white__container--contact img:nth-child(1) {
@@ -698,6 +708,13 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .leonardo--overForm {
+    right: 0rem;
+    top: -9rem;
+    width: 20rem !important;
+    box-shadow: none !important;
   }
 
   /* Home */
