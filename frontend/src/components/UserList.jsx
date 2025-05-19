@@ -1,77 +1,123 @@
-import React, { useState } from 'react'
-import { data, Link } from 'react-router-dom'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import donatello from '../assets/img/donatello.svg'
+import { Link } from 'react-router-dom'
 import { setAuthToken } from '../services/authService'
 
-const Signin = () => {
+import leonardo from '../assets/img/leonardo.svg'
+
+const UserList = () => {
   const { t } = useTranslation()
-
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    birthdate: '',
-    dni: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-    termsAndConditions: false,
-  })
+      name: '',
+      surname: '',
+      birthdate: '',
+      dni: '',
+      email: '',
+      password: '',
+      passwordConfirm: '',
+      termsAndConditions: false,
+    })
 
-  const [errors, setErrors] = useState({})
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
-  }
-
-  const handleTermsChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      termsAndConditions: e.target.checked,
-    }))
-  }
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
-      console.log('Registration response:', data)
-
-      if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user)
-        setErrors({})
-        window.location.href = '/'
-      } else {
-        setErrors(data.errors || {})
-        console.log('Token not saved. Response data structure:', data)
-      }
-    } catch (error) {
-      console.error('Registration error:', error)
+  const [showForm, setShowForm] = useState(false);
+  const [showList, setShowList] = useState(true); // Mostrar lista por defecto
+  
+    const [errors, setErrors] = useState({})
+  
+    const handleChange = (e) => {
+      const { name, value, type, checked } = e.target
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === 'checkbox' ? checked : value,
+      }))
     }
-  }
+  
+    const handleTermsChange = (e) => {
+      setFormData((prevData) => ({
+        ...prevData,
+        termsAndConditions: e.target.checked,
+      }))
+    }
+
+    const handleSubmit = async (e) => {
+      e.preventDefault()
+  
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+        const data = await response.json()
+        console.log('Registration response:', data)
+  
+        if (data && data.success && data.token) {
+          setAuthToken(data.token, data.user)
+          setErrors({})
+          window.location.href = '/'
+        } else {
+          setErrors(data.errors || {})
+          console.log('Token not saved. Response data structure:', data)
+        }
+      } catch (error) {
+        console.error('Registration error:', error)
+      }
+    }
+
+    const handleShowForm = () => {
+      setShowForm(true);
+      setShowList(false);
+    };
+  
+    const handleShowList = () => {
+      setShowForm(false);
+      setShowList(true);
+    };
+  
 
   return (
-    <main className="register__background">
-      <section className="white__container">
-        <img
-          className="peas--donatello"
-          src={donatello}
-          alt={t('alt.donatello')}
-          title={t('common.donatello')}
-        />
-        <h1>{t('actions.register')}</h1>
-        <form onSubmit={handleSubmit}>
+    <>
+      <h3>Usuarios</h3>
+
+      <div className="user__buttons">
+        <button 
+          className="form__submit --noArrow" 
+          onClick={handleShowList}
+        >
+          Ver usuarios
+        </button>
+        <button 
+          className="form__submit --noArrow" 
+          onClick={handleShowForm}
+        >
+          Crear usuario
+        </button>
+      </div>
+
+      {showList && (
+        <section className="card__container">
+          <article className="card">
+            <div className="card__content">
+              <img src={leonardo} alt="" title="" className='card__img'/>
+              <div className='card__text'>
+                <p>Nombre</p>
+                <p>Correo</p>
+              </div>
+            </div>
+            <div className='card__buttons'>
+              <button className="form__submit --noArrow">Editar</button>
+              <button className="form__submit --noArrow">Eliminar</button>
+            </div>
+          </article>
+        </section>
+      )}
+
+
+    {showForm && (
+      <section className="card__container--form">
+        <article className="card--form">
+          <form onSubmit={handleSubmit}>
           <div className="form__section">
             <label htmlFor="name">{t('form.name.label')}</label>
             <input
@@ -232,10 +278,6 @@ const Signin = () => {
                 </Link>
               </span>
             </label>
-            <Link to="/login" className="form__span">
-              <span>{t('form.span.msg1')}</span>
-              {t('actions.login')}
-            </Link>
             {errors.termsAndConditions &&
               Array.isArray(errors.termsAndConditions) &&
               errors.termsAndConditions.map((err, idx) => (
@@ -246,13 +288,15 @@ const Signin = () => {
           </div>
           <input
             type="submit"
-            value={t('actions.register')}
+            value='Crear usuario'
             className="form__submit"
           />
         </form>
+        </article>
       </section>
-    </main>
+    )}
+    </>
   )
 }
 
-export default Signin
+export default UserList

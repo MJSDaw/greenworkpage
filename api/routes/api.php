@@ -26,6 +26,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('admin/login', [AuthController::class, 'adminLogin']);
 
+// Public routes for contacts
+Route::post('contacts', [ContactController::class, 'store']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
@@ -41,8 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('reservations', [ReservationController::class, 'index']);
     Route::post('reservations', [ReservationController::class, 'store']);
     
-    // Public routes for contacts
-    Route::post('contacts', [ContactController::class, 'store']);
+    // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);
 });
 

@@ -21,12 +21,11 @@ const Login = () => {
 
     }))
   }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
-      const response = await fetch('https://localhost:8443/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,11 +37,11 @@ const Login = () => {
 
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        // Redirect
         setErrors({})
+        console.log('Token saved:', data.token)
+        window.location.href = '/'
       } else {
         setErrors(data.errors || {})
-        console.log('Token not saved. Response data structure:', data)
       }
     } catch (error) {
       console.error('Login error:', error)

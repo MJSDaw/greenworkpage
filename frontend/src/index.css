@@ -622,6 +622,171 @@ textarea {
 }
 
 /* =========================
+  USER / ADMIN
+========================= */
+
+.user__background {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('./assets/img/backgroundHome.svg');
+  background-size: cover;
+  background-position: top 55% center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 30vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  padding: 12rem 20rem 0 20rem;
+  min-height: fit-content;
+  gap: 4rem;
+  margin-bottom: 3rem;
+}
+
+.user__section, .user__section--part  {
+  display: flex;
+  width: 100%;
+}
+
+.user__section {
+  align-items: center;
+}
+
+.user__img {
+  display: flex;
+  justify-self: left;
+  align-self: center;
+  height: 20rem;
+  width: 20rem;
+  border-radius: 100%;
+  border: 5px solid var(--color1);
+  background-color: var(--color4);
+  margin-right: 3rem;
+}
+
+.user__section--part {
+  flex-direction: column;
+  padding: 0 20rem 3rem 20rem;
+}
+
+.user__section--part:last-child {
+  padding: 0 20rem 12rem 20rem;
+}
+
+.user__buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  gap: 3rem;
+}
+
+.dropdown__container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 
+    max-height 0.5s ease-in-out, 
+    opacity 0.3s ease-in-out;
+  margin-bottom: 0.5rem;
+}
+
+.dropdown__container.open {
+  min-height: fit-content;
+  max-height: fit-content;
+  opacity: 1;
+}
+
+.form__submit.active {
+  background-color: var(--color2);
+  color: var(--color0);
+  position: relative;
+  margin-bottom: 0;
+}
+
+.card__container, .card__container--form {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem 0 1rem 0;
+  background-color: var(--color3);
+  gap: 3rem;
+  padding: 3rem 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
+}
+
+.card__container--form {
+  width: fit-content;
+  justify-self: center;
+}
+
+.card, .card--form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color4);
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__light);
+  margin: 0 3rem;
+  padding: 1rem 3rem;
+  justify-content: space-between;
+}
+
+.card--form {
+  flex-direction: column;
+  padding: 6rem;
+  width: fit-content;
+}
+
+.card__content {
+  display: flex;
+  align-items: center;
+}
+
+.card__img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 100%;
+  border: 3px solid var(--color1);
+  margin-right: 3rem;
+}
+
+.card__buttons {
+  display: flex;
+  gap: 3rem;
+}
+
+/* Flecha SOLO para botones con clase .active */
+.form__submit.active::after,
+.form__submit:not(.--noArrow):not(.active)::after {
+  content: "";
+  display: inline-block;
+  margin-left: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("./assets/img/arrow.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Rotación cuando está activo */
+.form__submit.active::after {
+  transform: rotate(180deg);
+}
+
+/* Estado inicial (flecha hacia abajo) */
+.form__submit:not(.--noArrow):not(.active)::after {
+  transform: rotate(0deg);
+}
+
+/* EXCEPCIÓN: Botón sin flecha */
+.form__submit.--noArrow::after {
+  display: none !important;
+}
+
+/* =========================
   TERMS AND CONDITIONS
 ========================= */
 
