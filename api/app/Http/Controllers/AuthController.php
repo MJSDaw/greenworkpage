@@ -129,7 +129,7 @@ class AuthController extends Controller
                     
                     // Format: 8 digits + 1 letter
                     if (!preg_match('/^[0-9]{8}[A-Za-z]$/', $dni)) {
-                        // Format: X + 7 digits + 1 letter
+                        // Format: X, Y, Z + 7 digits + 1 letter
                         if (!preg_match('/^[XYZ][0-9]{7}[A-Za-z]$/', $dni) && !preg_match('/^[XYZ][0-9]{7}$/', $dni)) {
                             $dniErrors[] = 'nifFormatError';
                         }
