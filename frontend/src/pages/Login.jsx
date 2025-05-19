@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import miguelangel from '../assets/img/miguelAngel.svg'
-import { setAuthToken } from '../services/authService'
+import { setAuthToken, isAuthenticated, getUserType } from '../services/authService'
 
 const Login = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -14,6 +15,12 @@ const Login = () => {
 
   const [errors, setErrors] = useState({})
   
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/"); 
+    }
+  }, [navigate])
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
@@ -21,7 +28,7 @@ const Login = () => {
       [name]: value
     }))
   }
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -35,7 +42,7 @@ const Login = () => {
       })
       const data = await response.json()
       console.log('Login response:', data)
-        if (data && data.success && data.token) {
+      if (data && data.success && data.token) {
         setAuthToken(data.token, data.user, data.user_type)
         setErrors({})
         console.log('Token saved:', data.token)
