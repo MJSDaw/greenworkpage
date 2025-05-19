@@ -50,21 +50,21 @@ class ContactController extends Controller
             'termsAndConditions' => $request->termsAndConditions,
         ]);
 
-        // Envía el correo de notificación
+        // Send mail
         try {
-            // Intenta crear un archivo de log para debug
+            // Create a debug file
             $logPath = storage_path('logs/mail_debug.log');
             file_put_contents($logPath, date('Y-m-d H:i:s') . " - Intentando enviar correo a: info.greenworksagaseta@gmail.com\n", FILE_APPEND);
             file_put_contents($logPath, date('Y-m-d H:i:s') . " - Datos: " . json_encode($request->all()) . "\n", FILE_APPEND);
             
-            // Enviamos el correo usando directamente el método sendWithPythonMailer
+            // send mail using sendWithPythonMailer
             $mail = new ContactNotification($contact, $request->message);
             $result = $mail->sendWithPythonMailer();
             
-            // Registramos el resultado
+            // Save the result
             file_put_contents($logPath, date('Y-m-d H:i:s') . " - Correo enviado con Python: " . json_encode($result) . "\n", FILE_APPEND);
         } catch (\Exception $e) {
-            // Registra el error pero permite que la API siga funcionando
+            // Save the error message
             $errorMessage = 'Error al enviar el correo: ' . $e->getMessage() . "\n" . $e->getTraceAsString();
             file_put_contents(storage_path('logs/mail_error.log'), date('Y-m-d H:i:s') . " - $errorMessage\n", FILE_APPEND);
         }
