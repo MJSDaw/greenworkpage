@@ -30,7 +30,7 @@ class ContactController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:contacts',
+            'email' => 'required|email',
             'termsAndConditions' => 'required|boolean|accepted',
             'message' => 'nullable|string',
         ]);        if ($validator->fails()) {
@@ -41,6 +41,17 @@ class ContactController extends Controller
         if ($request->termsAndConditions !== true) {
             return response()->json([
                 'errors' => ['termsAndConditions' => ['You must accept the terms and conditions.']]
+            ], 422);
+        }
+
+        // Check if there's a contact with the same email in the last 24 hours
+        $recentContact = Contact::where('email', $request->email)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->first();
+
+        if ($recentContact) {
+            return response()->json([
+                'errors' => ['email' => ['wait24Hours']]
             ], 422);
         }
 
