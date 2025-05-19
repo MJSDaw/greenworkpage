@@ -12,11 +12,52 @@ class ReservationController extends Controller
     /**
      * Display a listing of the reservations.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reservations = Reservation::with(['user', 'space'])->get();
+        $query = Reservation::with(['user', 'space']);
+        
+        // Filter by user_id
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        
+        // Filter by space_id
+        if ($request->has('space_id')) {
+            $query->where('space_id', $request->space_id);
+        }
+        
+        // Filter by date range (start_date or end_date)
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $query->filterByDateRange($request->start_date, $request->end_date);
+        }
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'created_at');
+        $orderDirection = $request->input('order_direction', 'desc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'created_at';
+        }
+        
+        // Validate order direction
+        $orderDirection = strtolower($orderDirection) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        if ($orderBy === 'reservation_period') {
+            // Order by the start date portion of reservation_period
+            $query->orderByRaw("SUBSTRING_INDEX(reservation_period, '|', 1) $orderDirection");
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
+        }
+        
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $reservations = $query->paginate($perPage);
         
         return response()->json([
             'success' => true,
@@ -74,5 +115,101 @@ class ReservationController extends Controller
             'message' => 'Reservation created successfully',
             'data' => $reservation
         ], 201);
+    }
+
+    /**
+     * Get reservations for the authenticated user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function myReservations(Request $request)
+    {
+        $query = Reservation::with(['space'])
+            ->where('user_id', Auth::id());
+        
+        // Filter by space_id if provided
+        if ($request->has('space_id')) {
+            $query->where('space_id', $request->space_id);
+        }
+        
+        // Filter by date range
+        $query->filterByDateRange($request->start_date, $request->end_date);
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'reservation_period');
+        $orderDirection = $request->input('order_direction', 'asc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'reservation_period';
+        }
+        
+        // Validate order direction
+        $orderDirection = strtolower($orderDirection) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        if ($orderBy === 'reservation_period') {
+            // Order by the start date portion of reservation_period
+            $query->orderByRaw("SUBSTRING_INDEX(reservation_period, '|', 1) $orderDirection");
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
+        }
+        
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $reservations = $query->paginate($perPage);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $reservations
+        ]);
+    }
+    
+    /**
+     * Get reservations for a specific space.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $spaceId
+     * @return \Illuminate\Http\Response
+     */
+    public function spaceReservations(Request $request, $spaceId)
+    {
+        $query = Reservation::with(['user'])
+            ->where('space_id', $spaceId);
+            
+        // Filter by date range
+        $query->filterByDateRange($request->start_date, $request->end_date);
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'reservation_period');
+        $orderDirection = $request->input('order_direction', 'asc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'reservation_period';
+        }
+        
+        // Validate order direction
+        $orderDirection = strtolower($orderDirection) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        if ($orderBy === 'reservation_period') {
+            // Order by the start date portion of reservation_period
+            $query->orderByRaw("SUBSTRING_INDEX(reservation_period, '|', 1) $orderDirection");
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
+        }
+        
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $reservations = $query->paginate($perPage);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $reservations
+        ]);
     }
 }
