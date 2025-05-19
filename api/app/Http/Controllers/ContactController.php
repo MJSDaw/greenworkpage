@@ -44,6 +44,17 @@ class ContactController extends Controller
             ], 422);
         }
 
+        // Check if there's a contact with the same email in the last 24 hours
+        $recentContact = Contact::where('email', $request->email)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->first();
+
+        if ($recentContact) {
+            return response()->json([
+                'errors' => ['email' => ['wait24Hours']]
+            ], 422);
+        }
+
         $contact = Contact::create([
             'name' => $request->name,
             'email' => $request->email,
