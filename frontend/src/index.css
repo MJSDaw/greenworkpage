@@ -597,6 +597,7 @@ textarea {
   justify-content: left;
   gap: 3rem;
 }
+
 .dropdown__container {
   max-height: 0;
   opacity: 0;
@@ -608,6 +609,7 @@ textarea {
 }
 
 .dropdown__container.open {
+  min-height: fit-content;
   max-height: fit-content;
   opacity: 1;
 }
@@ -617,6 +619,58 @@ textarea {
   color: var(--color0);
   position: relative;
   margin-bottom: 0;
+}
+
+.card__container, .card__container--form {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem 0 1rem 0;
+  background-color: var(--color3);
+  gap: 3rem;
+  padding: 3rem 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
+}
+
+.card__container--form {
+  width: fit-content;
+  justify-self: center;
+}
+
+.card, .card--form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color4);
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__light);
+  margin: 0 3rem;
+  padding: 1rem 3rem;
+  justify-content: space-between;
+}
+
+.card--form {
+  flex-direction: column;
+  padding: 6rem;
+  width: fit-content;
+}
+
+.card__content {
+  display: flex;
+  align-items: center;
+}
+
+.card__img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 100%;
+  border: 3px solid var(--color1);
+  margin-right: 3rem;
+}
+
+.card__buttons {
+  display: flex;
+  gap: 3rem;
 }
 
 /* Flecha SOLO para botones con clase .active */
@@ -631,7 +685,6 @@ textarea {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  transition: transform 0.3s ease;
 }
 
 /* Rotación cuando está activo */
