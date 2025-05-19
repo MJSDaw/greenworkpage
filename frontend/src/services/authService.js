@@ -8,11 +8,15 @@
  * Set the authentication token in localStorage
  * @param {string} token - The authentication token
  * @param {object} userData - The user data
+ * @param {string} userType - The user type (user or admin)
  */
-export const setAuthToken = (token, userData = null) => {
+export const setAuthToken = (token, userData = null, userType = null) => {
   localStorage.setItem('authToken', token);
   if (userData) {
     localStorage.setItem('userData', JSON.stringify(userData));
+  }
+  if (userType) {
+    localStorage.setItem('user_type', userType);
   }
 };
 
@@ -34,11 +38,20 @@ export const getUserData = () => {
 };
 
 /**
+ * Get the user type from localStorage
+ * @returns {string|null} The user type or null if not found
+ */
+export const getUserType = () => {
+  return localStorage.getItem('user_type');
+};
+
+/**
  * Remove the authentication token from localStorage
  */
 export const removeAuthToken = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('userData');
+  localStorage.removeItem('user_type');
 };
 
 /**

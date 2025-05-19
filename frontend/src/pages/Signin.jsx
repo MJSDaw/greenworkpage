@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { data, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
 import { setAuthToken } from '../services/authService'
@@ -34,6 +34,7 @@ const Signin = () => {
       termsAndConditions: e.target.checked,
     }))
   }
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -49,9 +50,9 @@ const Signin = () => {
       console.log('Registration response:', data)
 
       if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user)
+        setAuthToken(data.token, data.user, 'user') // Al registrar, siempre es un usuario normal
         setErrors({})
-        window.location.href = '/'
+        window.location.href = '/user' // Redirigir directamente al dashboard de usuario
       } else {
         setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)

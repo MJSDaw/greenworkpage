@@ -13,14 +13,15 @@ const Login = () => {
   })
 
   const [errors, setErrors] = useState({})
+  
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
-
     }))
   }
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -34,12 +35,16 @@ const Login = () => {
       })
       const data = await response.json()
       console.log('Login response:', data)
-
-      if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user)
+        if (data && data.success && data.token) {
+        setAuthToken(data.token, data.user, data.user_type)
         setErrors({})
         console.log('Token saved:', data.token)
-        window.location.href = '/'
+        console.log('User type:', data.user_type)        // Redirect based on user type
+        if (data.user_type === 'admin') {
+          window.location.href = '/admin'
+        } else {
+          window.location.href = '/' // Redirección a home para usuarios normales
+        }
       } else {
         setErrors(data.errors || {})
       }
