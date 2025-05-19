@@ -28,7 +28,10 @@
     "miguelangel": "Miguel Ángel el guisante",
     "leonardo": "Leonardo el guisante",
     "menu": "Menú de navegación",
-    "search": "Icono de búsqueda"
+    "search": "Icono de búsqueda",
+    "greenwork1": "Greenwork 1",
+    "greenwork2": "Greenwork 2",
+    "greenwork3": "Greenwork 3"
   },
   "common": {
     "github": "Logo de Github",
@@ -51,7 +54,10 @@
       "title": "¿Tienes dudas? Estamos para ayudarte",
       "msg1": "Nuestro equipo de soporte te responderá lo antes posible.",
       "msg2": "En GreenWork valoramos tu tiempo y estamos comprometidos con darte una solución rápida y clara."
-    }
+    },
+    "greenwork1": "Greenwork sofa",
+    "greenwork2": "Greenwork pared",
+    "greenwork3": "Greenwork pantalla"
   },
   "links": {
     "home": "Inicio",
