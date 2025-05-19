@@ -558,6 +558,7 @@ textarea {
   padding: 12rem 20rem 0 20rem;
   min-height: fit-content;
   gap: 4rem;
+  margin-bottom: 3rem;
 }
 
 .user__section, .user__section--part  {
@@ -583,7 +584,11 @@ textarea {
 
 .user__section--part {
   flex-direction: column;
-  padding: 6rem 20rem 0 20rem;
+  padding: 0 20rem 3rem 20rem;
+}
+
+.user__section--part:last-child {
+  padding: 0 20rem 12rem 20rem;
 }
 
 .user__buttons {
@@ -591,6 +596,57 @@ textarea {
   flex-direction: row;
   justify-content: left;
   gap: 3rem;
+}
+.dropdown__container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 
+    max-height 0.5s ease-in-out, 
+    opacity 0.3s ease-in-out;
+  margin-bottom: 0.5rem;
+}
+
+.dropdown__container.open {
+  max-height: fit-content;
+  opacity: 1;
+}
+
+.form__submit.active {
+  background-color: var(--color2);
+  color: var(--color0);
+  position: relative;
+  margin-bottom: 0;
+}
+
+/* Flecha SOLO para botones con clase .active */
+.form__submit.active::after,
+.form__submit:not(.--noArrow):not(.active)::after {
+  content: "";
+  display: inline-block;
+  margin-left: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("./assets/img/arrow.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.3s ease;
+}
+
+/* Rotación cuando está activo */
+.form__submit.active::after {
+  transform: rotate(180deg);
+}
+
+/* Estado inicial (flecha hacia abajo) */
+.form__submit:not(.--noArrow):not(.active)::after {
+  transform: rotate(0deg);
+}
+
+/* EXCEPCIÓN: Botón sin flecha */
+.form__submit.--noArrow::after {
+  display: none !important;
 }
 
 /* =========================
