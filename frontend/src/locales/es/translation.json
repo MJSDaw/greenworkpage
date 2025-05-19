@@ -18,7 +18,9 @@
     "register": "Ir a registrarme",
     "login": "Ir a iniciar sesión",
     "menu": "Abrir el menú",
-    "search": "Buscar"
+    "search": "Buscar",
+    "logout": "Ir a cerrar sesión",
+    "user": "Ir al panel de usuario"
   },
   "alt": {
     "logo": "Logo de Greenwork",
@@ -68,7 +70,9 @@
     "privacy": "Política de privacidad",
     "problemSolvers": "Creado por ProblemSolvers con amor 💚",
     "register": "Registrarme",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "user": "Hola, "
   },
   "form":{
     "name": {

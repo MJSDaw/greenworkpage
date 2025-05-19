@@ -25,6 +25,10 @@ const Header = () => {
     navigate('/')
   }
 
+  const handleDashboard = () => {
+    navigate('/admin')
+  }
+
   return (
     <header>
       <Link to="/" title={t('actions.goToHomePage')} className="header__logo">
@@ -65,15 +69,26 @@ const Header = () => {
             </Link>
           </li>
           {authenticated ? (
-            <li>
-              <button
-                onClick={handleLogout}
-                className="nav__button"
-                title={t('actions.logout')}
-              >
-                {t('links.logout') || 'Logout'}
-              </button>
-            </li>
+            <>
+              <li>
+                <button
+                  onClick={handleDashboard}
+                  className="nav__button--user"
+                  title={t('actions.user')}
+                >
+                  {t('links.user') + 'Leonardo'}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="form__submit --noArrow"
+                  title={t('actions.logout')}
+                >
+                  {t('links.logout') || 'Logout'}
+                </button>
+              </li>
+            </>
           ) : (
             <>
               <li>

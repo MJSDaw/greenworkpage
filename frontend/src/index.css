@@ -404,6 +404,7 @@ textarea {
 .nav__menu {
   list-style: none;
   gap: 1rem;
+  align-items: center;
 }
 
 .nav__link {
@@ -427,6 +428,10 @@ textarea {
 .nav__button:hover, .nav__button--white:hover {
   background-color: var(--color2);
   color: var(--color0);
+}
+
+.nav__button--user {
+  border: none;
 }
 
 /* Menu */
@@ -596,7 +601,7 @@ textarea {
   height: 40px;
 }
 
-.slick-prev:before, 
+.slick-prev:before,
 .slick-next:before {
   color: #333;
   font-size: 30px;
@@ -895,7 +900,7 @@ footer {
 /* =========================
   MEDIA QUERIES
 ========================= */
-@media (max-width: 1350px) {
+@media (max-width: 1500px) {
 
   /* Global */
   header {
@@ -937,6 +942,15 @@ footer {
 
   .nav__menu--button {
     display: block;
+  }
+
+  .nav__menu li {
+    width: 100%;
+  }
+
+  .nav__menu li button {
+    width: 100%;
+    justify-content: center;
   }
 
   /* Peas */
