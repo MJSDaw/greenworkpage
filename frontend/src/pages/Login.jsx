@@ -37,11 +37,11 @@ const Login = () => {
 
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        // Redirect
         setErrors({})
+        console.log('Token saved:', data.token)
+        window.location.href = '/'
       } else {
         setErrors(data.errors || {})
-        console.log('Token not saved. Response data structure:', data)
       }
     } catch (error) {
       console.error('Login error:', error)

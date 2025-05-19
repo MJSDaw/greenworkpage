@@ -50,8 +50,8 @@ const Signin = () => {
 
       if (data && data.success && data.token) {
         setAuthToken(data.token, data.user)
-        // Redirect
         setErrors({})
+        window.location.href = '/'
       } else {
         setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)
