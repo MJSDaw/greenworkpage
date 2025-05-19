@@ -11,14 +11,9 @@ class AuditController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $audits = Audit::with('admin')->orderBy('created_at', 'desc')->get();
-        
-        return response()->json([
-            'success' => true,
-            'data' => $audits
-        ]);
+        return $this->filter($request);
     }
 
     /**
@@ -56,6 +51,11 @@ class AuditController extends Controller
             $query->where('admin_id', $request->admin_id);
         }
         
+        // Filter by record_id
+        if ($request->has('record_id')) {
+            $query->where('record_id', $request->record_id);
+        }
+        
         // Filter by start date
         if ($request->has('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -66,8 +66,27 @@ class AuditController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
         
-        // Sort by date (most recent first by default)
-        $query->orderBy('created_at', $request->input('order', 'desc'));
+        // Search in values (for JSON fields)
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(old_values) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(new_values) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+        
+        // Sort by the specified column and direction
+        $sortColumn = $request->input('sort_by', 'created_at');
+        $sortDirection = $request->input('sort_direction', 'desc');
+        
+        // Ensure the sort column is valid to prevent SQL injection
+        $allowedSortColumns = ['id', 'admin_id', 'action', 'table_name', 'record_id', 'created_at', 'updated_at'];
+        
+        if (in_array($sortColumn, $allowedSortColumns)) {
+            $query->orderBy($sortColumn, $sortDirection === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('created_at', 'desc'); // Default sorting
+        }
         
         // Paginate results
         $perPage = $request->input('per_page', 15);
