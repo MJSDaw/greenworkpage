@@ -11,14 +11,78 @@ use Illuminate\Support\Facades\Validator;
 class ContactController extends Controller
 {
     /**
-     * Display a listing of all contacts.
+     * Display a listing of all contacts with filtering and ordering capabilities.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contacts = Contact::all();
-        return response()->json($contacts);
+        $query = Contact::query();
+        
+        // Filtering by name
+        if ($request->has('name')) {
+            $query->filterByName($request->name);
+        }
+        
+        // Filtering by email
+        if ($request->has('email')) {
+            $query->filterByEmail($request->email);
+        }
+        
+        // Filtering by terms and conditions acceptance
+        if ($request->has('termsAndConditions')) {
+            $termsValue = filter_var($request->termsAndConditions, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($termsValue !== null) {
+                $query->where('termsAndConditions', $termsValue);
+            }
+        }
+        
+        // Filtering by created date range
+        if ($request->has('created_from') && $request->has('created_to')) {
+            $query->createdBetween($request->created_from, $request->created_to);
+        } else if ($request->has('created_from')) {
+            $query->where('created_at', '>=', $request->created_from);
+        } else if ($request->has('created_to')) {
+            $query->where('created_at', '<=', $request->created_to);
+        }
+        
+        // Search by any field
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'created_at');
+        $direction = $request->input('direction', 'desc');
+        
+        // Validate order_by field to prevent SQL injection
+        $allowedOrderFields = ['id', 'name', 'email', 'termsAndConditions', 'created_at', 'updated_at'];
+        if (in_array($orderBy, $allowedOrderFields)) {
+            $query->orderBy($orderBy, $direction === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('created_at', 'desc'); // Default ordering
+        }
+        
+        // Pagination
+        $perPage = (int) $request->input('per_page', 10);
+        $perPage = max(1, min(100, $perPage)); // Limit between 1 and 100
+        
+        $contacts = $query->paginate($perPage);
+        
+        return response()->json([
+            'data' => $contacts->items(),
+            'meta' => [
+                'current_page' => $contacts->currentPage(),
+                'last_page' => $contacts->lastPage(),
+                'per_page' => $contacts->perPage(),
+                'total' => $contacts->total()
+            ]
+        ]);
     }
 
     /**
