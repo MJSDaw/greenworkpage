@@ -73,4 +73,45 @@ class Reservation extends Model
         $dates = explode('|', $this->reservation_period);
         return $dates[1] ?? null;
     }
+    
+    /**
+     * Accessor for start_date attribute.
+     *
+     * @return string
+     */
+    public function getStartDateAttribute()
+    {
+        return $this->getStartDate();
+    }
+
+    /**
+     * Accessor for end_date attribute.
+     *
+     * @return string
+     */
+    public function getEndDateAttribute()
+    {
+        return $this->getEndDate();
+    }
+
+    /**
+     * Scope a query to filter by date range.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $startDate
+     * @param  string  $endDate
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterByDateRange($query, $startDate = null, $endDate = null)
+    {
+        if ($startDate) {
+            $query->whereRaw("SUBSTRING_INDEX(reservation_period, '|', 1) >= ?", [$startDate]);
+        }
+        
+        if ($endDate) {
+            $query->whereRaw("SUBSTRING_INDEX(reservation_period, '|', -1) <= ?", [$endDate]);
+        }
+
+        return $query;
+    }
 }

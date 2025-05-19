@@ -43,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes for reservations
     Route::get('reservations', [ReservationController::class, 'index']);
     Route::post('reservations', [ReservationController::class, 'store']);
+    Route::get('my-reservations', [ReservationController::class, 'myReservations']);
+    Route::get('spaces/{spaceId}/reservations', [ReservationController::class, 'spaceReservations']);
     
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);
@@ -53,6 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::apiResource('admins', AdminController::class);
     Route::get('users', [UserController::class, 'index']); // Route to get all users
+    Route::get('users/filter', [UserController::class, 'filter']); // Route to filter users
+    Route::get('users/{id}', [UserController::class, 'show']); // Route to get a specific user
     
     // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);

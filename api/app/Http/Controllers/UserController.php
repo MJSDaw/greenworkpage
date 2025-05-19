@@ -12,12 +12,85 @@ use App\Http\Controllers\AuditController;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource with filtering and ordering.
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $query = User::query();
+        
+        // Filter by name
+        if ($request->has('name')) {
+            $query->filterByName($request->name);
+        }
+        
+        // Filter by surname
+        if ($request->has('surname')) {
+            $query->filterBySurname($request->surname);
+        }
+        
+        // Filter by email
+        if ($request->has('email')) {
+            $query->filterByEmail($request->email);
+        }
+        
+        // Filter by birthdate range
+        if ($request->has('birthdate_from') || $request->has('birthdate_to')) {
+            $query->filterByBirthdateRange($request->birthdate_from, $request->birthdate_to);
+        }
+        
+        // Filter by registration date range
+        if ($request->has('registered_from') || $request->has('registered_to')) {
+            $query->filterByRegistrationDateRange($request->registered_from, $request->registered_to);
+        }
+        
+        // Search by any field
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('surname', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'created_at');
+        $direction = $request->input('direction', 'desc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = [
+            'id', 'name', 'surname', 'email', 'birthdate', 'created_at', 'updated_at'
+        ];
+        
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'created_at';
+        }
+        
+        // Validate order direction
+        $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        $query->orderBy($orderBy, $direction);
+        
+        // Pagination
+        $perPage = $request->input('per_page', 15);
+        $users = $query->paginate($perPage);
+        
         return response()->json($users);
+    }
+
+    /**
+     * Filter users by various criteria.
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filter(Request $request)
+    {
+        return $this->index($request);
     }
 
     /**

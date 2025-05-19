@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Spaces from './pages/Spaces'
 import About from './pages/About'
@@ -29,8 +30,16 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/user" element={<UserDashboard />} />
+            <Route path="/admin" element={
+              <ProtectedRoute userType="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/user" element={
+              <ProtectedRoute userType="user">
+                <UserDashboard />
+              </ProtectedRoute>
+            } />
           </Routes>
         </div>
         <Footer />

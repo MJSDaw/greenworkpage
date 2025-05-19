@@ -129,7 +129,7 @@ class AuthController extends Controller
                     
                     // Format: 8 digits + 1 letter
                     if (!preg_match('/^[0-9]{8}[A-Za-z]$/', $dni)) {
-                        // Format: X + 7 digits + 1 letter
+                        // Format: X, Y, Z + 7 digits + 1 letter
                         if (!preg_match('/^[XYZ][0-9]{7}[A-Za-z]$/', $dni) && !preg_match('/^[XYZ][0-9]{7}$/', $dni)) {
                             $dniErrors[] = 'nifFormatError';
                         }
@@ -234,7 +234,8 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'User registered successfully',
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'user_type' => 'user'
         ], 201);
     }
 
@@ -267,10 +268,17 @@ class AuthController extends Controller
             ], 422);
         }
 
+        // Check in User table
         $user = User::where('email', $request->email)->first();
-
-        // Check if the email exists
+        
+        // Check in Admin table if not found in User table
+        $admin = null;
         if (!$user) {
+            $admin = \App\Models\Admin::where('email', $request->email)->first();
+        }
+
+        // If not found in either table
+        if (!$user && !$admin) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
@@ -278,8 +286,33 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Verify if the password is correct
-        if (!Hash::check($request->password, $user->password)) {
+        // Check if credentials are valid for a user
+        if ($user) {
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => ['auth' => ['invalidCredentialsError']]
+                ], 401);
+            }
+
+            // Revoke previous tokens
+            $user->tokens()->delete();
+
+            // Create new token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login successful',
+                'user' => $user,
+                'token' => $token,
+                'user_type' => 'user'
+            ]);
+        }
+        
+        // Check if credentials are valid for an admin
+        if (!Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
@@ -288,79 +321,17 @@ class AuthController extends Controller
         }
 
         // Revoke previous tokens
-        $user->tokens()->delete();
-
-        // Create new token
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
-            'user' => $user,
-            'token' => $token
-        ]);
-    }
-
-    /**
-     * Administrator login
-     */
-    public function adminLogin(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = [];
-            foreach ($validator->errors()->toArray() as $field => $errorMessages) {
-                foreach ($errorMessages as $errorMessage) {
-                    $errorKey = $this->mapErrorToKey($field, $errorMessage);
-                    if (!isset($errors[$field])) {
-                        $errors[$field] = [];
-                    }
-                    $errors[$field][] = $errorKey;
-                }
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $errors
-            ], 422);
-        }
-
-        $admin = \App\Models\Admin::where('email', $request->email)->first();
-
-        // Check if the admin email exists
-        if (!$admin) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => ['email' => ['emailNotExistsError']]
-            ], 401);
-        }
-
-        // Verify if the admin password is correct
-        if (!Hash::check($request->password, $admin->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => ['auth' => ['invalidAdminCredentialsError']]
-            ], 401);
-        }
-
-        // Revoke previous tokens
         $admin->tokens()->delete();
 
-        // Create new token with admin guard
+        // Create new token with admin permissions
         $token = $admin->createToken('admin_token', ['admin'])->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'message' => 'Admin login successful',
+            'message' => 'Login successful',
             'user' => $admin,
-            'token' => $token
+            'token' => $token,
+            'user_type' => 'admin'
         ]);
     }
 
