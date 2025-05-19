@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import pruebas from '../assets/img/pruebas.webp'
-import leonardo from '../assets/img/leonardo.svg'
 import { createContact } from '../services/apiService'
+
+import greenwork1 from '../assets/img/greenwork1.webp'
+import greenwork2 from '../assets/img/greenwork2.webp'
+import greenwork3 from '../assets/img/greenwork3.webp'
+import leonardo from '../assets/img/leonardo.svg'
 
 const ContactUs = () => {
   const { t } = useTranslation()
@@ -56,24 +59,19 @@ const ContactUs = () => {
     <section className="contact__background">
       <h2 className="h1--left--up">{t('common.contactUs')}</h2>
       <article className="white__container--contact">
-        <img src={pruebas} alt={t('alt.pruebas')} title={t('common.pruebas')} />
-        <img src={pruebas} alt={t('alt.pruebas')} title={t('common.pruebas')} />
-        <img src={pruebas} alt={t('alt.pruebas')} title={t('common.pruebas')} />
+        <img src={greenwork3} alt={t('alt.greenwork3')} title={t('common.greenwork3')} />
+        <img src={greenwork1} alt={t('alt.greenwork1')} title={t('common.greenwork1')} />
+        <img src={greenwork2} alt={t('alt.greenwork2')} title={t('common.greenwork2')} />
         <section className="white__container">
           <h3>{t('common.contact.title')}</h3>          <p>{t('common.contact.msg1')}</p>
           <p>{t('common.contact.msg2')}</p>
           
           {submitSuccess ? (
-            <div className="success-message">
+            <div className="form__error">
               <p>{t('form.success')}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              {submitError && (
-                <div className="error-message">
-                  <p>{submitError}</p>
-                </div>
-              )}
               <div className="form__section">
                 <label htmlFor="name">{t('form.name.label')}</label>
                 <input
@@ -136,12 +134,18 @@ const ContactUs = () => {
                   {t('links.privacy')}
                 </Link>
               </span>
-            </label>            <input
+            </label>
+            <input
               type="submit"
               value={isSubmitting ? t('form.submitting') : t('common.contactUs')}
               disabled={isSubmitting}
               className="form__submit"
             />
+            {submitError && (
+                <div className="form__error">
+                  <p>{submitError}</p>
+                </div>
+              )}
           </form>
           )}
         </section>

@@ -11,6 +11,8 @@ import Signin from './pages/Signin'
 import Login from './pages/Login'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
+import AdminDashboard from './pages/AdminDashboard'
+import UserDashboard from './pages/UserDashboard'
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/user" element={<UserDashboard />} />
           </Routes>
         </div>
         <Footer />

@@ -28,7 +28,10 @@
     "leonardo": "Leonardo the pea",
     "groupPeas": "Group of peas",
     "menu": "Navigation menu",
-    "search": "Search icon"
+    "search": "Search icon",
+    "greenwork1": "Greenwork 1",
+    "greenwork2": "Greenwork 2",
+    "greenwork3": "Greenwork 3"
   },
   "common": {
     "github": "Logo of Github",
@@ -50,7 +53,10 @@
       "title": "Do you have questions? We are here to help you",
       "msg1": "Our support team will respond to you as soon as possible.",
       "msg2": "At GreenWork, we value your time and are committed to providing you with a quick and clear solution."
-    }
+    },
+    "greenwork1": "Greenwork sofa",
+    "greenwork2": "Greenwork wall",
+    "greenwork3": "Greenwork screen"
   },
   "links": {
     "home": "Home",
