@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next'
 
 import UserList from '../components/UserList'
@@ -11,7 +12,30 @@ import AuditList from '../components/AuditList'
 import leonardo from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const [activeSection, setActiveSection] = useState({
+    users: false,
+    spaces: false,
+    bookings: false,
+    subscriptions: false,
+    completedPayments: false,
+    pendingPayments: false,
+    audits: false
+  });
+
+  const toggleSection = (section) => {
+    setActiveSection(prev => ({
+      users: false,
+      spaces: false,
+      bookings: false,
+      subscriptions: false,
+      completedPayments: false,
+      pendingPayments: false,
+      audits: false,
+      [section]: !prev[section]
+    }));
+  };
+
   return (
     <>
       <section className='user__background'>
@@ -24,59 +48,94 @@ const AdminDashboard = () => {
       <section className='user__section--part'>
         <h2>Principal</h2>
         <article className='user__buttons'>
-          <button className='form__submit'>
+          <button 
+            className={`form__submit ${activeSection.users ? 'active' : ''}`}
+            onClick={() => toggleSection('users')}
+          >
             Usuarios
-            </button>
-            <button className='form__submit'>
-              Espacios
-            </button>
-            <button className='form__submit'>
-              Reservas
-            </button>
-          </article>
-          <article >
+          </button>
+          <button 
+            className={`form__submit ${activeSection.spaces ? 'active' : ''}`}
+            onClick={() => toggleSection('spaces')}
+          >
+            Espacios
+          </button>
+          <button 
+            className={`form__submit ${activeSection.bookings ? 'active' : ''}`}
+            onClick={() => toggleSection('bookings')}
+          >
+            Reservas
+          </button>
+        </article>
+        <article>
+          <section className={`dropdown__container ${activeSection.users ? 'open' : ''}`}>
             <UserList />
-            <SpaceList />
+          </section>
+          <section className={`dropdown__container ${activeSection.spaces ? 'open' : ''}`}>
+          <SpaceList />
+          </section>
+          <section className={`dropdown__container ${activeSection.bookings ? 'open' : ''}`}>
             <BookingList />
-          </article>
-        </section>
+          </section>
+        </article>
+      </section>
 
-        <section className='user__section--part'>
-          <h2>Pagos</h2>
-          <article className='user__buttons'>
-            <button className='form__submit'>
-              Suscripciones
-            </button>
-            <button className='form__submit'>
-              Pagos realizados
-            </button>
-            <button className='form__submit'>
-              Pagos pendientes
-            </button>
-          </article>
-          <article >
+      <section className='user__section--part'>
+        <h2>Pagos</h2>
+        <article className='user__buttons'>
+          <button 
+            className={`form__submit ${activeSection.subscriptions ? 'active' : ''}`}
+            onClick={() => toggleSection('subscriptions')}
+          >
+            Suscripciones
+          </button>
+          <button 
+            className={`form__submit ${activeSection.completedPayments ? 'active' : ''}`}
+            onClick={() => toggleSection('completedPayments')}
+          >
+            Pagos realizados
+          </button>
+          <button 
+            className={`form__submit ${activeSection.pendingPayments ? 'active' : ''}`}
+            onClick={() => toggleSection('pendingPayments')}
+          >
+            Pagos pendientes
+          </button>
+        </article>
+        <article>
+          <section className={`dropdown__container ${activeSection.subscriptions ? 'open' : ''}`}>
             <SuscriptionList />
+          </section>
+          <section className={`dropdown__container ${activeSection.completedPayments ? 'open' : ''}`}>
             <CompletedPaymentList />
+          </section>
+          <section className={`dropdown__container ${activeSection.pendingPayments ? 'open' : ''}`}>
             <PendingPaymentList />
-          </article>
-        </section>
+          </section>
+        </article>
+      </section>
 
-        <section className='user__section--part'>
-          <h2>Gestión de la web</h2>
-          <article className='user__buttons'>
-            <button className='form__submit'>
-              Auditorias
-            </button>
-            <button className='form__submit'>
-              Copia de seguridad manual
-            </button>
-          </article>
-          <article >
+      <section className='user__section--part'>
+        <h2>Gestión de la web</h2>
+        <article className='user__buttons'>
+          <button 
+            className={`form__submit ${activeSection.audits ? 'active' : ''}`}
+            onClick={() => toggleSection('audits')}
+          >
+            Auditorias
+          </button>
+          <button className='form__submit --noArrow'>
+            Copia de seguridad manual
+          </button>
+        </article>
+        <article>
+          <section className={`dropdown__container ${activeSection.audits ? 'open' : ''}`}>
             <AuditList />
-          </article>
-        </section>
+          </section>
+        </article>
+      </section>
     </>
-  )
-}
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

@@ -404,6 +404,7 @@ textarea {
 .nav__menu {
   list-style: none;
   gap: 1rem;
+  align-items: center;
 }
 
 .nav__link {
@@ -427,6 +428,10 @@ textarea {
 .nav__button:hover, .nav__button--white:hover {
   background-color: var(--color2);
   color: var(--color0);
+}
+
+.nav__button--user {
+  border: none;
 }
 
 /* Menu */
@@ -537,6 +542,90 @@ textarea {
   text-align: left;
 }
 
+.carousel__container {
+  display: flex;
+  flex-direction: column;
+  padding: 6rem 20rem;
+  overflow: hidden; /* Añadido para permitir que la imagen sobresalga */
+}
+
+.carousel__content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 6rem 0;
+  overflow: visible; /* Añadido para permitir que la imagen sobresalga */
+}
+
+/* Contenedor del slider - importante para el overflow */
+.slick-list {
+  overflow: visible !important;
+  margin: 0 -5%; /* Compensa el aumento de tamaño */
+}
+
+/* Estilo para las imágenes del carousel */
+.carousel-img {
+  width: 100%;
+  height: 300px; /* Altura fija para consistencia */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio */
+  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
+}
+
+/* Imagen central - más grande y con mayor z-index */
+.slick-center .carousel-img {
+  transform: scale(1.5);
+  z-index: 10; /* Aumentado para asegurar que esté por encima */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  position: relative; /* Necesario para el z-index */
+}
+
+/* Imágenes laterales - más pequeñas y detrás */
+.slick-slide:not(.slick-center) .carousel-img {
+  transform: scale(0.9);
+  opacity: 0.7;
+  z-index: 1;
+  position: relative;
+}
+
+/* Espaciado entre slides */
+.slick-slide {
+  padding: 0 20px; /* Aumentado para dar más espacio */
+  transition: transform 0.3s ease;
+}
+
+/* Flechas de navegación */
+.slick-prev, .slick-next {
+  z-index: 20; /* Asegura que estén sobre las imágenes */
+  width: 40px;
+  height: 40px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: #333;
+  font-size: 30px;
+}
+
+/* Puntos indicadores */
+.slick-dots {
+  bottom: -50px; /* Aleja los dots del carousel */
+}
+
+.slick-dots li button:before {
+  font-size: 12px;
+  color: #333;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #333;
+}
+
+.slick-slide:not(.slick-active):not(.slick-current) {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* =========================
   USER / ADMIN
 ========================= */
@@ -558,6 +647,7 @@ textarea {
   padding: 12rem 20rem 0 20rem;
   min-height: fit-content;
   gap: 4rem;
+  margin-bottom: 3rem;
 }
 
 .user__section, .user__section--part  {
@@ -583,7 +673,11 @@ textarea {
 
 .user__section--part {
   flex-direction: column;
-  padding: 6rem 20rem 0 20rem;
+  padding: 0 20rem 3rem 20rem;
+}
+
+.user__section--part:last-child {
+  padding: 0 20rem 12rem 20rem;
 }
 
 .user__buttons {
@@ -591,6 +685,110 @@ textarea {
   flex-direction: row;
   justify-content: left;
   gap: 3rem;
+}
+
+.dropdown__container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 
+    max-height 0.5s ease-in-out, 
+    opacity 0.3s ease-in-out;
+  margin-bottom: 0.5rem;
+}
+
+.dropdown__container.open {
+  min-height: fit-content;
+  max-height: fit-content;
+  opacity: 1;
+}
+
+.form__submit.active {
+  background-color: var(--color2);
+  color: var(--color0);
+  position: relative;
+  margin-bottom: 0;
+}
+
+.card__container, .card__container--form {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem 0 1rem 0;
+  background-color: var(--color3);
+  gap: 3rem;
+  padding: 3rem 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
+}
+
+.card__container--form {
+  width: fit-content;
+  justify-self: center;
+}
+
+.card, .card--form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color4);
+  border-radius: 1.5rem;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__light);
+  margin: 0 3rem;
+  padding: 1rem 3rem;
+  justify-content: space-between;
+}
+
+.card--form {
+  flex-direction: column;
+  padding: 6rem;
+  width: fit-content;
+}
+
+.card__content {
+  display: flex;
+  align-items: center;
+}
+
+.card__img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 100%;
+  border: 3px solid var(--color1);
+  margin-right: 3rem;
+}
+
+.card__buttons {
+  display: flex;
+  gap: 3rem;
+}
+
+/* Flecha SOLO para botones con clase .active */
+.form__submit.active::after,
+.form__submit:not(.--noArrow):not(.active)::after {
+  content: "";
+  display: inline-block;
+  margin-left: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("./assets/img/arrow.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Rotación cuando está activo */
+.form__submit.active::after {
+  transform: rotate(180deg);
+}
+
+/* Estado inicial (flecha hacia abajo) */
+.form__submit:not(.--noArrow):not(.active)::after {
+  transform: rotate(0deg);
+}
+
+/* EXCEPCIÓN: Botón sin flecha */
+.form__submit.--noArrow::after {
+  display: none !important;
 }
 
 /* =========================
@@ -702,7 +900,7 @@ footer {
 /* =========================
   MEDIA QUERIES
 ========================= */
-@media (max-width: 1350px) {
+@media (max-width: 1500px) {
 
   /* Global */
   header {
@@ -744,6 +942,15 @@ footer {
 
   .nav__menu--button {
     display: block;
+  }
+
+  .nav__menu li {
+    width: 100%;
+  }
+
+  .nav__menu li button {
+    width: 100%;
+    justify-content: center;
   }
 
   /* Peas */

@@ -5,10 +5,13 @@ import ContactUs from '../components/ContactUs'
 import search from '../assets/img/search.svg'
 import groupPeas from '../assets/img/groupPeas.png'
 import groupPeasMobile from '../assets/img/groupPeasMobile.png'
+import SpaceCard from '../components/SpaceCard'
+import SpacesCarousel from '../components/SpacesCarousel'
 
 const Home = () => {
   const { t } = useTranslation()
   return (
+    <>
     <main className="home">
       <section className="home__section">
         <img
@@ -52,14 +55,10 @@ const Home = () => {
           </form>
         </article>
       </section>
-      <section className="home__section--spaces">
-        <h2>{t('common.ourSpaces')}</h2>
-        <section className="home__section--spaces">
-          <h2>{t('common.ourSpaces')}</h2>
-        </section>
-      </section>
-      <ContactUs />
     </main>
+    <SpacesCarousel />
+      <ContactUs />
+      </>
   )
 }
 
