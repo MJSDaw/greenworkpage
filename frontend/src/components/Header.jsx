@@ -1,15 +1,28 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { isAuthenticated, removeAuthToken } from '../services/authService'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
 
 const Header = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [menuActive, setMenuActive] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
+
+  useEffect(() => {
+    setAuthenticated(isAuthenticated())
+  }, [])
 
   const toggleMenu = () => {
     setMenuActive(!menuActive)
+  }
+
+  const handleLogout = () => {
+    removeAuthToken()
+    setAuthenticated(false)
+    navigate('/')
   }
 
   return (
@@ -51,24 +64,38 @@ const Header = () => {
               {t('links.contact')}
             </Link>
           </li>
-          <li>
-            <Link
-              to="/signin"
-              title={t('actions.register')}
-              className="nav__button--white"
-            >
-              {t('links.register')}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/login"
-              title={t('actions.login')}
-              className="nav__button"
-            >
-              {t('links.login')}
-            </Link>
-          </li>
+          {authenticated ? (
+            <li>
+              <button
+                onClick={handleLogout}
+                className="nav__button"
+                title={t('actions.logout')}
+              >
+                {t('links.logout') || 'Logout'}
+              </button>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link
+                  to="/signin"
+                  title={t('actions.register')}
+                  className="nav__button--white"
+                >
+                  {t('links.register')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/login"
+                  title={t('actions.login')}
+                  className="nav__button"
+                >
+                  {t('links.login')}
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
         <button
           className={`nav__menu--button ${menuActive ? 'active' : ''}`}
