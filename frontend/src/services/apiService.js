@@ -12,7 +12,7 @@ import { getAuthHeader, authenticatedFetch } from './authService';
  */
 export const getUserProfile = async () => {
   try {
-    const response = await authenticatedFetch('https://localhost:8443/api/user');
+    const response = await authenticatedFetch('/api/user');
     
     if (!response.ok) {
       throw new Error('Failed to fetch user profile');
@@ -32,7 +32,7 @@ export const getUserProfile = async () => {
  */
 export const createResource = async (data) => {
   try {
-    const response = await authenticatedFetch('https://localhost:8443/api/resources', {
+    const response = await authenticatedFetch('/api/resources', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -56,7 +56,7 @@ export const createResource = async (data) => {
  */
 export const updateResource = async (id, data) => {
   try {
-    const response = await fetch(`https://localhost:8443/api/resources/${id}`, {
+    const response = await fetch(`/api/resources/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export const updateResource = async (id, data) => {
  */
 export const deleteResource = async (id) => {
   try {
-    const response = await fetch(`https://localhost:8443/api/resources/${id}`, {
+    const response = await fetch(`/api/resources/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader()
     });
@@ -106,7 +106,7 @@ export const deleteResource = async (id) => {
  */
 export const createContact = async (contactData) => {
   try {
-    const response = await fetch('https://localhost:8443/api/contacts', {
+    const response = await fetch('/api/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

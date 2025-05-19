@@ -34,12 +34,11 @@ const Signin = () => {
       termsAndConditions: e.target.checked,
     }))
   }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
-      const response = await fetch('https://localhost:8443/api/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
