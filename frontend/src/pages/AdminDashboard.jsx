@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+
 import { useTranslation } from 'react-i18next'
 
 import UserList from '../components/UserList'
@@ -12,7 +13,9 @@ import AuditList from '../components/AuditList'
 import defaultImage from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const [userName, setUserName] = useState('');
+
   const [activeSection, setActiveSection] = useState({
     users: false,
     spaces: false,
@@ -23,6 +26,21 @@ const AdminDashboard = () => {
     audits: false,
   })
   const [image, setImage] = useState(defaultImage)
+
+  useEffect(() => {
+    // Get username from userData in local storage
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const parsedUserData = JSON.parse(userData);
+        if (parsedUserData && parsedUserData.name) {
+          setUserName(parsedUserData.name);
+        }
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+      }
+    }
+  }, []);
 
   const toggleSection = (section) => {
     setActiveSection((prev) => ({
@@ -65,7 +83,7 @@ const AdminDashboard = () => {
               />
             </label>
           </div>
-          <h1>{t('common.greetings', { name: 'Leonardo' })}</h1>
+          <h1>{t('common.greetings', { name: userName || 'Usuario' })}</h1>
         </article>
       </section>
 

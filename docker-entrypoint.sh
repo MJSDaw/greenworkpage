@@ -55,23 +55,33 @@ if [ -d "/var/www/frontend" ]; then
     echo "Installing frontend dependencies..."
     cd /var/www/frontend
     
-    # Install dependencies with error handling
-    if ! npm install --no-fund --no-audit; then
-        echo "WARNING: Failed to install frontend dependencies. Continuing without frontend."
-    else        # Start the React server in the background
-        echo "Starting React development server..."
-        npm run dev -- --host 0.0.0.0 &
-        
-        # Wait for the server to be ready
-        sleep 3
-        
-        # Check if the server is running
-        if ! netstat -tulpn | grep :5173 > /dev/null; then
-            echo "WARNING: React server may not have started correctly. Check logs."
+    # Check if node_modules exists before installing
+    if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ]; then
+        echo "Installing frontend dependencies..."
+        if ! npm install --no-fund --no-audit; then
+            echo "WARNING: Failed to install frontend dependencies. Continuing without frontend."
         else
-            echo "React server is running."
+            echo "Frontend dependencies installed successfully."
+            # Touch a file to indicate that install was completed
+            touch node_modules/.package-lock.json
         fi
+    else
+        echo "Frontend dependencies are already installed."
     fi
+      # Start the React server in the background with hot reload enabled
+    echo "Starting React development server with hot reload..."
+    WATCHPACK_POLLING=true npm run dev -- --host 0.0.0.0 &
+    
+    # Wait for the server to be ready
+    sleep 3
+    
+    # Check if the server is running (using ps since netstat might not be available)
+    if ! ps aux | grep -v grep | grep "npm run dev" > /dev/null; then
+        echo "WARNING: React server may not have started correctly. Check logs."
+    else
+        echo "React server is running with hot reload enabled."
+    fi
+    
     cd /var/www/html
 fi
 

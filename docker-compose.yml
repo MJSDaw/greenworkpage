@@ -37,6 +37,7 @@ services:
       - laravel_vendor:/var/www/html/vendor
       - laravel_storage:/var/www/html/storage
       - ./frontend:/var/www/frontend
+      - ./frontend/node_modules:/var/www/frontend/node_modules:delegated
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
