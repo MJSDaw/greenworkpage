@@ -46,11 +46,11 @@ const Login = () => {
         setAuthToken(data.token, data.user, data.user_type)
         setErrors({})
         console.log('Token saved:', data.token)
-        console.log('User type:', data.user_type)        // Redirect based on user type
+        console.log('User type:', data.user_type)
         if (data.user_type === 'admin') {
           window.location.href = '/admin'
         } else {
-          window.location.href = '/' // Redirección a home para usuarios normales
+          window.location.href = '/user'
         }
       } else {
         setErrors(data.errors || {})
