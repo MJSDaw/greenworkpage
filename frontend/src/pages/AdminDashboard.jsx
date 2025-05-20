@@ -13,7 +13,7 @@ import AuditList from '../components/AuditList'
 import defaultImage from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
-  const { t } = useTranslation();  const [userName, setUserName] = useState('');
+  const { t } = useTranslation();  const [userName, setUserName] = useState(null);
 
   const [activeSection, setActiveSection] = useState({
     users: false,
@@ -110,11 +110,15 @@ const AdminDashboard = () => {
       console.error('No se pudo encontrar la información del administrador');
       return;
     }
-    
-    try {
+      try {
       // Crear FormData para enviar la imagen
       const formData = new FormData();
       formData.append('image', file);
+      
+      // Añadir la imagen anterior para eliminarla en el backend
+      if (adminData.image && !adminData.image.startsWith('http')) {
+        formData.append('previous_image', adminData.image);
+      }
       
       // Para debug - verificar que el archivo se está adjuntando correctamente
       console.log("Enviando archivo:", file.name, file.type, file.size);
