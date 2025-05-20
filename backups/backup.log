@@ -1,1 +1,5 @@
 Backup completed: /backups/greenworkdb_backup_20250517_130000.sql.gz
+/backup-database.sh: line 1: ﻿#!/bin/bash: not found
+Starting backup at Tue May 20 13:00:00 UTC 2025
+Compressing backup file...
+Backup completed: /backups/greenworkdb_backup_20250520_130000.sql.gz
