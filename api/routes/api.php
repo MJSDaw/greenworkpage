@@ -54,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Routes for administrators (protected and admin-only)
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::apiResource('admins', AdminController::class);
+    Route::post('admins/{id}/updateImage', [AdminController::class, 'updateImage']); // Route to update admin image
     Route::get('users', [UserController::class, 'index']); // Route to get all users
     Route::get('users/filter', [UserController::class, 'filter']); // Route to filter users
     Route::get('users/{id}', [UserController::class, 'show']); // Route to get a specific user
