@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { authenticatedFetch, getUserData } from '../services/authService'
+import { getUserData } from '../services/authService'
+import { getUserProfile, updateAdminImage } from '../services/apiService'
 
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
@@ -27,59 +28,56 @@ const AdminDashboard = () => {
   })
   // Iniciar con defaultImage solo si no hay imagen de usuario
   const [image, setImage] = useState(defaultImage)
-  useEffect(() => {
-    // Get admin data from local storage
-    const adminData = getUserData()
+  // useEffect(() => {
+  //   // Get admin data from local storage
+  //   const adminData = getUserData()
 
-    if (adminData) {
-      // Set username
-      if (adminData.name) {
-        setUserName(adminData.name)
-      }
-      // Set profile image
-      if (adminData.image) {
-        // If the image is a full URL
-        if (adminData.image.startsWith('http')) {
-          setImage(adminData.image)
-        } else {
-          // If it's a relative path, assume it's from storage
-          setImage(`https://localhost:8443/storage/${adminData.image}`)
-        }
-      } else {
-        // Si no hay imagen, usar la imagen predeterminada
-        setImage(defaultImage)
-      }
+  //   if (adminData) {
+  //     // Set username
+  //     if (adminData.name) {
+  //       setUserName(adminData.name)
+  //     }
+  //     // Set profile image
+  //     if (adminData.image) {
+  //       // If the image is a full URL
+  //       if (adminData.image.startsWith('http')) {
+  //         setImage(adminData.image)
+  //       } else {
+  //         // If it's a relative path, assume it's from storage
+  //         setImage(`https://localhost:8443/storage/${adminData.image}`)
+  //       }
+  //     } else {
+  //       // Si no hay imagen, usar la imagen predeterminada
+  //       setImage(defaultImage)
+  //     }
 
-      // Fetch latest admin data to ensure we have the most current info
-      const fetchAdminData = async () => {
-        try {
-          const response = await authenticatedFetch('/api/user')
-          if (response.ok) {
-            const updatedData = await response.json()
-            if (updatedData) {
-              // Update image if it exists in response
-              if (updatedData.image) {
-                if (updatedData.image.startsWith('http')) {
-                  setImage(updatedData.image)
-                } else {
-                  setImage(
-                    `https://localhost:8443/storage/${updatedData.image}`
-                  )
-                }
-              } else {
-                // Si no hay imagen en los datos actualizados, usar la predeterminada
-                setImage(defaultImage)
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching admin data:', error)
-        }
-      }
+  //     // Fetch latest admin data to ensure we have the most current info
+  //     const fetchAdminData = async () => {
+  //       try {
+  //         const updatedData = await getUserProfile()
+  //         if (updatedData) {
+  //           // Update image if it exists in response
+  //           if (updatedData.image) {
+  //             if (updatedData.image.startsWith('http')) {
+  //               setImage(updatedData.image)
+  //             } else {
+  //               setImage(
+  //                 `https://localhost:8443/storage/${updatedData.image}`
+  //               )
+  //             }
+  //           } else {
+  //             // Si no hay imagen en los datos actualizados, usar la predeterminada
+  //             setImage(defaultImage)
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching admin data:', error)
+  //       }
+  //     }
 
-      fetchAdminData()
-    }
-  }, [])
+  //     fetchAdminData()
+  //   }
+  // }, [])
 
   const toggleSection = (section) => {
     setActiveSection((prev) => ({
@@ -116,38 +114,10 @@ const AdminDashboard = () => {
     }
 
     try {
-      // Crear FormData para enviar la imagen
-      const formData = new FormData()
-      formData.append('image', file)
-
-      // Para debug - verificar que el archivo se está adjuntando correctamente
-      console.log('Enviando archivo:', file.name, file.type, file.size)
-
-      // Obtener el token de autenticación
-      const token =
-        localStorage.getItem('token') || localStorage.getItem('authToken')
-
-      // Realizar el fetch directamente sin usar authenticatedFetch
-      const response = await fetch(`/api/admin/${adminData.id}/updateImage`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      })
-      // Para debug - ver la respuesta completa
-      console.log('Respuesta status:', response.status)
-      const responseText = await response.text()
-      console.log('Respuesta completa:', responseText)
-      // Procesar la respuesta
-      let data
-      try {
-        data = JSON.parse(responseText)
-      } catch (e) {
-        console.error('Error al parsear respuesta JSON:', e)
-        throw new Error('Formato de respuesta inválido')
-      }
-      if (response.ok && data.success) {
+      // Enviar imagen al servidor usando el servicio centralizado
+      const data = await updateAdminImage(adminData.id, file)
+      
+      if (data && data.success) {
         console.log('Imagen actualizada con éxito:', data)
         // Actualizar la imagen con la ruta devuelta por el servidor
         // La ruta será algo como: admin-images/chrlE8EyTTqy1BHuuDkuGm0AF9rPkd28I4PXHYbT.jpg
@@ -206,7 +176,7 @@ const AdminDashboard = () => {
           >
             {t('links.users')}
           </button>
-          <button
+          {/* <button
             className={`form__submit ${activeSection.spaces ? 'active' : ''}`}
             onClick={() => toggleSection('spaces')}
           >
@@ -223,7 +193,7 @@ const AdminDashboard = () => {
             onClick={() => toggleSection('completedBookings')}
           >
             {t('links.completedBookings')}
-          </button>
+          </button> */}
         </article>
         <article>
           <section
@@ -231,7 +201,7 @@ const AdminDashboard = () => {
           >
             <UserList />
           </section>
-          <section
+          {/* <section
             className={`dropdown__container ${activeSection.spaces ? 'open' : ''}`}
           >
             <SpaceList />
@@ -245,11 +215,11 @@ const AdminDashboard = () => {
             className={`dropdown__container ${activeSection.completedBookings ? 'open' : ''}`}
           >
             <CompletedBookingList />
-          </section>
+          </section> */}
         </article>
       </section>
 
-      <section className="user__section--part">
+      {/* <section className="user__section--part">
         <h2>{t('links.payments')}</h2>
         <article className="user__buttons">
           <button
@@ -299,7 +269,7 @@ const AdminDashboard = () => {
             <AuditList />
           </section>
         </article>
-      </section>
+      </section> */}
     </>
   )
 }

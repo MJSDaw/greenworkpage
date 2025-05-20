@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
+import { getUsers, saveUser } from '../services/apiService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
@@ -23,18 +23,12 @@ const UserList = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // TODO: Organiza esto porfi
+  // Función para obtener usuarios desde el servicio API
   const fetchUsers = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/admin/users', {
-        method: 'GET',
-      })
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
-      }
-      const data = await response.json()
+      const data = await getUsers()
       // Check if the data is paginated and extract the users from the "data" property
       if (data && typeof data === 'object' && Array.isArray(data.data)) {
         setUsers(data.data) // Set only the users array from the paginated data
@@ -72,17 +66,8 @@ const UserList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingId ? `/api/users/${editingId}` : '/api/register'
-      const method = editingId ? 'PUT' : 'POST'
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
+      // Usar el servicio API centralizado para guardar usuario
+      const data = await saveUser(formData, editingId);
 
       if (data && data.success) {
         if (editingId) {
@@ -93,7 +78,7 @@ const UserList = () => {
         setError(data.error || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Registration error:', error) // TODO: Matalo
+      console.error(editingId ? 'Error al editar:' : 'Error al registrar:', error)
     }
   }
 
@@ -184,9 +169,8 @@ const UserList = () => {
                           placeholder={t('form.name.placeholder')}
                           value={formData.name}
                           onChange={handleChange}
-                          required
                         />
-                        {error.name &&
+                        {error && error.name &&
                           Array.isArray(error.name) &&
                           error.name.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -204,9 +188,8 @@ const UserList = () => {
                           placeholder={t('form.surname.placeholder')}
                           value={formData.surname}
                           onChange={handleChange}
-                          required
                         />
-                        {error.surname &&
+                        {error && error.surname &&
                           Array.isArray(error.surname) &&
                           error.surname.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -225,9 +208,8 @@ const UserList = () => {
                           type="date"
                           value={formData.birthdate}
                           onChange={handleChange}
-                          required
                         />
-                        {error.birthdate &&
+                        {error && error.birthdate &&
                           Array.isArray(error.birthdate) &&
                           error.birthdate.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -243,9 +225,8 @@ const UserList = () => {
                           placeholder={t('form.nif.placeholder')}
                           value={formData.dni}
                           onChange={handleChange}
-                          required
                         />
-                        {error.dni &&
+                        {error && error.dni &&
                           Array.isArray(error.dni) &&
                           error.dni.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -261,9 +242,8 @@ const UserList = () => {
                           placeholder={t('form.email.placeholder')}
                           value={formData.email}
                           onChange={handleChange}
-                          required
                         />
-                        {error.email &&
+                        {error && error.email &&
                           Array.isArray(error.email) &&
                           error.email.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -282,9 +262,8 @@ const UserList = () => {
                           placeholder={t('form.password.placeholder')}
                           value={formData.password}
                           onChange={handleChange}
-                          required
                         />
-                        {error.password &&
+                        {error && error.password &&
                           Array.isArray(error.password) &&
                           error.password.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -303,9 +282,8 @@ const UserList = () => {
                           placeholder={t('form.confirmPassword.placeholder')}
                           value={formData.passwordConfirm}
                           onChange={handleChange}
-                          required
                         />
-                        {error.confirmPassword &&
+                        {error && error.confirmPassword &&
                           Array.isArray(error.confirmPassword) &&
                           error.confirmPassword.map((err, idx) => (
                             <span className="form__error" key={idx}>
