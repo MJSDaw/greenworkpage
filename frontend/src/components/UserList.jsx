@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { setAuthToken, authenticatedFetch } from '../services/authService'
@@ -172,7 +172,7 @@ const UserList = () => {
                     />
                   <div className="card__text">
                     <p>{user.name} {user.surname}</p>
-                    <p>{user.email}</p>  
+                    <p>{user.email}</p>
                   </div>
                 </div>
                 <div className="card__buttons">
