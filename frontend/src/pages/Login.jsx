@@ -43,11 +43,11 @@ const Login = () => {
       const data = await response.json()
       console.log('Login response:', data)
       if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user, data.user_type)
+        setAuthToken(data.token, data.user, data.userType)
         setErrors({})
         console.log('Token saved:', data.token)
-        console.log('User type:', data.user_type)
-        if (data.user_type === 'admin') {
+        console.log('User type:', data.userType)
+        if (data.userType === 'admin') {
           window.location.href = '/admin'
         } else {
           window.location.href = '/user'
