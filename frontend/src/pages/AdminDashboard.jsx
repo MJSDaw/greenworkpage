@@ -13,8 +13,7 @@ import AuditList from '../components/AuditList'
 import defaultImage from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
-  const { t } = useTranslation();
-  const [userName, setUserName] = useState('');
+  const { t } = useTranslation();  const [userName, setUserName] = useState('');
 
   const [activeSection, setActiveSection] = useState({
     users: false,
@@ -25,6 +24,7 @@ const AdminDashboard = () => {
     pendingPayments: false,
     audits: false,
   })
+  // Iniciar con defaultImage solo si no hay imagen de usuario
   const [image, setImage] = useState(defaultImage)
   useEffect(() => {
     // Get admin data from local storage
@@ -35,30 +35,36 @@ const AdminDashboard = () => {
       if (adminData.name) {
         setUserName(adminData.name);
       }
-      
-      // Set profile image if exists
+      // Set profile image
       if (adminData.image) {
         // If the image is a full URL
         if (adminData.image.startsWith('http')) {
           setImage(adminData.image);
         } else {
           // If it's a relative path, assume it's from storage
-          setImage(`/storage/${adminData.image}`);
+          setImage(`https://localhost:8443/storage/${adminData.image}`);
         }
+      } else {
+        // Si no hay imagen, usar la imagen predeterminada
+        setImage(defaultImage);
       }
       
       // Fetch latest admin data to ensure we have the most current info
       const fetchAdminData = async () => {
-        try {
-          const response = await authenticatedFetch('/api/user');
+        try {          const response = await authenticatedFetch('/api/user');
           if (response.ok) {
             const updatedData = await response.json();
-            if (updatedData && updatedData.image) {
+            if (updatedData) {
               // Update image if it exists in response
-              if (updatedData.image.startsWith('http')) {
-                setImage(updatedData.image);
+              if (updatedData.image) {
+                if (updatedData.image.startsWith('http')) {
+                  setImage(updatedData.image);
+                } else {
+                  setImage(`https://localhost:8443/storage/${updatedData.image}`);
+                }
               } else {
-                setImage(`/storage/${updatedData.image}`);
+                // Si no hay imagen en los datos actualizados, usar la predeterminada
+                setImage(defaultImage);
               }
             }
           }
@@ -144,9 +150,8 @@ const AdminDashboard = () => {
         
         // Actualizar la imagen con la ruta devuelta por el servidor
         // La ruta será algo como: admin-images/chrlE8EyTTqy1BHuuDkuGm0AF9rPkd28I4PXHYbT.jpg
-        if (data.data && data.data.image) {
-          // Construir la URL correcta para acceder al archivo en el storage público
-          setImage(`/storage/${data.data.image}`);
+        if (data.data && data.data.image) {          // Construir la URL correcta para acceder al archivo en el storage público
+          setImage(`https://localhost:8443/storage/${data.data.image}`);
           
           // También actualizamos la información del admin en localStorage
           const currentAdminData = getUserData();
