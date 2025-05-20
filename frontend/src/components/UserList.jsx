@@ -66,19 +66,25 @@ const UserList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      // Si estamos editando, obtener el usuario original para comparación
+      const originalUser = editingId ? users.find(user => user.id === editingId) : null;
+      
       // Usar el servicio API centralizado para guardar usuario
-      const data = await saveUser(formData, editingId);
+      const data = await saveUser(formData, editingId, originalUser);
 
       if (data && data.success) {
         if (editingId) {
           setEditingId(null)
           setError({})
+          // Actualizar la lista de usuarios
+          fetchUsers()
         }
       } else {
         setError(data.error || {})
       }
     } catch (error) {
       console.error(editingId ? 'Error al editar:' : 'Error al registrar:', error)
+      setError({ general: error.message })
     }
   }
 
@@ -93,17 +99,33 @@ const UserList = () => {
   }
 
   const [editingId, setEditingId] = useState(null)
-
-  // TODO: usalo para cargar el resto de atributos pertinentes
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
     } else {
       setEditingId(id)
       const userToEdit = users.find((user) => user.id === id)
+      console.log('User to edit:', userToEdit) // Debug para ver el formato de los datos
+
+      // Formatear fecha si es necesario
+      let formattedBirthdate = ''
+      if (userToEdit.birthdate) {
+        // Convertir formato de fecha a YYYY-MM-DD para input type="date"
+        const date = new Date(userToEdit.birthdate)
+        if (!isNaN(date.getTime())) {
+          formattedBirthdate = date.toISOString().split('T')[0]
+        }
+      }
+
       setFormData({
-        name: userToEdit.name,
-        surname: userToEdit.surname,
+        name: userToEdit.name || '',
+        surname: userToEdit.surname || '',
+        birthdate: formattedBirthdate,
+        dni: userToEdit.dni || '',
+        email: userToEdit.email || '',
+        password: '',
+        passwordConfirm: '',
+        termsAndConditions: true,
       })
     }
   }
@@ -170,7 +192,8 @@ const UserList = () => {
                           value={formData.name}
                           onChange={handleChange}
                         />
-                        {error && error.name &&
+                        {error &&
+                          error.name &&
                           Array.isArray(error.name) &&
                           error.name.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -189,29 +212,10 @@ const UserList = () => {
                           value={formData.surname}
                           onChange={handleChange}
                         />
-                        {error && error.surname &&
+                        {error &&
+                          error.surname &&
                           Array.isArray(error.surname) &&
                           error.surname.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="birthdate">
-                          {t('form.birthday.label')}
-                        </label>
-                        <input
-                          id="birthdate"
-                          name="birthdate"
-                          placeholder={t('form.birthday.placeholder')}
-                          type="date"
-                          value={formData.birthdate}
-                          onChange={handleChange}
-                        />
-                        {error && error.birthdate &&
-                          Array.isArray(error.birthdate) &&
-                          error.birthdate.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`error.${err}`)}
                             </span>
@@ -226,7 +230,8 @@ const UserList = () => {
                           value={formData.email}
                           onChange={handleChange}
                         />
-                        {error && error.email &&
+                        {error &&
+                          error.email &&
                           Array.isArray(error.email) &&
                           error.email.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -246,7 +251,8 @@ const UserList = () => {
                           value={formData.password}
                           onChange={handleChange}
                         />
-                        {error && error.password &&
+                        {error &&
+                          error.password &&
                           Array.isArray(error.password) &&
                           error.password.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -266,7 +272,8 @@ const UserList = () => {
                           value={formData.passwordConfirm}
                           onChange={handleChange}
                         />
-                        {error && error.confirmPassword &&
+                        {error &&
+                          error.confirmPassword &&
                           Array.isArray(error.confirmPassword) &&
                           error.confirmPassword.map((err, idx) => (
                             <span className="form__error" key={idx}>
@@ -301,7 +308,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.name &&
+                {error &&
+                  error.name &&
                   Array.isArray(error.name) &&
                   error.name.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -319,7 +327,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.surname &&
+                {error &&
+                  error.surname &&
                   Array.isArray(error.surname) &&
                   error.surname.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -338,7 +347,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.birthdate &&
+                {error &&
+                  error.birthdate &&
                   Array.isArray(error.birthdate) &&
                   error.birthdate.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -356,7 +366,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.dni &&
+                {error &&
+                  error.dni &&
                   Array.isArray(error.dni) &&
                   error.dni.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -374,7 +385,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.email &&
+                {error &&
+                  error.email &&
                   Array.isArray(error.email) &&
                   error.email.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -393,7 +405,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.password &&
+                {error &&
+                  error.password &&
                   Array.isArray(error.password) &&
                   error.password.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -414,7 +427,8 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {error && error.confirmPassword &&
+                {error &&
+                  error.confirmPassword &&
                   Array.isArray(error.confirmPassword) &&
                   error.confirmPassword.map((err, idx) => (
                     <span className="form__error" key={idx}>
@@ -451,7 +465,8 @@ const UserList = () => {
                     </Link>
                   </span>
                 </label>
-                {error && error.termsAndConditions &&
+                {error &&
+                  error.termsAndConditions &&
                   Array.isArray(error.termsAndConditions) &&
                   error.termsAndConditions.map((err, idx) => (
                     <span className="form__error" key={idx}>

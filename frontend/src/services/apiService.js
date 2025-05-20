@@ -138,13 +138,36 @@ export const getUsers = async () => {
  * Crea o actualiza un usuario
  * @param {Object} userData - Datos del usuario
  * @param {Number|null} userId - ID del usuario (null para crear nuevo)
+ * @param {Object} originalUser - Datos originales del usuario (para comparar cambios)
  * @returns {Promise} Respuesta del servidor
  */
-export const saveUser = async (userData, userId = null) => {
+export const saveUser = async (userData, userId = null, originalUser = null) => {
   const url = userId ? `/api/admin/users/${userId}` : '/api/register';
   const method = userId ? 'PUT' : 'POST';
-  const isAuthenticated = userId ? true : false; // Solo necesitamos autenticación para actualizar
-  
+  const isAuthenticated = userId ? true : false;
+  // Si es una actualización, mantener los valores originales y actualizar solo los campos modificados
+  if (userId && originalUser) {
+    const dataToSend = { ...originalUser }; // Comenzar con todos los datos originales
+
+    // Actualizar solo los campos que han cambiado y no están vacíos
+    Object.keys(userData).forEach(key => {
+      if (userData[key] !== originalUser[key] && userData[key] !== '') {
+        dataToSend[key] = userData[key];
+      }
+    });
+
+    // Si no hay cambios en el email, asegurarnos de que no se valide
+    if (dataToSend.email === originalUser.email) {
+      dataToSend.skip_email_validation = true;
+    }
+
+    // Asegurarnos de que el ID está presente
+    dataToSend.id = userId;
+
+    return baseFetch(url, method, dataToSend, {}, isAuthenticated);
+  }
+
+  // Si es un nuevo registro, enviar todos los datos
   return baseFetch(url, method, userData, {}, isAuthenticated);
 };
 

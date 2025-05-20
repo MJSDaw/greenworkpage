@@ -112,18 +112,25 @@ class UserController extends Controller
         // Save original values for audit
         $originalUser = $user->toArray();
         
-        $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
-            'surname' => 'string|max:255',
-            'email' => [
+        $rules = [
+            'name' => 'sometimes|required|string|max:255',
+            'surname' => 'sometimes|required|string|max:255',
+            'password' => 'nullable|string|min:8',
+        ];
+
+        // Solo validar email si se está actualizando
+        if ($request->has('email')) {
+            $rules['email'] = [
+                'required',
                 'string',
                 'email',
                 'max:255',
-                'unique:users',
-                'unique:admins',
-            ],
-            'password' => 'nullable|string|min:8',
-        ], [
+                Rule::unique('users')->ignore($id),
+                Rule::unique('admins'),
+            ];
+        }
+
+        $validator = Validator::make($request->all(), $rules, [
             'email.unique' => 'Email address already in use.',
         ]);
 
@@ -135,11 +142,19 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->name = $request->name;
-        $user->surname = $request->surname;
-        $user->email = $request->email;
-        $user->dni = $request->dni;
-        
+        // Actualizar solo los campos que se han enviado
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->has('surname')) {
+            $user->surname = $request->surname;
+        }
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+        if ($request->has('dni')) {
+            $user->dni = $request->dni;
+        }
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
