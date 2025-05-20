@@ -735,7 +735,7 @@ textarea {
   justify-self: center;
 }
 
-.card, .card--form {
+.card, .card--form, .card--form--edit {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -747,10 +747,19 @@ textarea {
   justify-content: space-between;
 }
 
-.card--form {
+.card--form, .card--form--edit {
   flex-direction: column;
   padding: 6rem;
   width: fit-content;
+}
+
+.card--form--edit {
+  width: 80%;
+  align-self: center;
+}
+
+.card--form--edit form {
+  width: 100%;
 }
 
 .card__content {
