@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAuthenticated, removeAuthToken } from '../services/authService'
+import { isAuthenticated, removeAuthToken, getUserData } from '../services/authService'
+import { getUserProfile } from '../services/authService'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
 
@@ -13,19 +14,50 @@ const Header = () => {
   const [menuActive, setMenuActive] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
   const [userName, setUserName] = useState('')
+  const [userImage, setUserImage] = useState(leonardo) // Inicializar con la imagen por defecto
+
   useEffect(() => {
     setAuthenticated(isAuthenticated())
-    // Get username from userData in local storage
-    const userData = localStorage.getItem('userData')
+    
+    // Get user data from local storage first (para rápida visualización)
+    const userData = getUserData()
+    
     if (userData) {
-      try {
-        const parsedUserData = JSON.parse(userData)
-        if (parsedUserData && parsedUserData.name) {
-          setUserName(parsedUserData.name)
-        }
-      } catch (error) {
-        console.error('Error parsing user data from localStorage:', error)
+      if (userData.name) {
+        setUserName(userData.name)
       }
+      
+      // Set profile image if available in localStorage
+      if (userData.image) {
+        // Si la imagen es una URL completa
+        if (userData.image.startsWith('http')) {
+          setUserImage(userData.image)
+        } else {
+          // Si es una ruta relativa, asumimos que es del storage
+          setUserImage(`https://localhost:8443/storage/${userData.image}`)
+        }
+      }
+      
+      // Fetch latest user data to ensure we have the most current info
+      const fetchUserData = async () => {
+        try {
+          const updatedData = await getUserProfile()
+          if (updatedData) {
+            // Update image if it exists in response
+            if (updatedData.image) {
+              if (updatedData.image.startsWith('http')) {
+                setUserImage(updatedData.image)
+              } else {
+                setUserImage(`https://localhost:8443/storage/${updatedData.image}`)
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        }
+      }
+      
+      fetchUserData()
     }
   }, [])
 
@@ -95,7 +127,16 @@ const Header = () => {
                   title={t('actions.user')}
                 >
                   {t('links.user') + (userName || 'User')}
-                  <img src={leonardo} className='nav__button--user__img'/>
+                  <img 
+                    src={userImage} 
+                    className='nav__button--user__img'
+                    alt={t('alt.userProfile')}
+                    onError={(e) => {
+                      // Si hay un error al cargar la imagen, usar la predeterminada
+                      e.target.onerror = null;
+                      e.target.src = leonardo;
+                    }}
+                  />
                 </button>
               </li>
               <li>
