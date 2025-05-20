@@ -70,4 +70,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('audits', [AuditController::class, 'index']);
     Route::get('audits/filter', [AuditController::class, 'filter']);
     Route::get('audits/{id}', [AuditController::class, 'show']);
+    
+    // Route for database backup
+    Route::post('backup', [AdminController::class, 'createBackup']);
 });

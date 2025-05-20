@@ -309,3 +309,11 @@ export const getAudits = async () => {
 export const createContact = async (contactData) => {
   return baseFetch('/api/contacts', 'POST', contactData, {}, false);
 };
+
+/**
+ * Create a manual database backup
+ * @returns {Promise} The API response
+ */
+export const createBackup = async () => {
+  return baseFetch('/api/admin/backup', 'POST');
+};

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData } from '../services/authService'
+import { createBackup } from '../services/apiService'
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
 import BookingList from '../components/BookingList'
@@ -246,14 +247,25 @@ const AdminDashboard = () => {
 
       <section className="user__section--part">
         <h2>{t('common.management')}</h2>
-        <article className="user__buttons">
-          <button
+        <article className="user__buttons">          <button
             className={`form__submit ${activeSection.audits ? 'active' : ''}`}
             onClick={() => toggleSection('audits')}
           >
             {t('links.audits')}
           </button>
-          <button className="form__submit --noArrow">
+          <button 
+            className="form__submit --noArrow"
+            onClick={async () => {
+              try {
+                const response = await createBackup();
+                console.log('Backup response:', response);
+                // Aquí podríamos hacer algo con la respuesta si es necesario
+                // pero sin mostrar alertas
+              } catch (error) {
+                console.error('Error creating backup:', error);
+              }
+            }}
+          >
             {t('links.backup')}
           </button>
         </article>

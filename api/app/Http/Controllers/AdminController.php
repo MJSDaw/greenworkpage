@@ -83,4 +83,58 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Create a database backup
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createBackup(Request $request)
+    {
+        try {
+            // Get current admin id
+            $adminId = auth()->guard('admin')->id();
+            
+            // Run the backup command
+            $exitCode = \Artisan::call('db:backup', [
+                '--admin_id' => $adminId
+            ]);
+            
+            if ($exitCode !== 0) {
+                $output = \Artisan::output();
+                throw new \Exception("Backup command failed: " . $output);
+            }
+            
+            $output = \Artisan::output();
+            // Extract the backup file path from the output
+            if (preg_match('/Backup completed successfully: (.+)/', $output, $matches)) {
+                $backupFile = $matches[1];
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Database backup created successfully',
+                    'data' => [
+                        'backup_file' => basename($backupFile),
+                        'timestamp' => date('Y-m-d H:i:s')
+                    ]
+                ]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Database backup created successfully',
+                'data' => [
+                    'output' => $output
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create database backup',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
