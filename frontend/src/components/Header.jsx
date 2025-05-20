@@ -10,9 +10,21 @@ const Header = () => {
   const navigate = useNavigate()
   const [menuActive, setMenuActive] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
-
+  const [userName, setUserName] = useState('')
   useEffect(() => {
     setAuthenticated(isAuthenticated())
+    // Get username from userData in local storage
+    const userData = localStorage.getItem('userData')
+    if (userData) {
+      try {
+        const parsedUserData = JSON.parse(userData)
+        if (parsedUserData && parsedUserData.name) {
+          setUserName(parsedUserData.name)
+        }
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error)
+      }
+    }
   }, [])
 
   const toggleMenu = () => {
@@ -76,7 +88,7 @@ const Header = () => {
                   className="nav__button--user"
                   title={t('actions.user')}
                 >
-                  {t('links.user') + 'Leonardo'}
+                  {t('links.user') + (userName || 'User')}
                 </button>
               </li>
               <li>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next'
 
 import UserList from '../components/UserList'
@@ -13,6 +13,7 @@ import leonardo from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
+  const [userName, setUserName] = useState('');
   const [activeSection, setActiveSection] = useState({
     users: false,
     spaces: false,
@@ -22,6 +23,21 @@ const AdminDashboard = () => {
     pendingPayments: false,
     audits: false
   });
+
+  useEffect(() => {
+    // Get username from userData in local storage
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const parsedUserData = JSON.parse(userData);
+        if (parsedUserData && parsedUserData.name) {
+          setUserName(parsedUserData.name);
+        }
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+      }
+    }
+  }, []);
 
   const toggleSection = (section) => {
     setActiveSection(prev => ({
@@ -41,7 +57,7 @@ const AdminDashboard = () => {
       <section className='user__background'>
         <article className='user__section'>
           <img src={leonardo} className='user__img' alt={t('alt.login_img')}></img>
-          <h1>Hola, Leonardo, ¿En qué trabajamos hoy?</h1>
+          <h1>Hola, {userName || 'Usuario'}, ¿En qué trabajamos hoy?</h1>
         </article>
       </section>
 
