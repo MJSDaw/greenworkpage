@@ -431,12 +431,25 @@ textarea {
 }
 
 .nav__button--user {
+  background-color: var(--color4);
   border: none;
+  box-shadow: none;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav__button--user:hover {
-  background-color: var(--color2);
-  color: var(--color0);
+  padding: .5rem 1.5rem;
+  outline: 3px solid var(--color1);
+}
+
+.nav__button--user__img {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid var(--color1);
+  border-radius: 100%;
+  margin-left: 1rem;
+  background-color: var(--color4);
 }
 
 /* Menu */
