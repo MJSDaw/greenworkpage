@@ -235,7 +235,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully',
             'user' => $user,
             'token' => $token,
-            'user_type' => 'user'
+            'userType' => 'user'
         ], 201);
     }
 
@@ -307,7 +307,7 @@ class AuthController extends Controller
                 'message' => 'Login successful',
                 'user' => $user,
                 'token' => $token,
-                'user_type' => 'user'
+                'userType' => 'user'
             ]);
         }
         
@@ -331,7 +331,7 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'user' => $admin,
             'token' => $token,
-            'user_type' => 'admin'
+            'userType' => 'admin'
         ]);
     }
 
