@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     dos2unix \
+    net-tools \
+    procps \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Enable SSL module in Apache

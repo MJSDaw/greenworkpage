@@ -11,7 +11,12 @@ export default defineConfig({
     https: {
       key: fs.readFileSync('./certs/key.pem'),
       cert: fs.readFileSync('./certs/cert.pem'),
-    },    proxy: {
+    },
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
+    proxy: {
       '/api': {
         target: 'https://laravel:443',  // using the container name and internal port
         changeOrigin: true,
