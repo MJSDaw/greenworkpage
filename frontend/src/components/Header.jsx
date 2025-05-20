@@ -37,7 +37,7 @@ const Header = () => {
     navigate('/')
   }
   const handleDashboard = () => {
-    const userType = localStorage.getItem('user_type');
+    const userType = localStorage.getItem('userType');
     if (userType === 'admin') {
       navigate('/admin');
     } else {
