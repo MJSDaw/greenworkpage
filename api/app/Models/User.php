@@ -26,6 +26,7 @@ class User extends Authenticatable
         'dni',
         'birthdate',
         'termsAndConditions',
+        'image',
     ];
 
     /**

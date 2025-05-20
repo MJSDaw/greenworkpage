@@ -16,7 +16,7 @@ export const setAuthToken = (token, userData = null, userType = null) => {
     localStorage.setItem('userData', JSON.stringify(userData));
   }
   if (userType) {
-    localStorage.setItem('user_type', userType);
+    localStorage.setItem('userType', userType);
   }
 };
 
@@ -25,7 +25,8 @@ export const setAuthToken = (token, userData = null, userType = null) => {
  * @returns {string|null} The authentication token or null if not found
  */
 export const getAuthToken = () => {
-  return localStorage.getItem('authToken');
+  // Check for both 'authToken' and 'token' for compatibility
+  return localStorage.getItem('authToken') || localStorage.getItem('token');
 };
 
 /**
@@ -42,7 +43,7 @@ export const getUserData = () => {
  * @returns {string|null} The user type or null if not found
  */
 export const getUserType = () => {
-  return localStorage.getItem('user_type');
+  return localStorage.getItem('userType');
 };
 
 /**
@@ -51,7 +52,7 @@ export const getUserType = () => {
 export const removeAuthToken = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('userData');
-  localStorage.removeItem('user_type');
+  localStorage.removeItem('userType');
 };
 
 /**
@@ -72,7 +73,7 @@ export const getAuthHeader = () => {
 };
 
 /**
- * Example usage for API requests
+ * Authenticated API requests with automatic 401 handling
  * @param {string} url - The API endpoint
  * @param {object} options - The fetch options
  * @returns {Promise} The fetch promise
@@ -88,6 +89,14 @@ export const authenticatedFetch = async (url, options = {}) => {
     ...options,
     headers
   });
+
+  // If the response status is 401 (Unauthorized), logout automatically
+  if (response.status === 401) {
+    console.log('Received 401 Unauthorized response, logging out...');
+    removeAuthToken();
+    // Redirect to home page
+    window.location.href = '/';
+  }
 
   return response;
 };

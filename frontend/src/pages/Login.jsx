@@ -20,7 +20,6 @@ const Login = () => {
       navigate("/"); 
     }
   }, [navigate])
-
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
@@ -28,11 +27,12 @@ const Login = () => {
       [name]: value
     }))
   }
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
+      // Don't use authenticatedFetch for login/register pages to avoid automatic redirects on 401 errors
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -42,21 +42,27 @@ const Login = () => {
       })
       const data = await response.json()
       console.log('Login response:', data)
-      if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user, data.user_type)
+      
+      // Check if login was successful (token exists and success is true)
+      if (data && data.success === true && data.token) {
+        setAuthToken(data.token, data.user, data.userType)
         setErrors({})
         console.log('Token saved:', data.token)
-        console.log('User type:', data.user_type)
-        if (data.user_type === 'admin') {
+        console.log('User type:', data.userType)
+        if (data.userType === 'admin') {
           window.location.href = '/admin'
         } else {
           window.location.href = '/user'
         }
       } else {
+        // Handle login failure - set errors from response
+        console.log('Login failed:', data)
         setErrors(data.errors || {})
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Login error:', error)
+      // Show generic error message if fetch fails entirely
+      setErrors({ auth: ['networkError'] })
     }
   }
 

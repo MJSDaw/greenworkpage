@@ -41,11 +41,11 @@ const Signin = () => {
       termsAndConditions: e.target.checked,
     }))
   }
-  
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
+      // Don't use authenticatedFetch for login/register pages to avoid automatic redirects on 401 errors
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
@@ -57,9 +57,9 @@ const Signin = () => {
       console.log('Registration response:', data)
 
       if (data && data.success && data.token) {
-        setAuthToken(data.token, data.user, 'user') // Al registrar, siempre es un usuario normal
+        setAuthToken(data.token, data.user, 'user')
         setErrors({})
-        window.location.href = '/user' // Redirigir directamente al dashboard de usuario
+        window.location.href = '/user'
       } else {
         setErrors(data.errors || {})
         console.log('Token not saved. Response data structure:', data)
