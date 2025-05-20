@@ -113,26 +113,18 @@ class UserController extends Controller
         $originalUser = $user->toArray();
         
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
+            'name' => 'string|max:255',
+            'surname' => 'string|max:255',
             'email' => [
-                'required',
                 'string',
                 'email',
                 'max:255',
                 'unique:users',
                 'unique:admins',
             ],
-            'dni' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('users')->ignore($user->id)
-            ],
             'password' => 'nullable|string|min:8',
         ], [
             'email.unique' => 'Email address already in use.',
-            'dni.unique' => 'ID number already in use.'
         ]);
 
         if ($validator->fails()) {

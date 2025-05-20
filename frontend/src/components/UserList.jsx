@@ -218,23 +218,6 @@ const UserList = () => {
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="nif">{t('form.nif.label')}</label>
-                        <input
-                          id="nif"
-                          name="dni"
-                          placeholder={t('form.nif.placeholder')}
-                          value={formData.dni}
-                          onChange={handleChange}
-                        />
-                        {error && error.dni &&
-                          Array.isArray(error.dni) &&
-                          error.dni.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
                         <label htmlFor="email">{t('form.email.label')}</label>
                         <input
                           id="email"

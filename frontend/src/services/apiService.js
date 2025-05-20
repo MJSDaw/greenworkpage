@@ -141,7 +141,7 @@ export const getUsers = async () => {
  * @returns {Promise} Respuesta del servidor
  */
 export const saveUser = async (userData, userId = null) => {
-  const url = userId ? `/api/users/${userId}` : '/api/register';
+  const url = userId ? `/api/admin/users/${userId}` : '/api/register';
   const method = userId ? 'PUT' : 'POST';
   const isAuthenticated = userId ? true : false; // Solo necesitamos autenticación para actualizar
   

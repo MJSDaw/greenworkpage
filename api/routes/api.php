@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('users', [UserController::class, 'index']); // Route to get all users
     Route::get('users/filter', [UserController::class, 'filter']); // Route to filter users
     Route::get('users/{id}', [UserController::class, 'show']); // Route to get a specific user
+    Route::put('users/{id}', [UserController::class, 'update']); // Route to update a specific user
     
     // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);
