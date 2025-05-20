@@ -44,7 +44,7 @@ class PaymentFactory extends Factory
             ];
         }        return array_merge($userData, [
             'amount' => $this->faker->randomFloat(2, 10, 1000),
-            'status' => $this->faker->randomElement(['pending', 'completed', 'failed', 'refunded']),
+            'status' => $this->faker->randomElement(['pending', 'completed']),
             'payment_method' => $this->faker->randomElement(['credit_card', 'transfer', 'paypal', 'cash']),
             'payment_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ]);

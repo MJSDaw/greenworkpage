@@ -255,8 +255,6 @@ const PendingPaymentList = () => {
                         >
                           <option value="pending">{t('form.status.pending')}</option>
                           <option value="completed">{t('form.status.completed')}</option>
-                          <option value="failed">{t('form.status.failed')}</option>
-                          <option value="refunded">{t('form.status.refunded')}</option>
                         </select>
                         {errors.status &&
                           Array.isArray(errors.status) &&
@@ -418,8 +416,6 @@ const PendingPaymentList = () => {
                 >
                   <option value="pending">{t('form.status.pending')}</option>
                   <option value="completed">{t('form.status.completed')}</option>
-                  <option value="failed">{t('form.status.failed')}</option>
-                  <option value="refunded">{t('form.status.refunded')}</option>
                 </select>
                 {errors.status &&
                   Array.isArray(errors.status) &&

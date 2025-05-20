@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('space_reservation_id')->nullable();
             $table->string('reservation_period')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending');
+            $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->string('payment_method', 50)->nullable();
             $table->timestamp('payment_date')->nullable();
             $table->timestamps();

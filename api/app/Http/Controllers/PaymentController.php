@@ -79,7 +79,7 @@ class PaymentController extends Controller
                 'reservation_period' => 'required',
                 'amount' => 'required|numeric|min:0',
                 'payment_method' => 'required|string',
-                'status' => 'required|in:pending,processing,completed,failed',
+                'status' => 'required|in:pending,completed',
             ]);
 
             if ($validator->fails()) {
@@ -152,7 +152,7 @@ class PaymentController extends Controller
             $validator = Validator::make($request->all(), [
                 'amount' => 'sometimes|numeric|min:0',
                 'payment_method' => 'sometimes|string',
-                'status' => 'sometimes|in:pending,processing,completed,failed',
+                'status' => 'sometimes|in:pending,completed',
             ]);
 
             if ($validator->fails()) {
