@@ -165,12 +165,6 @@ const BookingList = () => {
               <React.Fragment key={booking.id || `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`}>
                 <article className="card">
                   <div className="card__content">
-                    <img
-                      src={leonardo}
-                      alt={t('alt.dashboardImg', { id: booking.id || booking.user_id })}
-                      title={t('common.dashboardImg', { id: booking.id || booking.user_id })}
-                      className="card__img"
-                    />
                     <div className="card__text">
                       <p>
                         {t('common.user')}: {booking.user?.name || booking.user_id}

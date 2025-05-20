@@ -4,6 +4,8 @@ import { getUserData } from '../services/authService'
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
 import BookingList from '../components/BookingList'
+import CompletedBookingList from '../components/CompletedBookingsList'
+import AuditList from '../components/AuditList'
 
 import defaultImage from '../assets/img/leonardo.svg'
 
@@ -181,12 +183,12 @@ const AdminDashboard = () => {
           >
             {t('links.bookings')}
           </button>
-          {/* <button
+          <button
             className={`form__submit ${activeSection.completedBookings ? 'active' : ''}`}
             onClick={() => toggleSection('completedBookings')}
           >
             {t('links.completedBookings')}
-          </button> */}
+          </button>
         </article>
         <article>
           <section
@@ -204,11 +206,11 @@ const AdminDashboard = () => {
           >
             <BookingList />
           </section>
-          {/* <section
+          <section
             className={`dropdown__container ${activeSection.completedBookings ? 'open' : ''}`}
           >
             <CompletedBookingList />
-          </section> */}
+          </section>
         </article>
       </section>
 
@@ -240,7 +242,7 @@ const AdminDashboard = () => {
             <CompletedPaymentList />
           </section>
         </article>
-      </section>
+      </section> */}
 
       <section className="user__section--part">
         <h2>{t('common.management')}</h2>
@@ -262,7 +264,7 @@ const AdminDashboard = () => {
             <AuditList />
           </section>
         </article>
-      </section> */}
+      </section>
     </>
   )
 }

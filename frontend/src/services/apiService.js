@@ -217,7 +217,7 @@ export const saveSpace = async (spaceData, spaceId = null) => {
  * @returns {Promise} Lista de reservas
  */
 export const getBookings = async () => {
-  return baseFetch('/api/bookings', 'GET');
+  return baseFetch('/api/getactivebookings', 'GET');
 };
 
 /**
@@ -225,7 +225,7 @@ export const getBookings = async () => {
  * @returns {Promise} Lista de reservas completadas
  */
 export const getCompletedBookings = async () => {
-  return baseFetch('/api/completed-bookings', 'GET');
+  return baseFetch('/api/getinactivebookings', 'GET');
 };
 
 /**

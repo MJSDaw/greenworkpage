@@ -41,8 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('spaces', [SpaceController::class, 'index']);
     
     // Routes for reservations
-    Route::get('bookings', [ReservationController::class, 'index']);
-    Route::post('bookings', [ReservationController::class, 'store']);
+    Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);
+    Route::get('getinactivebookings', [ReservationController::class, 'getInactiveReservations']);
     Route::get('bookings/{id}', [ReservationController::class, 'show']);
     Route::put('bookings/{id}', [ReservationController::class, 'update']);
     Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
