@@ -20,7 +20,8 @@
     "menu": "Abrir el menú",
     "search": "Buscar",
     "logout": "Ir a cerrar sesión",
-    "user": "Ir al panel de usuario"
+    "user": "Ir al panel de usuario",
+    "editImg": "Cambiar foto"
   },
   "alt": {
     "logo": "Logo de Greenwork",
@@ -33,7 +34,8 @@
     "search": "Icono de búsqueda",
     "greenwork1": "Greenwork 1",
     "greenwork2": "Greenwork 2",
-    "greenwork3": "Greenwork 3"
+    "greenwork3": "Greenwork 3",
+    "dashboardImg": "Usuario"
   },
   "common": {
     "github": "Logo de Github",
@@ -59,7 +61,11 @@
     },
     "greenwork1": "Greenwork sofa",
     "greenwork2": "Greenwork pared",
-    "greenwork3": "Greenwork pantalla"
+    "greenwork3": "Greenwork pantalla",
+    "dashboardImg": "Perfil de usuario",
+    "greetings": "Hola {{name}}, ¿En qué trabajamos hoy?",
+    "main": "Principal",
+    "management": "Gestión de la web"
   },
   "links": {
     "home": "Inicio",
@@ -72,7 +78,15 @@
     "register": "Registrarme",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
-    "user": "Hola, "
+    "user": "Hola, ",
+    "users": "Usuarios",
+    "bookings": "Reservas",
+    "payments": "Pagos",
+    "suscriptions": "Suscripciones",
+    "completedPayments": "Pagos realizados",
+    "pendingPayments": "Pagos pendientes",
+    "audits": "Auditorias",
+    "backup": "Copia de seguridad manual"
   },
   "form":{
     "name": {
