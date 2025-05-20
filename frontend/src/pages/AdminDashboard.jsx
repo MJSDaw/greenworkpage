@@ -13,7 +13,8 @@ import AuditList from '../components/AuditList'
 import defaultImage from '../assets/img/leonardo.svg'
 
 const AdminDashboard = () => {
-  const { t } = useTranslation();  const [userName, setUserName] = useState(null);
+  const { t } = useTranslation();
+  const [userName, setUserName] = useState('');
 
   const [activeSection, setActiveSection] = useState({
     users: false,
@@ -110,15 +111,11 @@ const AdminDashboard = () => {
       console.error('No se pudo encontrar la información del administrador');
       return;
     }
-      try {
+    
+    try {
       // Crear FormData para enviar la imagen
       const formData = new FormData();
       formData.append('image', file);
-      
-      // Añadir la imagen anterior para eliminarla en el backend
-      if (adminData.image && !adminData.image.startsWith('http')) {
-        formData.append('previous_image', adminData.image);
-      }
       
       // Para debug - verificar que el archivo se está adjuntando correctamente
       console.log("Enviando archivo:", file.name, file.type, file.size);
@@ -148,29 +145,19 @@ const AdminDashboard = () => {
         console.error("Error al parsear respuesta JSON:", e);
         throw new Error('Formato de respuesta inválido');
       }
-        if (response.ok && data.success) {
+      
+      if (response.ok && data.success) {
         console.log('Imagen actualizada con éxito:', data);
         
         // Actualizar la imagen con la ruta devuelta por el servidor
         // La ruta será algo como: admin-images/chrlE8EyTTqy1BHuuDkuGm0AF9rPkd28I4PXHYbT.jpg
-        if (data.data && data.data.image) {          
-          // Construir la URL correcta para acceder al archivo en el storage público
+        if (data.data && data.data.image) {          // Construir la URL correcta para acceder al archivo en el storage público
           setImage(`https://localhost:8443/storage/${data.data.image}`);
           
           // También actualizamos la información del admin en localStorage
           const currentAdminData = getUserData();
           if (currentAdminData) {
             currentAdminData.image = data.data.image;
-            localStorage.setItem('userData', JSON.stringify(currentAdminData));
-          }
-        } else {
-          // Si por alguna razón no hay imagen en la respuesta, usar la predeterminada
-          setImage(defaultImage);
-          
-          // Actualizar localStorage para reflejar que no hay imagen
-          const currentAdminData = getUserData();
-          if (currentAdminData) {
-            currentAdminData.image = null;
             localStorage.setItem('userData', JSON.stringify(currentAdminData));
           }
         }
