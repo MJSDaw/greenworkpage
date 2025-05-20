@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +42,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('spaces', [SpaceController::class, 'index']);
     
     // Routes for reservations
-    Route::get('reservations', [ReservationController::class, 'index']);
-    Route::post('reservations', [ReservationController::class, 'store']);
-    Route::get('my-reservations', [ReservationController::class, 'myReservations']);
-    Route::get('spaces/{spaceId}/reservations', [ReservationController::class, 'spaceReservations']);
+    Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);
+    Route::get('getinactivebookings', [ReservationController::class, 'getInactiveReservations']);
+    Route::get('bookings/{id}', [ReservationController::class, 'show']);
+    Route::put('bookings/{id}', [ReservationController::class, 'update']);
+    Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
+    Route::get('my-bookings', [ReservationController::class, 'myReservations']);
+    Route::get('spaces/{spaceId}/bookings', [ReservationController::class, 'spaceReservations']);
     
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);
@@ -58,6 +62,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('users', [UserController::class, 'index']); // Route to get all users
     Route::get('users/filter', [UserController::class, 'filter']); // Route to filter users
     Route::get('users/{id}', [UserController::class, 'show']); // Route to get a specific user
+    Route::put('users/{id}', [UserController::class, 'update']); // Route to update a specific user
     
     // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);
@@ -66,4 +71,13 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('audits', [AuditController::class, 'index']);
     Route::get('audits/filter', [AuditController::class, 'filter']);
     Route::get('audits/{id}', [AuditController::class, 'show']);
+    
+    // Route for database backup
+    Route::post('backup', [AdminController::class, 'createBackup']);
+    
+    // Routes for payments
+    Route::get('payments/pending', [PaymentController::class, 'getPendingPayments']);
+    Route::get('payments/completed', [PaymentController::class, 'getCompletedPayments']);
+    Route::post('payments', [PaymentController::class, 'store']);
+    Route::put('payments/{id}', [PaymentController::class, 'update']);
 });

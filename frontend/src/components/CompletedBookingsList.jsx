@@ -1,83 +1,63 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
-
 import leonardo from '../assets/img/leonardo.svg'
+import { getCompletedBookings } from '../services/apiService'
 
-const CompletedBookingList = () => {
+const BookingList = () => {
   const { t } = useTranslation()
-  const [showForm, setShowForm] = useState(false)
-  const [showList, setShowList] = useState(true)
-  const [users, setUsers] = useState([])
+  const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // TODO: Organiza esto porfi
-  const fetchUsers = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const response = await authenticatedFetch('/api/admin/users', {
-        method: 'GET',
-      })
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
-      }
-      const data = await response.json()
-      // Check if the data is paginated and extract the users from the "data" property
-      if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setUsers(data.data) // Set only the users array from the paginated data
-      } else {
-        setUsers(data) // Fallback to the original behavior if data is not paginated
-      }
-    } catch (err) {
-      setError(err.message)
-      console.error('Error al obtener usuarios:', err) // TODO: Esto me lo quitas de consola porfi
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    if (showList) {
-      fetchUsers()
+    const fetchBookings = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await getCompletedBookings()
+        const bookingsArray = data?.data?.data || []
+        setBookings(bookingsArray)
+      } catch (err) {
+        setError(err.message)
+        console.error('Error al obtener reservas:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [showList])
+    fetchBookings()
+  }, [])
 
   return (
     <>
-      <h3>{t('links.completedBookings')}</h3>
+      <h3>{t('links.bookings')}</h3>
       <section className="card__container">
         {loading && <p>{t('common.bookingsLoading')}</p>}
         {error && <p>{t('common.commonError', { error: error })}</p>}
-        {!loading && !error && users.length === 0 && (
+        {!loading && !error && bookings.length === 0 && (
           <p>{t('common.bookingsNoBookings')}</p>
         )}
         {!loading &&
           !error &&
-          users.map((user) => (
-            <React.Fragment key={user.id}>
-              <article className="card">
-                <div className="card__content">
-                  <img
-                    src={leonardo}
-                    alt={t('alt.dashboardImg', { id: user.id })}
-                    title={t('common.dashboardImg', { id: user.id })}
-                    className="card__img"
-                  />
-                  <div className="card__text">
-                    <p>
-                      {user.name} {user.surname}
-                    </p>
-                    <p>{user.email}</p>
-                  </div>
+          bookings.map((booking) => (
+            <article className="card" key={booking.id || `${booking.user_id}-${booking.space_id}-${booking.reservation_period}` }>
+              <div className="card__content">
+                <div className="card__text">
+                  <p>
+                    {t('common.user')}: {booking.user?.name || booking.user_id}
+                  </p>
+                  <p>
+                    {t('common.space')}: {booking.space?.subtitle || booking.space_id}
+                  </p>
+                  <p>
+                    {t('common.period')}: {booking.start_date || booking.reservation_period?.split('|')[0]} - {booking.end_date || booking.reservation_period?.split('|')[1]}
+                  </p>
                 </div>
-              </article>
-            </React.Fragment>
+              </div>
+            </article>
           ))}
       </section>
     </>
   )
 }
 
-export default CompletedBookingList
+export default BookingList

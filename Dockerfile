@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     net-tools \
     procps \
+    postgresql-client \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Enable SSL module in Apache
@@ -41,9 +42,6 @@ RUN chmod -R 775 storage bootstrap/cache && \
 
 # Copy Apache configuration
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
-
-# Install postgres client for pg_isready
-RUN apt-get install -y postgresql-client
 
 # Copy the entry script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

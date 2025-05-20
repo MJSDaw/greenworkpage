@@ -17,6 +17,7 @@ class Reservation extends Model
         'user_id',
         'space_id',
         'reservation_period',
+        'status',
     ];    /**
      * The attributes that should be cast.
      *
@@ -24,6 +25,7 @@ class Reservation extends Model
      */
     protected $casts = [
         // No casting needed for reservation_period as it will remain a string
+        'status' => 'boolean',
     ];
 
     /**
@@ -31,7 +33,9 @@ class Reservation extends Model
      *
      * @var bool
      */
-    public $incrementing = false;    /**
+    public $incrementing = false;
+    
+    /**
      * The primary key for the model.
      *
      * @var array
@@ -113,5 +117,13 @@ class Reservation extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * Get the payments for this reservation.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

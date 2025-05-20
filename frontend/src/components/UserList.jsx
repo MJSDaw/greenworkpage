@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
+import { getUsers, saveUser } from '../services/apiService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
@@ -22,21 +22,13 @@ const UserList = () => {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  // TODO: Estas poniendo dos variables de error
-  const [errors, setErrors] = useState({})
 
-  // TODO: Organiza esto porfi
+  // Función para obtener usuarios desde el servicio API
   const fetchUsers = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/admin/users', {
-        method: 'GET',
-      })
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
-      }
-      const data = await response.json()
+      const data = await getUsers()
       // Check if the data is paginated and extract the users from the "data" property
       if (data && typeof data === 'object' && Array.isArray(data.data)) {
         setUsers(data.data) // Set only the users array from the paginated data
@@ -45,7 +37,6 @@ const UserList = () => {
       }
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener usuarios:', err) // TODO: Esto me lo quitas de consola porfi
     } finally {
       setLoading(false)
     }
@@ -75,39 +66,25 @@ const UserList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingId ? `/api/users/${editingId}` : '/api/register'
-      const method = editingId ? 'PUT' : 'POST'
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
-      console.log(editingId ? 'Edit response:' : 'Registration response:', data) // TODO: Matalo
+      // Si estamos editando, obtener el usuario original para comparación
+      const originalUser = editingId ? users.find(user => user.id === editingId) : null;
+      
+      // Usar el servicio API centralizado para guardar usuario
+      const data = await saveUser(formData, editingId, originalUser);
 
       if (data && data.success) {
         if (editingId) {
           setEditingId(null)
-          setErrors({})
-          console.log('Usuario actualizado correctamente') // TODO: Matalo
-        } else {
-          if (data.token) {
-            setAuthToken(data.token, data.user)
-            setErrors({})
-            window.location.href = '/'
-          } else {
-            setErrors(data.errors || {})
-            console.log('Token not saved. Response data structure:', data) // TODO: Matalo
-          }
+          setError({})
+          // Actualizar la lista de usuarios
+          fetchUsers()
         }
       } else {
-        setErrors(data.errors || {})
+        setError(data.error || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Registration error:', error) // TODO: Matalo
+      console.error(editingId ? 'Error al editar:' : 'Error al registrar:', error)
+      setError({ general: error.message })
     }
   }
 
@@ -122,17 +99,23 @@ const UserList = () => {
   }
 
   const [editingId, setEditingId] = useState(null)
-
-  // TODO: usalo para cargar el resto de atributos pertinentes
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
     } else {
       setEditingId(id)
       const userToEdit = users.find((user) => user.id === id)
+      console.log('User to edit:', userToEdit) // Debug para ver el formato de los datos
+
       setFormData({
-        name: userToEdit.name,
-        surname: userToEdit.surname,
+        name: userToEdit.name || '',
+        surname: userToEdit.surname || '',
+        birthdate: formattedBirthdate,
+        dni: userToEdit.dni || '',
+        email: userToEdit.email || '',
+        password: '',
+        passwordConfirm: '',
+        termsAndConditions: true,
       })
     }
   }
@@ -198,13 +181,13 @@ const UserList = () => {
                           placeholder={t('form.name.placeholder')}
                           value={formData.name}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.name &&
-                          Array.isArray(errors.name) &&
-                          errors.name.map((err, idx) => (
+                        {error &&
+                          error.name &&
+                          Array.isArray(error.name) &&
+                          error.name.map((err, idx) => (
                             <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
+                              {t(`error.${err}`)}
                             </span>
                           ))}
                       </div>
@@ -218,52 +201,13 @@ const UserList = () => {
                           placeholder={t('form.surname.placeholder')}
                           value={formData.surname}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.surname &&
-                          Array.isArray(errors.surname) &&
-                          errors.surname.map((err, idx) => (
+                        {error &&
+                          error.surname &&
+                          Array.isArray(error.surname) &&
+                          error.surname.map((err, idx) => (
                             <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="birthdate">
-                          {t('form.birthday.label')}
-                        </label>
-                        <input
-                          id="birthdate"
-                          name="birthdate"
-                          placeholder={t('form.birthday.placeholder')}
-                          type="date"
-                          value={formData.birthdate}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.birthdate &&
-                          Array.isArray(errors.birthdate) &&
-                          errors.birthdate.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="nif">{t('form.nif.label')}</label>
-                        <input
-                          id="nif"
-                          name="dni"
-                          placeholder={t('form.nif.placeholder')}
-                          value={formData.dni}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.dni &&
-                          Array.isArray(errors.dni) &&
-                          errors.dni.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
+                              {t(`error.${err}`)}
                             </span>
                           ))}
                       </div>
@@ -275,13 +219,13 @@ const UserList = () => {
                           placeholder={t('form.email.placeholder')}
                           value={formData.email}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.email &&
-                          Array.isArray(errors.email) &&
-                          errors.email.map((err, idx) => (
+                        {error &&
+                          error.email &&
+                          Array.isArray(error.email) &&
+                          error.email.map((err, idx) => (
                             <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
+                              {t(`error.${err}`)}
                             </span>
                           ))}
                       </div>
@@ -296,13 +240,13 @@ const UserList = () => {
                           placeholder={t('form.password.placeholder')}
                           value={formData.password}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.password &&
-                          Array.isArray(errors.password) &&
-                          errors.password.map((err, idx) => (
+                        {error &&
+                          error.password &&
+                          Array.isArray(error.password) &&
+                          error.password.map((err, idx) => (
                             <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
+                              {t(`error.${err}`)}
                             </span>
                           ))}
                       </div>
@@ -317,13 +261,13 @@ const UserList = () => {
                           placeholder={t('form.confirmPassword.placeholder')}
                           value={formData.passwordConfirm}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.confirmPassword &&
-                          Array.isArray(errors.confirmPassword) &&
-                          errors.confirmPassword.map((err, idx) => (
+                        {error &&
+                          error.confirmPassword &&
+                          Array.isArray(error.confirmPassword) &&
+                          error.confirmPassword.map((err, idx) => (
                             <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
+                              {t(`error.${err}`)}
                             </span>
                           ))}
                       </div>
@@ -354,11 +298,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.name &&
-                  Array.isArray(errors.name) &&
-                  errors.name.map((err, idx) => (
+                {error &&
+                  error.name &&
+                  Array.isArray(error.name) &&
+                  error.name.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -372,11 +317,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.surname &&
-                  Array.isArray(errors.surname) &&
-                  errors.surname.map((err, idx) => (
+                {error &&
+                  error.surname &&
+                  Array.isArray(error.surname) &&
+                  error.surname.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -391,11 +337,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.birthdate &&
-                  Array.isArray(errors.birthdate) &&
-                  errors.birthdate.map((err, idx) => (
+                {error &&
+                  error.birthdate &&
+                  Array.isArray(error.birthdate) &&
+                  error.birthdate.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -409,11 +356,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.dni &&
-                  Array.isArray(errors.dni) &&
-                  errors.dni.map((err, idx) => (
+                {error &&
+                  error.dni &&
+                  Array.isArray(error.dni) &&
+                  error.dni.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -427,11 +375,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.email &&
-                  Array.isArray(errors.email) &&
-                  errors.email.map((err, idx) => (
+                {error &&
+                  error.email &&
+                  Array.isArray(error.email) &&
+                  error.email.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -446,11 +395,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.password &&
-                  Array.isArray(errors.password) &&
-                  errors.password.map((err, idx) => (
+                {error &&
+                  error.password &&
+                  Array.isArray(error.password) &&
+                  error.password.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -467,11 +417,12 @@ const UserList = () => {
                   onChange={handleChange}
                   required
                 />
-                {errors.confirmPassword &&
-                  Array.isArray(errors.confirmPassword) &&
-                  errors.confirmPassword.map((err, idx) => (
+                {error &&
+                  error.confirmPassword &&
+                  Array.isArray(error.confirmPassword) &&
+                  error.confirmPassword.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>
@@ -504,11 +455,12 @@ const UserList = () => {
                     </Link>
                   </span>
                 </label>
-                {errors.termsAndConditions &&
-                  Array.isArray(errors.termsAndConditions) &&
-                  errors.termsAndConditions.map((err, idx) => (
+                {error &&
+                  error.termsAndConditions &&
+                  Array.isArray(error.termsAndConditions) &&
+                  error.termsAndConditions.map((err, idx) => (
                     <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
+                      {t(`error.${err}`)}
                     </span>
                   ))}
               </div>

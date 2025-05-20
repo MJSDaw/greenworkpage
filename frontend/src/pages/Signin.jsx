@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import donatello from '../assets/img/donatello.svg'
-import { setAuthToken, isAuthenticated, getUserType } from '../services/authService'
+import { setAuthToken, isAuthenticated } from '../services/authService'
+import { register } from '../services/apiService'
 
 const Signin = () => {
   const { t } = useTranslation()
@@ -45,15 +46,7 @@ const Signin = () => {
     e.preventDefault()
 
     try {
-      // Don't use authenticatedFetch for login/register pages to avoid automatic redirects on 401 errors
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
+      const data = await register(formData)
       console.log('Registration response:', data)
 
       if (data && data.success && data.token) {

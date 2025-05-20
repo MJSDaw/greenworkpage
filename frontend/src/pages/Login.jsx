@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import miguelangel from '../assets/img/miguelAngel.svg'
-import { setAuthToken, isAuthenticated, getUserType } from '../services/authService'
+import { setAuthToken, isAuthenticated } from '../services/authService'
+import { login } from '../services/apiService'
 
 const Login = () => {
   const { t } = useTranslation()
@@ -32,15 +33,7 @@ const Login = () => {
     e.preventDefault()
 
     try {
-      // Don't use authenticatedFetch for login/register pages to avoid automatic redirects on 401 errors
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
+      const data = await login(formData)
       console.log('Login response:', data)
       
       // Check if login was successful (token exists and success is true)

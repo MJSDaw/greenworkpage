@@ -75,8 +75,8 @@ class ReservationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'space_id' => 'required|exists:spaces,id',
-            'start_date' => 'required|date_format:Y-m-d H:i',
-            'end_date' => 'required|date_format:Y-m-d H:i|after:start_date',
+            'start_date' => 'required|string',
+            'end_date' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -190,6 +190,120 @@ class ReservationController extends Controller
         $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
         if (!in_array($orderBy, $allowedOrderColumns)) {
             $orderBy = 'reservation_period';
+        }
+        
+        // Validate order direction
+        $orderDirection = strtolower($orderDirection) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        if ($orderBy === 'reservation_period') {
+            // Order by the start date portion of reservation_period
+            $query->orderByRaw("SUBSTRING_INDEX(reservation_period, '|', 1) $orderDirection");
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
+        }
+        
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $reservations = $query->paginate($perPage);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $reservations
+        ]);
+    }
+
+    /**
+     * Display a listing of the active reservations.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getActiveReservations(Request $request)
+    {
+        $query = Reservation::with(['user', 'space'])
+            ->where('status', true);
+        
+        // Filter by user_id
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        
+        // Filter by space_id
+        if ($request->has('space_id')) {
+            $query->where('space_id', $request->space_id);
+        }
+        
+        // Filter by date range (start_date or end_date)
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $query->filterByDateRange($request->start_date, $request->end_date);
+        }
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'created_at');
+        $orderDirection = $request->input('order_direction', 'desc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'created_at';
+        }
+        
+        // Validate order direction
+        $orderDirection = strtolower($orderDirection) === 'asc' ? 'asc' : 'desc';
+        
+        // Apply ordering
+        if ($orderBy === 'reservation_period') {
+            // Order by the start date portion of reservation_period
+            $query->orderByRaw("SUBSTRING_INDEX(reservation_period, '|', 1) $orderDirection");
+        } else {
+            $query->orderBy($orderBy, $orderDirection);
+        }
+        
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $reservations = $query->paginate($perPage);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $reservations
+        ]);
+    }
+
+    /**
+     * Display a listing of the inactive reservations.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getInactiveReservations(Request $request)
+    {
+        $query = Reservation::with(['user', 'space'])
+            ->where('status', false);
+        
+        // Filter by user_id
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        
+        // Filter by space_id
+        if ($request->has('space_id')) {
+            $query->where('space_id', $request->space_id);
+        }
+        
+        // Filter by date range (start_date or end_date)
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $query->filterByDateRange($request->start_date, $request->end_date);
+        }
+        
+        // Ordering
+        $orderBy = $request->input('order_by', 'created_at');
+        $orderDirection = $request->input('order_direction', 'desc');
+        
+        // Validate order_by to prevent SQL injection
+        $allowedOrderColumns = ['created_at', 'updated_at', 'reservation_period'];
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'created_at';
         }
         
         // Validate order direction
