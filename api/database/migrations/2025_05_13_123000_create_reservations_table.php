@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('space_id')->constrained('spaces')->onDelete('cascade');
             $table->string('reservation_period');
+            $table->boolean('status')->default(true);
             $table->timestamps();
 
             // Set composite primary key

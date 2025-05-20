@@ -41,10 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('spaces', [SpaceController::class, 'index']);
     
     // Routes for reservations
-    Route::get('reservations', [ReservationController::class, 'index']);
-    Route::post('reservations', [ReservationController::class, 'store']);
-    Route::get('my-reservations', [ReservationController::class, 'myReservations']);
-    Route::get('spaces/{spaceId}/reservations', [ReservationController::class, 'spaceReservations']);
+    Route::get('bookings', [ReservationController::class, 'index']);
+    Route::post('bookings', [ReservationController::class, 'store']);
+    Route::get('bookings/{id}', [ReservationController::class, 'show']);
+    Route::put('bookings/{id}', [ReservationController::class, 'update']);
+    Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
+    Route::get('my-bookings', [ReservationController::class, 'myReservations']);
+    Route::get('spaces/{spaceId}/bookings', [ReservationController::class, 'spaceReservations']);
     
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);

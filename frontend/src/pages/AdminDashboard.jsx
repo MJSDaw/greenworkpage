@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { getUserData } from '../services/authService'
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
+import BookingList from '../components/BookingList'
 
 import defaultImage from '../assets/img/leonardo.svg'
 
@@ -152,7 +153,6 @@ const AdminDashboard = () => {
               <input
                 type="file"
                 accept="image/*"
-                // onChange={handleImageChange}
               />
             </label>
           </div>
@@ -175,13 +175,13 @@ const AdminDashboard = () => {
           >
             {t('links.spaces')}
           </button>
-          {/* <button
+          <button
             className={`form__submit ${activeSection.bookings ? 'active' : ''}`}
             onClick={() => toggleSection('bookings')}
           >
             {t('links.bookings')}
           </button>
-          <button
+          {/* <button
             className={`form__submit ${activeSection.completedBookings ? 'active' : ''}`}
             onClick={() => toggleSection('completedBookings')}
           >
@@ -199,12 +199,12 @@ const AdminDashboard = () => {
           >
             <SpaceList />
           </section>
-          {/* <section
+           <section
             className={`dropdown__container ${activeSection.bookings ? 'open' : ''}`}
           >
             <BookingList />
           </section>
-          <section
+          {/* <section
             className={`dropdown__container ${activeSection.completedBookings ? 'open' : ''}`}
           >
             <CompletedBookingList />

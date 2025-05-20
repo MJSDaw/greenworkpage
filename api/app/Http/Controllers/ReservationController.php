@@ -75,8 +75,8 @@ class ReservationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'space_id' => 'required|exists:spaces,id',
-            'start_date' => 'required|date_format:Y-m-d H:i',
-            'end_date' => 'required|date_format:Y-m-d H:i|after:start_date',
+            'start_date' => 'required|string',
+            'end_date' => 'required|string',
         ]);
 
         if ($validator->fails()) {

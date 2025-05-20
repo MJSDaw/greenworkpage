@@ -217,7 +217,7 @@ export const saveSpace = async (spaceData, spaceId = null) => {
  * @returns {Promise} Lista de reservas
  */
 export const getBookings = async () => {
-  return baseFetch('/api/admin/bookings', 'GET');
+  return baseFetch('/api/bookings', 'GET');
 };
 
 /**
@@ -225,7 +225,7 @@ export const getBookings = async () => {
  * @returns {Promise} Lista de reservas completadas
  */
 export const getCompletedBookings = async () => {
-  return baseFetch('/api/admin/completed-bookings', 'GET');
+  return baseFetch('/api/completed-bookings', 'GET');
 };
 
 /**
@@ -239,6 +239,25 @@ export const saveBooking = async (bookingData, bookingId = null) => {
   const method = bookingId ? 'PUT' : 'POST';
   
   return baseFetch(url, method, bookingData);
+};
+
+/**
+ * Crea una nueva reserva
+ * @param {Object} bookingData - Datos de la reserva
+ * @returns {Promise} Respuesta del servidor
+ */
+export const createBooking = async (bookingData) => {
+  return baseFetch('/api/bookings', 'POST', bookingData);
+};
+
+/**
+ * Actualiza una reserva existente
+ * @param {string} id - ID de la reserva
+ * @param {Object} bookingData - Datos actualizados de la reserva
+ * @returns {Promise} Respuesta del servidor
+ */
+export const updateBooking = async (id, bookingData) => {
+  return baseFetch(`/api/bookings/${id}`, 'PUT', bookingData);
 };
 
 // ==================== Pagos ====================
