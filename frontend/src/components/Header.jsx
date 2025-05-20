@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAuthenticated, removeAuthToken, getUserType } from '../services/authService'
 import { isAuthenticated, removeAuthToken } from '../services/authService'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
