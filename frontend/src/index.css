@@ -669,6 +669,11 @@ textarea {
   border: 5px solid var(--color1);
   background-color: var(--color4);
   margin-right: 3rem;
+  transition: opacity 0.3s ease;
+}
+
+.user__img-container:hover .user__img {
+  opacity: 0.5;
 }
 
 .user__section--part {
@@ -691,8 +696,8 @@ textarea {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: 
-    max-height 0.5s ease-in-out, 
+  transition:
+    max-height 0.5s ease-in-out,
     opacity 0.3s ease-in-out;
   margin-bottom: 0.5rem;
 }
@@ -789,6 +794,38 @@ textarea {
 /* EXCEPCIÓN: Botón sin flecha */
 .form__submit.--noArrow::after {
   display: none !important;
+}
+
+.user__img__container {
+  position: relative;
+  display: inline-block;
+}
+
+.user__edit__btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  border-radius: 100%;
+  margin-right: 3rem;
+}
+
+.user__img__container:hover .user__edit__btn {
+  opacity: 1;
+}
+
+.user__edit__btn input[type="file"] {
+  display: none;
 }
 
 /* =========================
