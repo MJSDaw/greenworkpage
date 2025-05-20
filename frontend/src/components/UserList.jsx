@@ -107,6 +107,16 @@ const UserList = () => {
       const userToEdit = users.find((user) => user.id === id)
       console.log('User to edit:', userToEdit) // Debug para ver el formato de los datos
 
+      // Format birthdate if it exists
+      let formattedBirthdate = '';
+      if (userToEdit.birthdate) {
+        // Ensure the date is in YYYY-MM-DD format for input[type="date"]
+        const birthdate = new Date(userToEdit.birthdate);
+        if (!isNaN(birthdate.getTime())) {
+          formattedBirthdate = birthdate.toISOString().split('T')[0];
+        }
+      }
+
       setFormData({
         name: userToEdit.name || '',
         surname: userToEdit.surname || '',
