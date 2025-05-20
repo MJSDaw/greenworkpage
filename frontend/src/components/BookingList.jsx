@@ -23,18 +23,19 @@ const BookingList = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [errors, setErrors] = useState({})
-
   const fetchBookings = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await getBookings()
+      const response = await getBookings()
       
       // Extract the bookings array from the paginated response
-      const bookingsArray = data?.data?.data || []
+      const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)
+      console.log('Bookings response:', response)
+      console.log('Bookings array:', bookingsArray)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Error al obtener reservas')
       console.error('Error al obtener reservas:', err)
     } finally {
       setLoading(false)

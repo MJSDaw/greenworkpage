@@ -118,4 +118,12 @@ class Reservation extends Model
 
         return $query;
     }
+
+    /**
+     * Get the payments for this reservation.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

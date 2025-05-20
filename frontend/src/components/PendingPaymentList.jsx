@@ -1,61 +1,90 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
+import { authenticatedFetch } from '../services/authService'
+import { getPendingPayments, getUsers, getBookings, savePayment } from '../services/apiService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
 const PendingPaymentList = () => {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    birthdate: '',
-    dni: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-    termsAndConditions: false,
+    user_id: '',
+    amount: '',
+    status: 'pending',
+    payment_method: '',
+    payment_date: '',
+    user_reservation_id: '',
+    space_reservation_id: '',
+    reservation_period: '',
   })
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
+  const [payments, setPayments] = useState([])
   const [users, setUsers] = useState([])
+  const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  // TODO: Estas poniendo dos variables de error
   const [errors, setErrors] = useState({})
 
   // TODO: Organiza esto porfi
-  const fetchUsers = async () => {
+  const fetchPayments = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/admin/users', {
-        method: 'GET',
-      })
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
-      }
-      const data = await response.json()
-      // Check if the data is paginated and extract the users from the "data" property
-      if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setUsers(data.data) // Set only the users array from the paginated data
-      } else {
-        setUsers(data) // Fallback to the original behavior if data is not paginated
-      }
+      const data = await getPendingPayments();
+      setPayments(data); // The API service now ensures this is an array
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener usuarios:', err) // TODO: Esto me lo quitas de consola porfi
+      console.error('Error al obtener pagos pendientes:', err)
     } finally {
       setLoading(false)
     }
   }
-
+    const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      // Ensure we're working with an array
+      const usersArray = response?.data?.data || response?.data || response || [];
+      setUsers(usersArray);
+    } catch (err) {
+      console.error('Error al obtener usuarios:', err)
+    }
+  }
+  const fetchReservations = async () => {
+    try {
+      const response = await getBookings();
+      console.log('Bookings response:', response);
+      
+      // Ensure we're working with an array
+      let reservationsArray = [];
+      
+      if (response?.data?.data && Array.isArray(response.data.data)) {
+        reservationsArray = response.data.data;
+      } else if (response?.data && Array.isArray(response.data)) {
+        reservationsArray = response.data;
+      } else if (Array.isArray(response)) {
+        reservationsArray = response;
+      }
+      
+      console.log('Processed reservations array:', reservationsArray);
+      setReservations(reservationsArray); // Now we're sure this is an array
+    } catch (err) {
+      console.error('Error al obtener reservas:', err);
+      // Set an empty array as a fallback
+      setReservations([]);
+    }
+  }
   useEffect(() => {
     if (showList) {
-      fetchUsers()
+      fetchPayments()
     }
   }, [showList])
+
+  useEffect(() => {
+    fetchUsers()
+    fetchReservations()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -64,50 +93,29 @@ const PendingPaymentList = () => {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
-
   const handleTermsChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
       termsAndConditions: e.target.checked,
     }))
   }
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingId ? `/api/users/${editingId}` : '/api/register'
-      const method = editingId ? 'PUT' : 'POST'
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
-      console.log(editingId ? 'Edit response:' : 'Registration response:', data) // TODO: Matalo
+      const data = await savePayment(formData, editingId);
 
       if (data && data.success) {
-        if (editingId) {
-          setEditingId(null)
-          setErrors({})
-          console.log('Usuario actualizado correctamente') // TODO: Matalo
-        } else {
-          if (data.token) {
-            setAuthToken(data.token, data.user)
-            setErrors({})
-            window.location.href = '/'
-          } else {
-            setErrors(data.errors || {})
-            console.log('Token not saved. Response data structure:', data) // TODO: Matalo
-          }
-        }
+        setEditingId(null)
+        setErrors({})
+        fetchPayments()
+        setShowForm(false)
+        setShowList(true)
       } else {
         setErrors(data.errors || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Registration error:', error) // TODO: Matalo
+      console.error(editingId ? 'Error updating payment:' : 'Error creating payment:', error)
     }
   }
 
@@ -120,23 +128,26 @@ const PendingPaymentList = () => {
     setShowForm(false)
     setShowList(true)
   }
-
   const [editingId, setEditingId] = useState(null)
 
-  // TODO: usalo para cargar el resto de atributos pertinentes
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
     } else {
       setEditingId(id)
-      const userToEdit = users.find((user) => user.id === id)
+      const paymentToEdit = payments.find((payment) => payment.id === id)
       setFormData({
-        name: userToEdit.name,
-        surname: userToEdit.surname,
+        user_id: paymentToEdit.user_id,
+        amount: paymentToEdit.amount,
+        status: paymentToEdit.status,
+        payment_method: paymentToEdit.payment_method || '',
+        payment_date: paymentToEdit.payment_date || '',
+        user_reservation_id: paymentToEdit.user_reservation_id || '',
+        space_reservation_id: paymentToEdit.space_reservation_id || '',
+        reservation_period: paymentToEdit.reservation_period || '',
       })
     }
   }
-
   return (
     <>
       <h3>{t('links.pendingPayments')}</h3>
@@ -152,32 +163,33 @@ const PendingPaymentList = () => {
         <section className="card__container">
           {loading && <p>{t('common.paymentsLoading')}</p>}
           {error && <p>{t('common.commonError', { error: error })}</p>}
-          {!loading && !error && users.length === 0 && (
+          {!loading && !error && payments.length === 0 && (
             <p>{t('common.paymentsNoPayments')}</p>
           )}
           {!loading &&
             !error &&
-            users.map((user) => (
-              <React.Fragment key={user.id}>
+            payments.map((payment) => (
+              <React.Fragment key={payment.id}>
                 <article className="card">
                   <div className="card__content">
                     <img
                       src={leonardo}
-                      alt={t('alt.dashboardImg', { id: user.id })}
-                      title={t('common.dashboardImg', { id: user.id })}
+                      alt={t('alt.dashboardImg', { id: payment.id })}
+                      title={t('common.dashboardImg', { id: payment.id })}
                       className="card__img"
                     />
                     <div className="card__text">
                       <p>
-                        {user.name} {user.surname}
+                        {payment.user?.name || 'Usuario'} - {payment.amount}€
                       </p>
-                      <p>{user.email}</p>
+                      <p>{t('common.status')}: {payment.status}</p>
+                      <p>{payment.payment_method || t('common.paymentMethodUnknown')}</p>
                     </div>
                   </div>
                   <div className="card__buttons">
                     <button
                       className="form__submit --noArrow"
-                      onClick={() => handleEditClick(user.id)}
+                      onClick={() => handleEditClick(payment.id)}
                     >
                       {t('actions.edit')}
                     </button>
@@ -185,143 +197,152 @@ const PendingPaymentList = () => {
                       {t('actions.delete')}
                     </button>
                   </div>
-                </article>
-
-                {editingId === user.id && (
+                </article>                {editingId === payment.id && (
                   <article className="card--form--edit">
                     <form onSubmit={handleSubmit}>
                       <div className="form__section">
-                        <label htmlFor="name">{t('form.name.label')}</label>
-                        <input
-                          id="name"
-                          name="name"
-                          placeholder={t('form.name.placeholder')}
-                          value={formData.name}
+                        <label htmlFor="user_id">{t('form.user.label')}</label>
+                        <select
+                          id="user_id"
+                          name="user_id"
+                          value={formData.user_id}
                           onChange={handleChange}
                           required
-                        />
-                        {errors.name &&
-                          Array.isArray(errors.name) &&
-                          errors.name.map((err, idx) => (
+                        >
+                          <option value="">{t('form.user.placeholder')}</option>
+                          {users.map(user => (
+                            <option key={user.id} value={user.id}>
+                              {user.name} {user.surname} ({user.email})
+                            </option>
+                          ))}
+                        </select>
+                        {errors.user_id &&
+                          Array.isArray(errors.user_id) &&
+                          errors.user_id.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="surname">
-                          {t('form.surname.label')}
-                        </label>
+                        <label htmlFor="amount">{t('form.amount.label')}</label>
                         <input
-                          id="surname"
-                          name="surname"
-                          placeholder={t('form.surname.placeholder')}
-                          value={formData.surname}
+                          id="amount"
+                          name="amount"
+                          type="number"
+                          step="0.01"
+                          placeholder={t('form.amount.placeholder')}
+                          value={formData.amount}
                           onChange={handleChange}
                           required
                         />
-                        {errors.surname &&
-                          Array.isArray(errors.surname) &&
-                          errors.surname.map((err, idx) => (
+                        {errors.amount &&
+                          Array.isArray(errors.amount) &&
+                          errors.amount.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="birthdate">
-                          {t('form.birthday.label')}
-                        </label>
-                        <input
-                          id="birthdate"
-                          name="birthdate"
-                          placeholder={t('form.birthday.placeholder')}
-                          type="date"
-                          value={formData.birthdate}
+                        <label htmlFor="status">{t('form.status.label')}</label>
+                        <select
+                          id="status"
+                          name="status"
+                          value={formData.status}
                           onChange={handleChange}
                           required
-                        />
-                        {errors.birthdate &&
-                          Array.isArray(errors.birthdate) &&
-                          errors.birthdate.map((err, idx) => (
+                        >
+                          <option value="pending">{t('form.status.pending')}</option>
+                          <option value="completed">{t('form.status.completed')}</option>
+                          <option value="failed">{t('form.status.failed')}</option>
+                          <option value="refunded">{t('form.status.refunded')}</option>
+                        </select>
+                        {errors.status &&
+                          Array.isArray(errors.status) &&
+                          errors.status.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="nif">{t('form.nif.label')}</label>
-                        <input
-                          id="nif"
-                          name="dni"
-                          placeholder={t('form.nif.placeholder')}
-                          value={formData.dni}
+                        <label htmlFor="payment_method">{t('form.paymentMethod.label')}</label>
+                        <select
+                          id="payment_method"
+                          name="payment_method"
+                          value={formData.payment_method}
                           onChange={handleChange}
-                          required
-                        />
-                        {errors.dni &&
-                          Array.isArray(errors.dni) &&
-                          errors.dni.map((err, idx) => (
+                        >
+                          <option value="">{t('form.paymentMethod.placeholder')}</option>
+                          <option value="credit_card">{t('form.paymentMethod.creditCard')}</option>
+                          <option value="debit_card">{t('form.paymentMethod.debitCard')}</option>
+                          <option value="cash">{t('form.paymentMethod.cash')}</option>
+                          <option value="transfer">{t('form.paymentMethod.transfer')}</option>
+                        </select>
+                        {errors.payment_method &&
+                          Array.isArray(errors.payment_method) &&
+                          errors.payment_method.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="email">{t('form.email.label')}</label>
+                        <label htmlFor="payment_date">{t('form.paymentDate.label')}</label>
                         <input
-                          id="email"
-                          name="email"
-                          placeholder={t('form.email.placeholder')}
-                          value={formData.email}
+                          id="payment_date"
+                          name="payment_date"
+                          type="datetime-local"
+                          placeholder={t('form.paymentDate.placeholder')}
+                          value={formData.payment_date}
                           onChange={handleChange}
-                          required
                         />
-                        {errors.email &&
-                          Array.isArray(errors.email) &&
-                          errors.email.map((err, idx) => (
+                        {errors.payment_date &&
+                          Array.isArray(errors.payment_date) &&
+                          errors.payment_date.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="password">
-                          {t('form.password.label')}
-                        </label>
-                        <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder={t('form.password.placeholder')}
-                          value={formData.password}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.password &&
-                          Array.isArray(errors.password) &&
-                          errors.password.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="confirmPassword">
-                          {t('form.confirmPassword.label')}
-                        </label>
-                        <input
-                          id="confirmPassword"
-                          name="passwordConfirm"
-                          type="password"
-                          placeholder={t('form.confirmPassword.placeholder')}
-                          value={formData.passwordConfirm}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.confirmPassword &&
-                          Array.isArray(errors.confirmPassword) &&
-                          errors.confirmPassword.map((err, idx) => (
+                          ))}                      </div>                      <div className="form__section">
+                        <label htmlFor="reservation">{t('form.reservation.label')}</label>
+                        <select
+                          id="reservation"
+                          name="reservation"
+                          onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            if (selectedValue) {
+                              const parts = selectedValue.split('|');
+                              if (parts.length >= 3) {
+                                const user_id = parts[0];
+                                const space_id = parts[1];
+                                const period = parts.slice(2).join('|'); // Handle case where period might contain |
+                                
+                                setFormData(prev => ({
+                                  ...prev,
+                                  user_reservation_id: user_id,
+                                  space_reservation_id: space_id,
+                                  reservation_period: period
+                                }));
+                              }
+                            }
+                          }}
+                          value={formData.user_reservation_id && formData.space_reservation_id && formData.reservation_period ? 
+                            `${formData.user_reservation_id}|${formData.space_reservation_id}|${formData.reservation_period}` : ''}
+                        >
+                          <option value="">{t('form.reservation.placeholder')}</option>
+                          {Array.isArray(reservations) && reservations.length > 0 ? reservations.map(reservation => (
+                            <option 
+                              key={`${reservation.user_id || ''}-${reservation.space_id || ''}-${reservation.reservation_period || ''}`} 
+                              value={`${reservation.user_id || ''}|${reservation.space_id || ''}|${reservation.reservation_period || ''}`}
+                            >
+                              {reservation.user?.name || 'Usuario'} - {reservation.space?.subtitle || 'Espacio'} ({reservation.start_date || (reservation.reservation_period && reservation.reservation_period.split('|')[0]) || 'Fecha desconocida'})
+                            </option>
+                          )) : <option disabled>No hay reservas disponibles</option>}
+                        </select>
+                        {errors.reservation_period && 
+                          Array.isArray(errors.reservation_period) &&
+                          errors.reservation_period.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
@@ -333,186 +354,164 @@ const PendingPaymentList = () => {
                         className="form__submit"
                       />
                     </form>
-                  </article>
-                )}
+                  </article>                )}
               </React.Fragment>
             ))}
         </section>
       )}
-
+      
       {showForm && (
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
               <div className="form__section">
-                <label htmlFor="name">{t('form.name.label')}</label>
+                <label htmlFor="user_id">{t('form.user.label')}</label>
+                <select
+                  id="user_id"
+                  name="user_id"
+                  value={formData.user_id}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">{t('form.user.placeholder')}</option>
+                  {users.map(user => (
+                    <option key={user.id} value={user.id}>
+                      {user.name} {user.surname} ({user.email})
+                    </option>
+                  ))}
+                </select>
+                {errors.user_id &&
+                  Array.isArray(errors.user_id) &&
+                  errors.user_id.map((err, idx) => (
+                    <span className="form__error" key={idx}>
+                      {t(`errors.${err}`)}
+                    </span>
+                  ))}
+              </div>              <div className="form__section">
+                <label htmlFor="amount">{t('form.amount.label')}</label>
                 <input
-                  id="name"
-                  name="name"
-                  placeholder={t('form.name.placeholder')}
-                  value={formData.name}
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  step="0.01"
+                  placeholder={t('form.amount.placeholder')}
+                  value={formData.amount}
                   onChange={handleChange}
                   required
                 />
-                {errors.name &&
-                  Array.isArray(errors.name) &&
-                  errors.name.map((err, idx) => (
+                {errors.amount &&
+                  Array.isArray(errors.amount) &&
+                  errors.amount.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="surname">{t('form.surname.label')}</label>
-                <input
-                  id="surname"
-                  name="surname"
-                  placeholder={t('form.surname.placeholder')}
-                  value={formData.surname}
+                <label htmlFor="status">{t('form.status.label')}</label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
                   onChange={handleChange}
                   required
-                />
-                {errors.surname &&
-                  Array.isArray(errors.surname) &&
-                  errors.surname.map((err, idx) => (
+                >
+                  <option value="pending">{t('form.status.pending')}</option>
+                  <option value="completed">{t('form.status.completed')}</option>
+                  <option value="failed">{t('form.status.failed')}</option>
+                  <option value="refunded">{t('form.status.refunded')}</option>
+                </select>
+                {errors.status &&
+                  Array.isArray(errors.status) &&
+                  errors.status.map((err, idx) => (
+                    <span className="form__error" key={idx}>
+                      {t(`errors.${err}`)}
+                    </span>
+                  ))}
+              </div>              <div className="form__section">
+                <label htmlFor="payment_method">{t('form.paymentMethod.label')}</label>
+                <select
+                  id="payment_method"
+                  name="payment_method"
+                  value={formData.payment_method}
+                  onChange={handleChange}
+                >
+                  <option value="">{t('form.paymentMethod.placeholder')}</option>
+                  <option value="credit_card">{t('form.paymentMethod.creditCard')}</option>
+                  <option value="debit_card">{t('form.paymentMethod.debitCard')}</option>
+                  <option value="cash">{t('form.paymentMethod.cash')}</option>
+                  <option value="transfer">{t('form.paymentMethod.transfer')}</option>
+                </select>
+                {errors.payment_method &&
+                  Array.isArray(errors.payment_method) &&
+                  errors.payment_method.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="birthdate">{t('form.birthday.label')}</label>
+                <label htmlFor="payment_date">{t('form.paymentDate.label')}</label>
                 <input
-                  id="birthdate"
-                  name="birthdate"
-                  placeholder={t('form.birthday.placeholder')}
-                  type="date"
-                  value={formData.birthdate}
+                  id="payment_date"
+                  name="payment_date"
+                  type="datetime-local"
+                  placeholder={t('form.paymentDate.placeholder')}
+                  value={formData.payment_date}
                   onChange={handleChange}
-                  required
                 />
-                {errors.birthdate &&
-                  Array.isArray(errors.birthdate) &&
-                  errors.birthdate.map((err, idx) => (
+                {errors.payment_date &&
+                  Array.isArray(errors.payment_date) &&
+                  errors.payment_date.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
-              </div>
-              <div className="form__section">
-                <label htmlFor="nif">{t('form.nif.label')}</label>
-                <input
-                  id="nif"
-                  name="dni"
-                  placeholder={t('form.nif.placeholder')}
-                  value={formData.dni}
-                  onChange={handleChange}
+              </div>              <div className="form__section">
+                <label htmlFor="reservation">{t('form.reservation.label')}</label>
+              <select
+                  id="reservation"
+                  name="reservation"
+                  onChange={(e) => {
+                    const selectedValue = e.target.value;
+                    if (selectedValue) {
+                      const parts = selectedValue.split('|');
+                      if (parts.length >= 3) {
+                        const user_id = parts[0];
+                        const space_id = parts[1];
+                        const period = parts.slice(2).join('|'); // Handle case where period might contain |
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          user_reservation_id: user_id,
+                          space_reservation_id: space_id,
+                          reservation_period: period
+                        }));
+                      }
+                    }
+                  }}
+                  value={formData.user_reservation_id && formData.space_reservation_id && formData.reservation_period ? 
+                    `${formData.user_reservation_id}|${formData.space_reservation_id}|${formData.reservation_period}` : ''}
                   required
-                />
-                {errors.dni &&
-                  Array.isArray(errors.dni) &&
-                  errors.dni.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label htmlFor="email">{t('form.email.label')}</label>
-                <input
-                  id="email"
-                  name="email"
-                  placeholder={t('form.email.placeholder')}
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.email &&
-                  Array.isArray(errors.email) &&
-                  errors.email.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label htmlFor="password">{t('form.password.label')}</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder={t('form.password.placeholder')}
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.password &&
-                  Array.isArray(errors.password) &&
-                  errors.password.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label htmlFor="confirmPassword">
-                  {t('form.confirmPassword.label')}
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="passwordConfirm"
-                  type="password"
-                  placeholder={t('form.confirmPassword.placeholder')}
-                  value={formData.passwordConfirm}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.confirmPassword &&
-                  Array.isArray(errors.confirmPassword) &&
-                  errors.confirmPassword.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label className="input--checkbox__label">
-                  <input
-                    className="input--checkbox"
-                    type="checkbox"
-                    name="termsAndConditions"
-                    checked={formData.termsAndConditions}
-                    onChange={handleTermsChange}
-                    required
-                  />
-                  <span className="input--checkbox__text">
-                    {t('form.checkbox.register.msg1')}
-                    <Link
-                      to="/terms"
-                      className="input--checkbox__text--link"
-                      title={t('actions.goToTerms')}
+                >
+                  <option value="">{t('form.reservation.placeholder')}</option>
+                  {Array.isArray(reservations) && reservations.length > 0 ? reservations.map(reservation => (
+                    <option 
+                      key={`${reservation.user_id || ''}-${reservation.space_id || ''}-${reservation.reservation_period || ''}`} 
+                      value={`${reservation.user_id || ''}|${reservation.space_id || ''}|${reservation.reservation_period || ''}`}
                     >
-                      {t('links.terms')}
-                    </Link>{' '}
-                    {t('form.checkbox.register.msg2')}
-                    <Link
-                      to="/privacy"
-                      className="input--checkbox__text--link"
-                      title={t('actions.goToPrivacy')}
-                    >
-                      {t('links.privacy')}
-                    </Link>
-                  </span>
-                </label>
-                {errors.termsAndConditions &&
-                  Array.isArray(errors.termsAndConditions) &&
-                  errors.termsAndConditions.map((err, idx) => (
+                      {reservation.user?.name || 'Usuario'} - {reservation.space?.subtitle || 'Espacio'} ({reservation.start_date || (reservation.reservation_period && reservation.reservation_period.split('|')[0]) || 'Fecha desconocida'})
+                    </option>
+                  )) : <option disabled>No hay reservas disponibles</option>}
+                </select>
+                {errors.reservation_period && 
+                  Array.isArray(errors.reservation_period) &&
+                  errors.reservation_period.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
-              </div>
-              <input
+              </div>              <input
                 type="submit"
                 value={t('actions.paymentsCreate')}
                 className="form__submit"

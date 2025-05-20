@@ -7,6 +7,7 @@ import SpaceList from '../components/SpaceList'
 import BookingList from '../components/BookingList'
 import CompletedBookingList from '../components/CompletedBookingsList'
 import AuditList from '../components/AuditList'
+import PendingPaymentList from '../components/PendingPaymentList'
 
 import defaultImage from '../assets/img/leonardo.svg'
 
@@ -215,7 +216,7 @@ const AdminDashboard = () => {
         </article>
       </section>
 
-      {/* <section className="user__section--part">
+      <section className="user__section--part">
         <h2>{t('links.payments')}</h2>
         <article className="user__buttons">
           <button
@@ -224,12 +225,12 @@ const AdminDashboard = () => {
           >
             {t('links.pendingPayments')}
           </button>
-          <button
+          {/* <button
             className={`form__submit ${activeSection.completedPayments ? 'active' : ''}`}
             onClick={() => toggleSection('completedPayments')}
           >
             {t('links.completedPayments')}
-          </button>
+          </button> */}
         </article>
         <article>
           <section
@@ -237,13 +238,13 @@ const AdminDashboard = () => {
           >
             <PendingPaymentList />
           </section>
-          <section
+          {/*<section
             className={`dropdown__container ${activeSection.completedPayments ? 'open' : ''}`}
           >
             <CompletedPaymentList />
-          </section>
+          </section>*/}
         </article>
-      </section> */}
+      </section>
 
       <section className="user__section--part">
         <h2>{t('common.management')}</h2>

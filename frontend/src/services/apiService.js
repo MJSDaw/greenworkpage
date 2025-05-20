@@ -131,7 +131,21 @@ export const getUserProfile = async () => {
  * @returns {Promise} Lista de usuarios
  */
 export const getUsers = async () => {
-  return baseFetch('/api/admin/users', 'GET');
+  try {
+    const response = await baseFetch('/api/admin/users', 'GET');
+    // Ensure we always return an array
+    if (response && typeof response === 'object') {
+      if (Array.isArray(response)) {
+        return response;
+      } else if (Array.isArray(response.data)) {
+        return response.data;
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
 };
 
 /**
@@ -217,7 +231,24 @@ export const saveSpace = async (spaceData, spaceId = null) => {
  * @returns {Promise} Lista de reservas
  */
 export const getBookings = async () => {
-  return baseFetch('/api/getactivebookings', 'GET');
+  try {
+    const response = await baseFetch('/api/getactivebookings', 'GET');
+    // Handle the nested pagination structure
+    if (response && typeof response === 'object') {
+      if (response.success && response.data && response.data.data) {
+        // This is the paginated response structure
+        return response;
+      } else if (Array.isArray(response)) {
+        return { success: true, data: { data: response } };
+      } else if (Array.isArray(response.data)) {
+        return { success: true, data: { data: response.data } };
+      }
+    }
+    return { success: true, data: { data: [] } };
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return { success: false, data: { data: [] } };
+  }
 };
 
 /**
@@ -263,11 +294,38 @@ export const updateBooking = async (id, bookingData) => {
 // ==================== Pagos ====================
 
 /**
+ * Guarda o actualiza un pago
+ * @param {Object} paymentData - Datos del pago
+ * @param {Number|null} paymentId - ID del pago (null para crear nuevo)
+ * @returns {Promise} Respuesta del servidor
+ */
+export const savePayment = async (paymentData, paymentId = null) => {
+  const url = paymentId ? `/api/admin/payments/${paymentId}` : '/api/admin/payments';
+  const method = paymentId ? 'PUT' : 'POST';
+  
+  return baseFetch(url, method, paymentData);
+};
+
+/**
  * Obtiene la lista de pagos pendientes
  * @returns {Promise} Lista de pagos pendientes
  */
 export const getPendingPayments = async () => {
-  return baseFetch('/api/admin/pending-payments', 'GET');
+  try {
+    const response = await baseFetch('/api/admin/payments/pending', 'GET');
+    // Ensure we always return an array
+    if (response && typeof response === 'object') {
+      if (Array.isArray(response)) {
+        return response;
+      } else if (Array.isArray(response.data)) {
+        return response.data;
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching pending payments:', error);
+    return [];
+  }
 };
 
 /**
@@ -275,20 +333,17 @@ export const getPendingPayments = async () => {
  * @returns {Promise} Lista de pagos completados
  */
 export const getCompletedPayments = async () => {
-  return baseFetch('/api/admin/completed-payments', 'GET');
+  return baseFetch('/api/admin/payments/completed', 'GET');
 };
 
 /**
- * Guarda o actualiza un pago
- * @param {Object} paymentData - Datos del pago
- * @param {Number|null} paymentId - ID del pago (null para crear nuevo)
+ * Actualiza el estado de un pago
+ * @param {Number} paymentId - ID del pago a actualizar
+ * @param {Object} paymentData - Datos del pago a actualizar
  * @returns {Promise} Respuesta del servidor
  */
-export const savePayment = async (paymentData, paymentId = null) => {
-  const url = paymentId ? `/api/payments/${paymentId}` : '/api/payments';
-  const method = paymentId ? 'PUT' : 'POST';
-  
-  return baseFetch(url, method, paymentData);
+export const updatePayment = async (paymentId, paymentData) => {
+  return baseFetch(`/api/admin/payments/${paymentId}`, 'PUT', paymentData);
 };
 
 // ==================== Auditorías ====================

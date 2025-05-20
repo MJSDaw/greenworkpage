@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,4 +74,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     
     // Route for database backup
     Route::post('backup', [AdminController::class, 'createBackup']);
+    
+    // Routes for payments
+    Route::get('payments/pending', [PaymentController::class, 'getPendingPayments']);
+    Route::get('payments/completed', [PaymentController::class, 'getCompletedPayments']);
+    Route::post('payments', [PaymentController::class, 'store']);
+    Route::put('payments/{id}', [PaymentController::class, 'update']);
 });
