@@ -434,6 +434,11 @@ textarea {
   border: none;
 }
 
+.nav__button--user:hover {
+  background-color: var(--color2);
+  color: var(--color0);
+}
+
 /* Menu */
 
 .nav__menu--button {
@@ -709,7 +714,6 @@ textarea {
 }
 
 .form__submit.active {
-  background-color: var(--color2);
   color: var(--color0);
   position: relative;
   margin-bottom: 0;
