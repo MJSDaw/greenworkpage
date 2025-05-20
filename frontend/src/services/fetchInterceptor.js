@@ -25,9 +25,16 @@ export const setupFetchInterceptor = () => {
   const originalFetch = window.fetch;
   
   window.fetch = async function(input, init) {
+    // Get the URL from the input
+    const url = typeof input === 'string' ? input : input.url;
+    
+    // Skip intercepting 401 responses for authentication-related routes
+    const isAuthRoute = url.includes('/api/login') || url.includes('/api/register');
+    
     const response = await originalFetch(input, init);
     
-    if (response.status === 401) {
+    // Only handle 401 responses for non-auth routes
+    if (response.status === 401 && !isAuthRoute) {
       handleUnauthorized();
     }
     
