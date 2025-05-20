@@ -100,3 +100,9 @@ export const authenticatedFetch = async (url, options = {}) => {
 
   return response;
 };
+
+// Add this function or re-export it from apiService
+import { getUserProfile as apiGetUserProfile } from './apiService';
+
+// Re-export the function
+export const getUserProfile = apiGetUserProfile;
