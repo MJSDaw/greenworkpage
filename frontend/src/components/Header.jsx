@@ -5,6 +5,8 @@ import { isAuthenticated, removeAuthToken } from '../services/authService'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
 
+import leonardo from '../assets/img/leonardo.svg'
+
 const Header = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -93,6 +95,7 @@ const Header = () => {
                   title={t('actions.user')}
                 >
                   {t('links.user') + (userName || 'User')}
+                  <img src={leonardo} className='nav__button--user__img'/>
                 </button>
               </li>
               <li>
