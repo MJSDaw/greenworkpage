@@ -8,55 +8,49 @@ import leonardo from '../assets/img/leonardo.svg'
 const SpaceList = () => {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    birthdate: '',
-    dni: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-    termsAndConditions: false,
+    places: '',
+    price: '',
+    schedule: '',
+    images: '',
+    description: '',
+    subtitle: '',
   })
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
-  const [users, setUsers] = useState([])
+  const [spaces, setSpaces] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  // TODO: Estas poniendo dos variables de error
   const [errors, setErrors] = useState({})
 
-  // TODO: Organiza esto porfi
-  const fetchUsers = async () => {
+  const fetchSpaces = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/admin/users', {
+      const response = await authenticatedFetch('/api/spaces', {
         method: 'GET',
       })
       if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
+        throw new Error('Error al obtener los espacios')
       }
       const data = await response.json()
-      // Check if the data is paginated and extract the users from the "data" property
+      // Check if the data is paginated and extract the spaces from the "data" property
       if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setUsers(data.data) // Set only the users array from the paginated data
+        setSpaces(data.data) // Set only the spaces array from the paginated data
       } else {
-        setUsers(data) // Fallback to the original behavior if data is not paginated
+        setSpaces(data) // Fallback to the original behavior if data is not paginated
       }
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener usuarios:', err) // TODO: Esto me lo quitas de consola porfi
+      console.error('Error al obtener espacios:', err)
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => {
     if (showList) {
-      fetchUsers()
+      fetchSpaces()
     }
   }, [showList])
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
@@ -64,21 +58,13 @@ const SpaceList = () => {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
-
-  const handleTermsChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      termsAndConditions: e.target.checked,
-    }))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingId ? `/api/users/${editingId}` : '/api/register'
+      const url = editingId ? `/api/admin/spaces/${editingId}` : '/api/admin/spaces'
       const method = editingId ? 'PUT' : 'POST'
 
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -86,28 +72,25 @@ const SpaceList = () => {
         body: JSON.stringify(formData),
       })
       const data = await response.json()
-      console.log(editingId ? 'Edit response:' : 'Registration response:', data) // TODO: Matalo
+      console.log(editingId ? 'Edit response:' : 'Create response:', data)
 
-      if (data && data.success) {
+      if (data && data.status === 'success') {
         if (editingId) {
           setEditingId(null)
           setErrors({})
-          console.log('Usuario actualizado correctamente') // TODO: Matalo
+          console.log('Espacio actualizado correctamente')
         } else {
-          if (data.token) {
-            setAuthToken(data.token, data.user)
-            setErrors({})
-            window.location.href = '/'
-          } else {
-            setErrors(data.errors || {})
-            console.log('Token not saved. Response data structure:', data) // TODO: Matalo
-          }
+          setErrors({})
+          setShowForm(false)
+          setShowList(true)
+          console.log('Espacio creado correctamente')
         }
+        fetchSpaces() // Reload the spaces list
       } else {
         setErrors(data.errors || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Registration error:', error) // TODO: Matalo
+      console.error(editingId ? 'Edit error:' : 'Create error:', error)
     }
   }
 
@@ -122,17 +105,20 @@ const SpaceList = () => {
   }
 
   const [editingId, setEditingId] = useState(null)
-
   // TODO: usalo para cargar el resto de atributos pertinentes
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
     } else {
       setEditingId(id)
-      const userToEdit = users.find((user) => user.id === id)
+      const spaceToEdit = spaces.find((space) => space.id === id)
       setFormData({
-        name: userToEdit.name,
-        surname: userToEdit.surname,
+        places: spaceToEdit.places,
+        price: spaceToEdit.price,
+        schedule: spaceToEdit.schedule,
+        images: spaceToEdit.images,
+        description: spaceToEdit.description,
+        subtitle: spaceToEdit.subtitle,
       })
     }
   }
@@ -147,37 +133,36 @@ const SpaceList = () => {
         <button className="form__submit --noArrow" onClick={handleShowForm}>
           {t('actions.spacesCreate')}
         </button>
-      </div>
+      </div>      
       {showList && (
         <section className="card__container">
           {loading && <p>{t('common.spacesLoading')}</p>}
           {error && <p>{t('common.commonError', { error: error })}</p>}
-          {!loading && !error && users.length === 0 && (
+          {!loading && !error && spaces.length === 0 && (
             <p>{t('common.spacesNoSpaces')}</p>
           )}
           {!loading &&
             !error &&
-            users.map((user) => (
-              <React.Fragment key={user.id}>
+            spaces.map((space) => (
+              <React.Fragment key={space.id}>
                 <article className="card">
                   <div className="card__content">
                     <img
                       src={leonardo}
-                      alt={t('alt.dashboardImg', { id: user.id })}
-                      title={t('common.dashboardImg', { id: user.id })}
+                      alt={t('alt.dashboardImg', { id: space.id })}
+                      title={t('common.dashboardImg', { id: space.id })}
                       className="card__img"
                     />
                     <div className="card__text">
-                      <p>
-                        {user.name} {user.surname}
-                      </p>
-                      <p>{user.email}</p>
+                      <p>{space.subtitle}</p>
+                      <p>{space.price}€ - {space.places} {t('common.places')}</p>
+                      <p>{space.schedule}</p>
                     </div>
                   </div>
                   <div className="card__buttons">
                     <button
                       className="form__submit --noArrow"
-                      onClick={() => handleEditClick(user.id)}
+                      onClick={() => handleEditClick(space.id)}
                     >
                       {t('actions.edit')}
                     </button>
@@ -185,143 +170,121 @@ const SpaceList = () => {
                       {t('actions.delete')}
                     </button>
                   </div>
-                </article>
-
-                {editingId === user.id && (
+                </article>                {editingId === space.id && (
                   <article className="card--form--edit">
                     <form onSubmit={handleSubmit}>
                       <div className="form__section">
-                        <label htmlFor="name">{t('form.name.label')}</label>
+                        <label htmlFor="places">{t('form.places.label')}</label>
                         <input
-                          id="name"
-                          name="name"
-                          placeholder={t('form.name.placeholder')}
-                          value={formData.name}
+                          id="places"
+                          name="places"
+                          type="number"
+                          placeholder={t('form.places.placeholder')}
+                          value={formData.places}
                           onChange={handleChange}
                           required
                         />
-                        {errors.name &&
-                          Array.isArray(errors.name) &&
-                          errors.name.map((err, idx) => (
+                        {errors.places &&
+                          Array.isArray(errors.places) &&
+                          errors.places.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="surname">
-                          {t('form.surname.label')}
+                        <label htmlFor="price">
+                          {t('form.price.label')}
                         </label>
                         <input
-                          id="surname"
-                          name="surname"
-                          placeholder={t('form.surname.placeholder')}
-                          value={formData.surname}
+                          id="price"
+                          name="price"
+                          type="number"
+                          step="0.01"
+                          placeholder={t('form.price.placeholder')}
+                          value={formData.price}
                           onChange={handleChange}
                           required
                         />
-                        {errors.surname &&
-                          Array.isArray(errors.surname) &&
-                          errors.surname.map((err, idx) => (
+                        {errors.price &&
+                          Array.isArray(errors.price) &&
+                          errors.price.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="birthdate">
-                          {t('form.birthday.label')}
+                        <label htmlFor="schedule">
+                          {t('form.schedule.label')}
                         </label>
                         <input
-                          id="birthdate"
-                          name="birthdate"
-                          placeholder={t('form.birthday.placeholder')}
-                          type="date"
-                          value={formData.birthdate}
+                          id="schedule"
+                          name="schedule"
+                          placeholder={t('form.schedule.placeholder')}
+                          value={formData.schedule}
                           onChange={handleChange}
                           required
                         />
-                        {errors.birthdate &&
-                          Array.isArray(errors.birthdate) &&
-                          errors.birthdate.map((err, idx) => (
+                        {errors.schedule &&
+                          Array.isArray(errors.schedule) &&
+                          errors.schedule.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="nif">{t('form.nif.label')}</label>
+                        <label htmlFor="images">{t('form.images.label')}</label>
                         <input
-                          id="nif"
-                          name="dni"
-                          placeholder={t('form.nif.placeholder')}
-                          value={formData.dni}
+                          id="images"
+                          name="images"
+                          placeholder={t('form.images.placeholder')}
+                          value={formData.images}
                           onChange={handleChange}
                           required
                         />
-                        {errors.dni &&
-                          Array.isArray(errors.dni) &&
-                          errors.dni.map((err, idx) => (
+                        {errors.images &&
+                          Array.isArray(errors.images) &&
+                          errors.images.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="email">{t('form.email.label')}</label>
-                        <input
-                          id="email"
-                          name="email"
-                          placeholder={t('form.email.placeholder')}
-                          value={formData.email}
+                        <label htmlFor="description">{t('form.description.label')}</label>
+                        <textarea
+                          id="description"
+                          name="description"
+                          placeholder={t('form.description.placeholder')}
+                          value={formData.description}
                           onChange={handleChange}
                           required
                         />
-                        {errors.email &&
-                          Array.isArray(errors.email) &&
-                          errors.email.map((err, idx) => (
+                        {errors.description &&
+                          Array.isArray(errors.description) &&
+                          errors.description.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="password">
-                          {t('form.password.label')}
+                        <label htmlFor="subtitle">
+                          {t('form.subtitle.label')}
                         </label>
                         <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder={t('form.password.placeholder')}
-                          value={formData.password}
+                          id="subtitle"
+                          name="subtitle"
+                          placeholder={t('form.subtitle.placeholder')}
+                          value={formData.subtitle}
                           onChange={handleChange}
                           required
                         />
-                        {errors.password &&
-                          Array.isArray(errors.password) &&
-                          errors.password.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="confirmPassword">
-                          {t('form.confirmPassword.label')}
-                        </label>
-                        <input
-                          id="confirmPassword"
-                          name="passwordConfirm"
-                          type="password"
-                          placeholder={t('form.confirmPassword.placeholder')}
-                          value={formData.passwordConfirm}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.confirmPassword &&
-                          Array.isArray(errors.confirmPassword) &&
-                          errors.confirmPassword.map((err, idx) => (
+                        {errors.subtitle &&
+                          Array.isArray(errors.subtitle) &&
+                          errors.subtitle.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
@@ -338,175 +301,116 @@ const SpaceList = () => {
               </React.Fragment>
             ))}
         </section>
-      )}
-
-      {showForm && (
+      )}      {showForm && (
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
               <div className="form__section">
-                <label htmlFor="name">{t('form.name.label')}</label>
+                <label htmlFor="places">{t('form.places.label')}</label>
                 <input
-                  id="name"
-                  name="name"
-                  placeholder={t('form.name.placeholder')}
-                  value={formData.name}
+                  id="places"
+                  name="places"
+                  type="number"
+                  placeholder={t('form.places.placeholder')}
+                  value={formData.places}
                   onChange={handleChange}
                   required
                 />
-                {errors.name &&
-                  Array.isArray(errors.name) &&
-                  errors.name.map((err, idx) => (
+                {errors.places &&
+                  Array.isArray(errors.places) &&
+                  errors.places.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="surname">{t('form.surname.label')}</label>
+                <label htmlFor="price">{t('form.price.label')}</label>
                 <input
-                  id="surname"
-                  name="surname"
-                  placeholder={t('form.surname.placeholder')}
-                  value={formData.surname}
+                  id="price"
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  placeholder={t('form.price.placeholder')}
+                  value={formData.price}
                   onChange={handleChange}
                   required
                 />
-                {errors.surname &&
-                  Array.isArray(errors.surname) &&
-                  errors.surname.map((err, idx) => (
+                {errors.price &&
+                  Array.isArray(errors.price) &&
+                  errors.price.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="birthdate">{t('form.birthday.label')}</label>
+                <label htmlFor="schedule">{t('form.schedule.label')}</label>
                 <input
-                  id="birthdate"
-                  name="birthdate"
-                  placeholder={t('form.birthday.placeholder')}
-                  type="date"
-                  value={formData.birthdate}
+                  id="schedule"
+                  name="schedule"
+                  placeholder={t('form.schedule.placeholder')}
+                  value={formData.schedule}
                   onChange={handleChange}
                   required
                 />
-                {errors.birthdate &&
-                  Array.isArray(errors.birthdate) &&
-                  errors.birthdate.map((err, idx) => (
+                {errors.schedule &&
+                  Array.isArray(errors.schedule) &&
+                  errors.schedule.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="nif">{t('form.nif.label')}</label>
+                <label htmlFor="images">{t('form.images.label')}</label>
                 <input
-                  id="nif"
-                  name="dni"
-                  placeholder={t('form.nif.placeholder')}
-                  value={formData.dni}
+                  id="images"
+                  name="images"
+                  placeholder={t('form.images.placeholder')}
+                  value={formData.images}
                   onChange={handleChange}
                   required
                 />
-                {errors.dni &&
-                  Array.isArray(errors.dni) &&
-                  errors.dni.map((err, idx) => (
+                {errors.images &&
+                  Array.isArray(errors.images) &&
+                  errors.images.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="email">{t('form.email.label')}</label>
-                <input
-                  id="email"
-                  name="email"
-                  placeholder={t('form.email.placeholder')}
-                  value={formData.email}
+                <label htmlFor="description">{t('form.description.label')}</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder={t('form.description.placeholder')}
+                  value={formData.description}
                   onChange={handleChange}
                   required
                 />
-                {errors.email &&
-                  Array.isArray(errors.email) &&
-                  errors.email.map((err, idx) => (
+                {errors.description &&
+                  Array.isArray(errors.description) &&
+                  errors.description.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="password">{t('form.password.label')}</label>
+                <label htmlFor="subtitle">{t('form.subtitle.label')}</label>
                 <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder={t('form.password.placeholder')}
-                  value={formData.password}
+                  id="subtitle"
+                  name="subtitle"
+                  placeholder={t('form.subtitle.placeholder')}
+                  value={formData.subtitle}
                   onChange={handleChange}
                   required
                 />
-                {errors.password &&
-                  Array.isArray(errors.password) &&
-                  errors.password.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label htmlFor="confirmPassword">
-                  {t('form.confirmPassword.label')}
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="passwordConfirm"
-                  type="password"
-                  placeholder={t('form.confirmPassword.placeholder')}
-                  value={formData.passwordConfirm}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.confirmPassword &&
-                  Array.isArray(errors.confirmPassword) &&
-                  errors.confirmPassword.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
-              <div className="form__section">
-                <label className="input--checkbox__label">
-                  <input
-                    className="input--checkbox"
-                    type="checkbox"
-                    name="termsAndConditions"
-                    checked={formData.termsAndConditions}
-                    onChange={handleTermsChange}
-                    required
-                  />
-                  <span className="input--checkbox__text">
-                    {t('form.checkbox.register.msg1')}
-                    <Link
-                      to="/terms"
-                      className="input--checkbox__text--link"
-                      title={t('actions.goToTerms')}
-                    >
-                      {t('links.terms')}
-                    </Link>{' '}
-                    {t('form.checkbox.register.msg2')}
-                    <Link
-                      to="/privacy"
-                      className="input--checkbox__text--link"
-                      title={t('actions.goToPrivacy')}
-                    >
-                      {t('links.privacy')}
-                    </Link>
-                  </span>
-                </label>
-                {errors.termsAndConditions &&
-                  Array.isArray(errors.termsAndConditions) &&
-                  errors.termsAndConditions.map((err, idx) => (
+                {errors.subtitle &&
+                  Array.isArray(errors.subtitle) &&
+                  errors.subtitle.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
