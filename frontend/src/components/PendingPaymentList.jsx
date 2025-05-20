@@ -36,7 +36,6 @@ const PendingPaymentList = () => {
       setPayments(data); // The API service now ensures this is an array
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener pagos pendientes:', err)
     } finally {
       setLoading(false)
     }
@@ -48,13 +47,12 @@ const PendingPaymentList = () => {
       const usersArray = response?.data?.data || response?.data || response || [];
       setUsers(usersArray);
     } catch (err) {
-      console.error('Error al obtener usuarios:', err)
+      // Error eliminado
     }
   }
   const fetchReservations = async () => {
     try {
       const response = await getBookings();
-      console.log('Bookings response:', response);
       
       // Ensure we're working with an array
       let reservationsArray = [];
@@ -67,10 +65,8 @@ const PendingPaymentList = () => {
         reservationsArray = response;
       }
       
-      console.log('Processed reservations array:', reservationsArray);
       setReservations(reservationsArray); // Now we're sure this is an array
     } catch (err) {
-      console.error('Error al obtener reservas:', err);
       // Set an empty array as a fallback
       setReservations([]);
     }
@@ -115,7 +111,7 @@ const PendingPaymentList = () => {
         setErrors(data.errors || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Error updating payment:' : 'Error creating payment:', error)
+      // Error eliminado
     }
   }
 

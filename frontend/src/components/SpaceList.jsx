@@ -41,7 +41,6 @@ const SpaceList = () => {
       }
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener espacios:', err)
     } finally {
       setLoading(false)
     }
@@ -72,25 +71,22 @@ const SpaceList = () => {
         body: JSON.stringify(formData),
       })
       const data = await response.json()
-      console.log(editingId ? 'Edit response:' : 'Create response:', data)
 
       if (data && data.status === 'success') {
         if (editingId) {
           setEditingId(null)
           setErrors({})
-          console.log('Espacio actualizado correctamente')
         } else {
           setErrors({})
           setShowForm(false)
           setShowList(true)
-          console.log('Espacio creado correctamente')
         }
         fetchSpaces() // Reload the spaces list
       } else {
         setErrors(data.errors || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Create error:', error)
+      // Error eliminado
     }
   }
 

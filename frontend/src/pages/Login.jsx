@@ -34,14 +34,11 @@ const Login = () => {
 
     try {
       const data = await login(formData)
-      console.log('Login response:', data)
       
       // Check if login was successful (token exists and success is true)
       if (data && data.success === true && data.token) {
         setAuthToken(data.token, data.user, data.userType)
         setErrors({})
-        console.log('Token saved:', data.token)
-        console.log('User type:', data.userType)
         if (data.userType === 'admin') {
           window.location.href = '/admin'
         } else {
@@ -49,11 +46,9 @@ const Login = () => {
         }
       } else {
         // Handle login failure - set errors from response
-        console.log('Login failed:', data)
         setErrors(data.errors || {})
       }
-  } catch (error) {
-      console.error('Login error:', error)
+    } catch (error) {
       // Show generic error message if fetch fails entirely
       setErrors({ auth: ['networkError'] })
     }

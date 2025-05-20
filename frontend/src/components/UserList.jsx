@@ -83,7 +83,6 @@ const UserList = () => {
         setError(data.error || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Error al editar:' : 'Error al registrar:', error)
       setError({ general: error.message })
     }
   }
@@ -105,7 +104,6 @@ const UserList = () => {
     } else {
       setEditingId(id)
       const userToEdit = users.find((user) => user.id === id)
-      console.log('User to edit:', userToEdit) // Debug para ver el formato de los datos
 
       // Format birthdate if it exists
       let formattedBirthdate = '';

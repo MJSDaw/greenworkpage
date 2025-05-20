@@ -82,7 +82,6 @@ export const baseFetch = async (
       }
       return result;
     } catch (parseError) {
-      console.error('Error al parsear respuesta JSON:', parseError);
       // Si no se puede parsear, devolver el texto original
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -91,7 +90,6 @@ export const baseFetch = async (
     }
     
   } catch (error) {
-    console.error(`Error en petición a ${url}:`, error);
     throw error;
   }
 };

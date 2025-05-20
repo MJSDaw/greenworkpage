@@ -32,11 +32,8 @@ const BookingList = () => {
       // Extract the bookings array from the paginated response
       const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)
-      console.log('Bookings response:', response)
-      console.log('Bookings array:', bookingsArray)
     } catch (err) {
       setError(err.message || 'Error al obtener reservas')
-      console.error('Error al obtener reservas:', err)
     } finally {
       setLoading(false)
     }
@@ -63,7 +60,6 @@ const BookingList = () => {
       setUsers(usersList)
       setSpaces(spacesList)
     } catch (err) {
-      console.error('Error al cargar datos complementarios:', err)
       setError(err.message)
     }
   }
@@ -99,19 +95,16 @@ const BookingList = () => {
         if (editingId) {
           setEditingId(null)
           setErrors({})
-          console.log('Reserva actualizada correctamente')
         } else {
           setErrors({})
           setShowForm(false)
           setShowList(true)
-          console.log('Reserva creada correctamente')
         }
         fetchBookings() // Reload the bookings list
       } else {
         setErrors(data.errors || {})
       }
     } catch (error) {
-      console.error(editingId ? 'Edit error:' : 'Create error:', error)
       setErrors(error.errors || {})
     }
   }

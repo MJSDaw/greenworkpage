@@ -19,7 +19,6 @@ const BookingList = () => {
         setBookings(bookingsArray)
       } catch (err) {
         setError(err.message)
-        console.error('Error al obtener reservas:', err)
       } finally {
         setLoading(false)
       }

@@ -98,7 +98,6 @@ const AdminDashboard = () => {
 
     // Validar el archivo (opcional)
     if (file.size > 2 * 1024 * 1024) {
-      console.error('La imagen es demasiado grande. El tamaño máximo es 2MB.')
       return
     }
 
@@ -110,7 +109,6 @@ const AdminDashboard = () => {
     const adminData = getUserData()
 
     if (!adminData || !adminData.id) {
-      console.error('No se pudo encontrar la información del administrador')
       return
     }
 
@@ -119,9 +117,7 @@ const AdminDashboard = () => {
       const data = await updateAdminImage(adminData.id, file)
       
       if (data && data.success) {
-        console.log('Imagen actualizada con éxito:', data)
         // Actualizar la imagen con la ruta devuelta por el servidor
-        // La ruta será algo como: admin-images/chrlE8EyTTqy1BHuuDkuGm0AF9rPkd28I4PXHYbT.jpg
         if (data.data && data.data.image) {
           // Construir la URL correcta para acceder al archivo en el storage público
           setImage(`https://localhost:8443/storage/${data.data.image}`)
@@ -132,15 +128,9 @@ const AdminDashboard = () => {
             localStorage.setItem('userData', JSON.stringify(currentAdminData))
           }
         }
-      } else {
-        console.error(
-          'Error al actualizar la imagen:',
-          data.message || 'Error desconocido'
-        )
-        // Puedes mostrar un mensaje al usuario aquí
       }
     } catch (error) {
-      console.error('Error al enviar la imagen al servidor:', error)
+      // Eliminado el console.error
     }
   }
 

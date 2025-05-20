@@ -17,7 +17,6 @@ const BackupManager = () => {
         toast.error(t('errors.backupFailed'))
       }
     } catch (error) {
-      console.error('Backup error:', error)
       toast.error(t('errors.backupFailed'))
     } finally {
       setIsLoading(false)
