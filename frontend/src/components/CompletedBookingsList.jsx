@@ -4,8 +4,9 @@ import { setAuthToken, authenticatedFetch } from '../services/authService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
-const CompletedPaymentList = () => {
+const CompletedBookingList = () => {
   const { t } = useTranslation()
+  const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -45,12 +46,12 @@ const CompletedPaymentList = () => {
 
   return (
     <>
-      <h3>{t('links.completedPayments')}</h3>
+      <h3>{t('links.completedBookings')}</h3>
       <section className="card__container">
-        {loading && <p>{t('common.paymentsLoading')}</p>}
+        {loading && <p>{t('common.bookingsLoading')}</p>}
         {error && <p>{t('common.commonError', { error: error })}</p>}
         {!loading && !error && users.length === 0 && (
-          <p>{t('common.paymentsNoPayments')}</p>
+          <p>{t('common.bookingsNoBookings')}</p>
         )}
         {!loading &&
           !error &&
@@ -79,4 +80,4 @@ const CompletedPaymentList = () => {
   )
 }
 
-export default CompletedPaymentList
+export default CompletedBookingList
