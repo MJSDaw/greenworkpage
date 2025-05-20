@@ -21,7 +21,17 @@
     "search": "Buscar",
     "logout": "Ir a cerrar sesión",
     "user": "Ir al panel de usuario",
-    "editImg": "Cambiar foto"
+    "editImg": "Cambiar foto",
+    "usersRead": "Ver usuarios",
+    "usersCreate": "Crear usuario",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "spacesRead": "Ver espacios",
+    "spacesCreate": "Crear espacios",
+    "bookingsRead": "Ver reservas",
+    "bookingsCreate": "Crear reserva",
+    "paymentsRead": "Ver pagos",
+    "paymentsCreate": "Crear pago"
   },
   "alt": {
     "logo": "Logo de Greenwork",
@@ -35,7 +45,7 @@
     "greenwork1": "Greenwork 1",
     "greenwork2": "Greenwork 2",
     "greenwork3": "Greenwork 3",
-    "dashboardImg": "Usuario"
+    "dashboardImg": "Usuario {{id}}"
   },
   "common": {
     "github": "Logo de Github",
@@ -62,10 +72,21 @@
     "greenwork1": "Greenwork sofa",
     "greenwork2": "Greenwork pared",
     "greenwork3": "Greenwork pantalla",
-    "dashboardImg": "Perfil de usuario",
+    "dashboardImg": "Perfil de usuario {{id}}",
     "greetings": "Hola {{name}}, ¿En qué trabajamos hoy?",
     "main": "Principal",
-    "management": "Gestión de la web"
+    "management": "Gestión de la web",
+    "commonError": "Error: {{error}}",
+    "userLoading": "Cargando usuarios...",
+    "userNoUsers": "No hay usuarios disponibles",
+    "spacesLoading": "Cargando espacios...",
+    "spacesNoSpaces": "No hay espacios disponibles",
+    "bookingsLoading": "Cargando reservas...",
+    "bookingsNoBookings": "No hay reservas disponibles",
+    "paymentsLoading": "Cargando pagos...",
+    "paymentsNoPayments": "No hay pagos disponibles",
+    "auditsLoading": "Cargando auditorias...",
+    "auditsNoAudits": "No hay pagos auditorias"
   },
   "links": {
     "home": "Inicio",
@@ -81,6 +102,7 @@
     "user": "Hola, ",
     "users": "Usuarios",
     "bookings": "Reservas",
+    "completedBookings": "Reservas finalizadas",
     "payments": "Pagos",
     "suscriptions": "Suscripciones",
     "completedPayments": "Pagos realizados",

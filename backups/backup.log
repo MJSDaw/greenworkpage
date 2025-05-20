@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+Backup completed: /backups/greenworkdb_backup_20250517_130000.sql.gz
+/backup-database.sh: line 1: ﻿#!/bin/bash: not found
+Starting backup at Tue May 20 13:00:00 UTC 2025
+Compressing backup file...
+Backup completed: /backups/greenworkdb_backup_20250520_130000.sql.gz
+=======
 Backup completed: /backups/greenworkdb_backup_20250517_130000.sql.gz
 /backup-database.sh: line 1: ﻿#!/bin/bash: not found
 /backup-database.sh: line 2: : not found
@@ -6,3 +13,4 @@ Backup completed: /backups/greenworkdb_backup_20250517_130000.sql.gz
 Starting backup at Tue May 20 13:00:00 UTC 2025
 /backup-database.sh: line 13: can't create /backups/greenworkdb_backup_20250520_130000.sql: nonexistent directory
 /backup-database.sh: line 31: syntax error: unexpected end of file (expecting "then")
+>>>>>>> 7d2a99471e7c99eb60d7bbc6e5b4b302e826ecca
