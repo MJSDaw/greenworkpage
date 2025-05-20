@@ -8,6 +8,7 @@ import BookingList from '../components/BookingList'
 import CompletedBookingList from '../components/CompletedBookingsList'
 import AuditList from '../components/AuditList'
 import PendingPaymentList from '../components/PendingPaymentList'
+import CompletedPaymentList from '../components/CompletedPaymentList'
 
 import defaultImage from '../assets/img/leonardo.svg'
 
@@ -225,12 +226,12 @@ const AdminDashboard = () => {
           >
             {t('links.pendingPayments')}
           </button>
-          {/* <button
+          <button
             className={`form__submit ${activeSection.completedPayments ? 'active' : ''}`}
             onClick={() => toggleSection('completedPayments')}
           >
             {t('links.completedPayments')}
-          </button> */}
+          </button>
         </article>
         <article>
           <section
@@ -238,11 +239,11 @@ const AdminDashboard = () => {
           >
             <PendingPaymentList />
           </section>
-          {/*<section
+          <section
             className={`dropdown__container ${activeSection.completedPayments ? 'open' : ''}`}
           >
             <CompletedPaymentList />
-          </section>*/}
+          </section>
         </article>
       </section>
 

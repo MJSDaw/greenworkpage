@@ -1,37 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
+import { getCompletedPayments } from '../services/apiService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
 const CompletedPaymentList = () => {
   const { t } = useTranslation()
   const [showList, setShowList] = useState(true)
-  const [users, setUsers] = useState([])
+  const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // TODO: Organiza esto porfi
-  const fetchUsers = async () => {
+  const fetchCompletedPayments = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/admin/users', {
-        method: 'GET',
-      })
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios')
-      }
-      const data = await response.json()
-      // Check if the data is paginated and extract the users from the "data" property
+      const data = await getCompletedPayments()
+      // Check if the data is paginated and extract the payments from the "data" property
       if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setUsers(data.data) // Set only the users array from the paginated data
+        setPayments(data.data) // Set only the payments array from the paginated data
       } else {
-        setUsers(data) // Fallback to the original behavior if data is not paginated
+        setPayments(data) // Fallback to the original behavior if data is not paginated
       }
     } catch (err) {
       setError(err.message)
-      console.error('Error al obtener usuarios:', err) // TODO: Esto me lo quitas de consola porfi
     } finally {
       setLoading(false)
     }
@@ -39,7 +31,7 @@ const CompletedPaymentList = () => {
 
   useEffect(() => {
     if (showList) {
-      fetchUsers()
+      fetchCompletedPayments()
     }
   }, [showList])
 
@@ -49,26 +41,33 @@ const CompletedPaymentList = () => {
       <section className="card__container">
         {loading && <p>{t('common.paymentsLoading')}</p>}
         {error && <p>{t('common.commonError', { error: error })}</p>}
-        {!loading && !error && users.length === 0 && (
+        {!loading && !error && payments.length === 0 && (
           <p>{t('common.paymentsNoPayments')}</p>
         )}
         {!loading &&
           !error &&
-          users.map((user) => (
-            <React.Fragment key={user.id}>
+          payments.map((payment) => (
+            <React.Fragment key={payment.id}>
               <article className="card">
                 <div className="card__content">
                   <img
                     src={leonardo}
-                    alt={t('alt.dashboardImg', { id: user.id })}
-                    title={t('common.dashboardImg', { id: user.id })}
+                    alt={t('alt.dashboardImg', { id: payment.id })}
+                    title={t('common.dashboardImg', { id: payment.id })}
                     className="card__img"
                   />
                   <div className="card__text">
-                    <p>
-                      {user.name} {user.surname}
-                    </p>
-                    <p>{user.email}</p>
+                    {payment.user && (
+                      <>
+                        <p>
+                          {payment.user.name} {payment.user.surname}
+                        </p>
+                        <p>{payment.user.email}</p>
+                      </>
+                    )}
+                    <p>{t('common.amount')}: {payment.amount}</p>
+                    <p>{t('common.date')}: {new Date(payment.created_at || payment.date).toLocaleDateString()}</p>
+                    <p>{t('common.status')}: {payment.status}</p>
                   </div>
                 </div>
               </article>
