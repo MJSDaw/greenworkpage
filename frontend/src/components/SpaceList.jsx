@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { setAuthToken, authenticatedFetch } from '../services/authService'
+import { Link } from 'react-router-dom'
+import { setAuthToken } from '../services/authService'
+import { getSpaces, saveSpace } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
 
-const SpaceList = () => {
-  const { t } = useTranslation()
-  const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-  const [scheduleEntries, setScheduleEntries] = useState([])
+const SpaceList = () => {  
+  const { t } = useTranslation();
+  const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  const [scheduleEntries, setScheduleEntries] = useState([]);
   const [scheduleForm, setScheduleForm] = useState({
     day: 'monday',
     startTime: '',
@@ -21,50 +24,43 @@ const SpaceList = () => {
     images: '',
     description: '',
     subtitle: '',
-  })
-  const [showForm, setShowForm] = useState(false)
-  const [showList, setShowList] = useState(true)
-  const [spaces, setSpaces] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [errors, setErrors] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const perPage = 3
+  });
+  const [showForm, setShowForm] = useState(false);
+  const [showList, setShowList] = useState(true);
+  const [spaces, setSpaces] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const perPage = 3;
+
   const fetchSpaces = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const response = await authenticatedFetch(
-        `/api/spaces?page=${currentPage}&per_page=${perPage}`,
-        {
-          method: 'GET',
-        }
-      )
-      if (!response.ok) {
-        throw new Error('Error al obtener los espacios')
-      }
-      const data = await response.json()
+      const response = await getSpaces();
       // Check if the data is paginated and extract the spaces from the "data" property
-      if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setSpaces(data.data) // Set only the spaces array from the paginated data
-        setTotalPages(data.last_page || 1) // Set total pages from the pagination metadata
-      } else {
-        setSpaces(data) // Fallback to the original behavior if data is not paginated
-        setTotalPages(1)
+      if (response && typeof response === 'object' && Array.isArray(response.data)) {
+        setSpaces(response.data); // Set only the spaces array from the paginated data
+        setTotalPages(response.last_page || 1); // Set total pages from the pagination metadata
+      } else if (Array.isArray(response)) {
+        setSpaces(response); // Fallback to the original behavior if data is not paginated
+        setTotalPages(1);
       }
     } catch (err) {
-      setError(err.message)
+      setError(err.message);    
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (showList) {
       fetchSpaces()
     }
   }, [showList, currentPage])
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
@@ -72,40 +68,29 @@ const SpaceList = () => {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
+  
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const url = editingId
-        ? `/api/admin/spaces/${editingId}`
-        : '/api/admin/spaces'
-      const method = editingId ? 'PUT' : 'POST'
-
-      const response = await authenticatedFetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      const data = await response.json()
-
+      const data = await saveSpace(formData, editingId);
+      
       if (data && data.status === 'success') {
         if (editingId) {
-          setEditingId(null)
-          setErrors({})
+          setEditingId(null);
+          setErrors({});
         } else {
-          setErrors({})
-          setShowForm(false)
-          setShowList(true)
+          setErrors({});
+          setShowForm(false);
+          setShowList(true);
         }
-        fetchSpaces() // Reload the spaces list
+        fetchSpaces(); // Reload the spaces list
       } else {
-        setErrors(data.errors || {})
+        setErrors(data.errors || {});
       }
     } catch (error) {
-      // Error eliminado
+      setErrors(error.errors || {});
     }
-  }
+  };
 
   const handleShowForm = () => {
     setShowForm(true)

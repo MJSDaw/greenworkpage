@@ -214,7 +214,7 @@ export const getSpaces = async () => {
  * @returns {Promise} Respuesta del servidor
  */
 export const saveSpace = async (spaceData, spaceId = null) => {
-  const url = spaceId ? `/api/spaces/${spaceId}` : '/api/spaces';
+  const url = spaceId ? `/api/admin/spaces/${spaceId}` : '/api/admin/spaces';
   const method = spaceId ? 'PUT' : 'POST';
   
   return baseFetch(url, method, spaceData);
@@ -295,7 +295,16 @@ export const saveBooking = async (bookingData, bookingId = null) => {
  * @returns {Promise} Respuesta del servidor
  */
 export const createBooking = async (bookingData) => {
-  return baseFetch('/api/bookings', 'POST', bookingData);
+  // Debug log
+  console.log('Creating booking with data:', bookingData);
+  try {
+    const response = await baseFetch('/api/bookings/create', 'POST', bookingData);
+    console.log('Booking creation response:', response);
+    return response;
+  } catch (error) {
+    console.error('Error creating booking:', error);
+    throw error;
+  }
 };
 
 /**
