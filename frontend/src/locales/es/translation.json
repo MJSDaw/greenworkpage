@@ -216,6 +216,20 @@
       "label": "Fecha de finalización",
       "placeholder": "Fecha de finalización"
     },
+    "date": {
+      "label": "Fecha",
+      "placeholder": "Fecha",
+      "noSlot": "Esta fecha no está disponible",
+      "available": "Rangos de tiempo disponibles"
+    },
+    "time": {
+      "label": "Hora",
+      "placeholder": "Hora",
+      "startTime": "Hora de inicio",
+      "selectStartTime": "Selecciona una hora de inicio",
+      "endTime": "Hora de finalización",
+      "selectEndTime": "Selecciona una hora de finalización"
+    },
     "seats": {
       "label": "Puestos",
       "placeholder": "Puestos"

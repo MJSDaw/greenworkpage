@@ -47,39 +47,51 @@ const AuditList = () => {
             <article className="card" key={audit.id}>
               <div className="card__content">
                 <div className="card__text">
-                  <p><span className='span--bold'>{t('common.user')}: </span>{audit.admin?.email || audit.admin_id}</p>
-                  <p><span className='span--bold'>{t('common.action')}: </span>{audit.action}</p>
-                  <p><span className='span--bold'>{t('common.table')}: </span>{audit.table_name}</p>
+                  <p>
+                    <span className="span--bold">{t('common.user')}: </span>
+                    {audit.admin?.email || audit.admin_id}
+                  </p>
+                  <p>
+                    <span className="span--bold">{t('common.action')}: </span>
+                    {audit.action}
+                  </p>
+                  <p>
+                    <span className="span--bold">{t('common.table')}: </span>
+                    {audit.table_name}
+                  </p>
                 </div>
               </div>
-            </article>          ))}
+            </article>
+          ))}
       </section>
       {!loading && !error && audits.length > 0 && (
         <div className="pagination">
           <button
-            onClick={() => setCurrentPage(p => 1)}
+            onClick={() => setCurrentPage((p) => 1)}
             disabled={currentPage === 1}
           >
-            <img src={arrowTopito} className='arrowTopito--left'/>
+            <img src={arrowTopito} className="arrowTopito--left" />
           </button>
           <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            <img src={arrow} className='arrow--left'/>
+            <img src={arrow} className="arrow--left" />
           </button>
-          <span>{currentPage} / {totalPages}</span>
+          <span>
+            {currentPage} / {totalPages}
+          </span>
           <button
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
-            <img src={arrow} className='arrow--right'/>
+            <img src={arrow} className="arrow--right" />
           </button>
           <button
-            onClick={() => setCurrentPage(p => totalPages)}
+            onClick={() => setCurrentPage((p) => totalPages)}
             disabled={currentPage === totalPages}
           >
-            <img src={arrowTopito} className='arrowTopito--right'/>
+            <img src={arrowTopito} className="arrowTopito--right" />
           </button>
         </div>
       )}

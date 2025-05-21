@@ -769,7 +769,7 @@ textarea {
   margin: 3rem 0 3rem 0;
   background-color: var(--color3);
   gap: 3rem;
-  padding: 3rem 0;
+  padding: 3rem 3rem;
   border-radius: 1.5rem;
   box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
 }
@@ -797,12 +797,11 @@ textarea {
 .card--form, .card--form--edit {
   margin: 0;
   padding: 3rem;
-  width: calc(100% - 6rem);
+  width: 100%;
   justify-content: center;
 }
 
 .card--form--edit {
-  width: 80%;
   align-self: center;
 }
 
@@ -826,6 +825,10 @@ textarea {
 .card__buttons {
   display: flex;
   gap: 3rem;
+}
+
+.card {
+  margin: 0;
 }
 
 /* Flecha SOLO para botones con clase .active */
@@ -1253,7 +1256,7 @@ footer {
   }
 
   .card__container, .card__container--form {
-    padding: 3rem 0rem;
+    padding: 3rem 3rem;
   }
 
   .card, .card__content {
@@ -1308,6 +1311,7 @@ footer {
     background-color: var(--error1);
     justify-content: center;
     width: 100%;
+    min-width: fit-content;
   }
 
   .card__buttons {
