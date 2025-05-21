@@ -125,24 +125,18 @@ export const getUserProfile = async () => {
 };
 
 /**
- * Obtiene la lista de usuarios (solo admin)
- * @returns {Promise} Lista de usuarios
+ * Obtiene la lista de usuarios con paginación (solo admin)
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de usuarios paginada
  */
-export const getUsers = async () => {
+export const getUsers = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/admin/users', 'GET');
-    // Ensure we always return an array
-    if (response && typeof response === 'object') {
-      if (Array.isArray(response)) {
-        return response;
-      } else if (Array.isArray(response.data)) {
-        return response.data;
-      }
-    }
-    return [];
+    const response = await baseFetch(`/api/admin/users?page=${page}&per_page=${perPage}`, 'GET');
+    return response;
   } catch (error) {
     console.error('Error fetching users:', error);
-    return [];
+    return { data: [], current_page: 1, last_page: 1, total: 0 };
   }
 };
 
