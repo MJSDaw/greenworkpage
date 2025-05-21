@@ -1,70 +1,102 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { isAuthenticated, removeAuthToken } from '../services/authService';
-import logo from '../assets/img/logo.png';
-import menuHamburger from '../assets/img/menu_hamburguer.svg';
-import leonardo from '../assets/img/leonardo.svg';
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { isAuthenticated, removeAuthToken } from '../services/authService'
+import { getUserProfile } from '../services/authService'
+import logo from '../assets/img/logo.png'
+import menuHamburger from '../assets/img/menu_hamburguer.svg'
+import leonardo from '../assets/img/leonardo.svg'
 
 const Header = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [menuActive, setMenuActive] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userName, setUserName] = useState('');
-  const menuRef = useRef(null);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [menuActive, setMenuActive] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
+  const [userName, setUserName] = useState('')
+  const menuRef = useRef(null)
+  const [userImage, setUserImage] = useState(leonardo) // Inicializar con la imagen por defecto
 
   useEffect(() => {
-    setAuthenticated(isAuthenticated());
+    setAuthenticated(isAuthenticated())
     // Get username from userData in local storage
-    const userData = localStorage.getItem('userData');
+    const userData = localStorage.getItem('userData')
     if (userData) {
       try {
-        const parsedUserData = JSON.parse(userData);
+        const parsedUserData = JSON.parse(userData)
         if (parsedUserData && parsedUserData.name) {
-          setUserName(parsedUserData.name);
+          setUserName(parsedUserData.name)
         }
+
+        if (userData.name) {
+          setUserName(userData.name)
+        }
+
+        const fetchUserData = async () => {
+          try {
+            const updatedData = await getUserProfile()
+            if (updatedData) {
+              // Update image if it exists in response
+              if (updatedData.image) {
+                if (updatedData.image.startsWith('http')) {
+                  setUserImage(updatedData.image)
+                } else {
+                  setUserImage(
+                    `https://localhost:8443/storage/${updatedData.image}`
+                  )
+                }
+              }
+            }
+          } catch (error) {
+            // Error eliminado
+          }
+        }
+
+        fetchUserData()
       } catch (error) {
-        console.error('Error parsing user data from localStorage:', error);
+        console.error('Error parsing user data from localStorage:', error)
       }
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       // Si el menú está activo y el clic fue fuera del menú, lo cerramos
-      if (menuActive && menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuActive(false);
+      if (
+        menuActive &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setMenuActive(false)
       }
-    };
+    }
 
     // Agregamos el event listener cuando el componente se monta
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
 
     // Limpiamos el event listener cuando el componente se desmonta
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [menuActive]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuActive])
 
   const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+    setMenuActive(!menuActive)
+  }
 
   const handleLogout = () => {
-    removeAuthToken();
-    setAuthenticated(false);
-    navigate('/');
-  };
+    removeAuthToken()
+    setAuthenticated(false)
+    navigate('/')
+  }
 
   const handleDashboard = () => {
-    const userType = localStorage.getItem('userType');
+    const userType = localStorage.getItem('userType')
     if (userType === 'admin') {
-      navigate('/admin');
+      navigate('/admin')
     } else {
-      navigate('/user');
+      navigate('/user')
     }
-  };
+  }
 
   return (
     <header>
@@ -114,7 +146,16 @@ const Header = () => {
                   title={t('actions.user')}
                 >
                   {t('links.user') + (userName || 'User')}
-                  <img src={leonardo} className="nav__button--user__img" alt="User icon" />
+                  <img
+                    src={userImage}
+                    className="nav__button--user__img"
+                    alt={t('alt.userProfile')}
+                    onError={(e) => {
+                      // Si hay un error al cargar la imagen, usar la predeterminada
+                      e.target.onerror = null
+                      e.target.src = leonardo
+                    }}
+                  />
                 </button>
               </li>
               <li>
@@ -165,7 +206,7 @@ const Header = () => {
         </button>
       </nav>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
