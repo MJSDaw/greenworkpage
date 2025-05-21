@@ -225,12 +225,14 @@ export const saveSpace = async (spaceData, spaceId = null) => {
 // ==================== Reservas ====================
 
 /**
- * Obtiene la lista de reservas
- * @returns {Promise} Lista de reservas
+ * Obtiene la lista de reservas con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de reservas paginada
  */
-export const getBookings = async () => {
+export const getBookings = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/getactivebookings', 'GET');
+    const response = await baseFetch(`/api/getactivebookings?page=${page}&per_page=${perPage}`, 'GET');
     // Handle the nested pagination structure
     if (response && typeof response === 'object') {
       if (response.success && response.data && response.data.data) {

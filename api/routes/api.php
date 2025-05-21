@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes for reservations
     Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);
     Route::get('getinactivebookings', [ReservationController::class, 'getInactiveReservations']);
+    Route::post('bookings', [ReservationController::class, 'store']);
     Route::get('bookings/{id}', [ReservationController::class, 'show']);
     Route::put('bookings/{id}', [ReservationController::class, 'update']);
     Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
