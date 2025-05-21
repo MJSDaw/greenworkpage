@@ -1312,7 +1312,7 @@ footer {
     padding-bottom: 2rem; /* Add padding for the scrollbar */
   }
 
-  .card--form--edit form .form__submit {
+  .card--form--edit form .form__submit, .card--form form .form__submit {
     width: 100%;
   }
 
@@ -1343,12 +1343,10 @@ footer {
     width: 100%;
   }
 
-  .card 
-
   .card__buttons {
     flex-direction: column;
     gap: 3rem;
-    margin-bottom: 3rem;
+    margin: 1rem 0 3rem 0;
     width: 100%;
   }
 

@@ -205,6 +205,18 @@
     "period": {
       "label": "Periodo",
       "placeholder": "Periodo"
+    },
+    "startDate": {
+      "label": "Fecha de inicio",
+      "placeholder": "Fecha de inicio"
+    },
+    "endDate": {
+      "label": "Fecha de finalización",
+      "placeholder": "Fecha de finalización"
+    },
+    "seats": {
+      "label": "Puestos",
+      "placeholder": "Puestos"
     }
   },
   "backup": {
