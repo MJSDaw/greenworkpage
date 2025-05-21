@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { setAuthToken, authenticatedFetch } from '../services/authService'
 
+import arrowTopito from '../assets/img/arrowTopito.svg'
+import arrow from '../assets/img/arrow.svg'
+
 const SpaceList = () => {
   const { t } = useTranslation()
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
@@ -246,25 +249,42 @@ const SpaceList = () => {
         </button>
       </div>
       {showList && (
-        <section className="card__container">
-          {loading && <p>{t('common.spacesLoading')}</p>}
-          {error && <p>{t('common.commonError', { error: error })}</p>}
-          {!loading && !error && spaces.length === 0 && (
-            <p>{t('common.spacesNoSpaces')}</p>
-          )}
-          {!loading &&
-            !error &&
-            spaces.map((space) => (
-              <React.Fragment key={space.id}>
-                <article className="card">
-                  <div className="card__content">
-                    {' '}
-                    <div className="card__text">
-                      <p>{space.subtitle}</p>
-                      <p>
-                        {space.price}€ - {space.places} {t('common.places')}
-                      </p>{' '}
-                      <ul className="schedule-display">
+        <>
+          <section className="card__container">
+            {loading && <p>{t('common.spacesLoading')}</p>}
+            {error && <p>{t('common.commonError', { error: error })}</p>}
+            {!loading && !error && spaces.length === 0 && (
+              <p>{t('common.spacesNoSpaces')}</p>
+            )}
+            {!loading &&
+              !error &&
+              spaces.map((space) => (
+                <React.Fragment key={space.id}>
+                  <article className="card">
+                    <div className="card__content">
+                      {' '}
+                      <div className="card__text">
+                        <p>
+                          <span className="span--bold">
+                            {t('form.space.label')}: {' '}
+                          </span>
+                          {space.subtitle}
+                        </p>
+                        <p>
+                          <span className="span--bold">
+                            {t('form.seats.label')}: {' '}
+                          </span>
+                          {space.places}
+                        </p>
+                        <p>
+                          <span className="span--bold">
+                            {t('form.amount.label')}: {' '}
+                          </span>
+                          {space.price}€
+                        </p>
+                        <span className="span--bold">
+                          {t('form.spaceAvailability.label')}:
+                        </span>
                         {space.schedule
                           .split('|')
                           .map((schedule) => {
@@ -287,214 +307,251 @@ const SpaceList = () => {
                             return a.start.localeCompare(b.start)
                           })
                           .map((schedule, index) => (
-                            <li key={index}>
-                              {schedule.day.charAt(0).toUpperCase() +
-                                schedule.day.slice(1)}
-                              : {schedule.start} - {schedule.end}
-                            </li>
+                            <p key={index}>
+                              <span className="span--bold">
+                                {t(`form.days.${schedule.day.toLowerCase()}`)}: {' '}
+                              </span>
+                              {schedule.start} - {schedule.end}
+                            </p>
                           ))}
-                      </ul>
+                      </div>
                     </div>
-                  </div>
-                  <div className="card__buttons">
-                    <button
-                      className="form__submit --noArrow"
-                      onClick={() => handleEditClick(space.id)}
-                    >
-                      {t('actions.edit')}
-                    </button>
-                    <button className="form__submit --noArrow">
-                      {t('actions.delete')}
-                    </button>
-                  </div>
-                </article>{' '}
-                {editingId === space.id && (
-                  <article className="card--form--edit">
-                    <form onSubmit={handleSubmit}>
-                      <div className="form__section">
-                        <label htmlFor="places">{t('form.places.label')}</label>
-                        <input
-                          id="places"
-                          name="places"
-                          type="number"
-                          placeholder={t('form.places.placeholder')}
-                          value={formData.places}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.places &&
-                          Array.isArray(errors.places) &&
-                          errors.places.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="price">{t('form.price.label')}</label>
-                        <input
-                          id="price"
-                          name="price"
-                          type="number"
-                          step="0.01"
-                          placeholder={t('form.price.placeholder')}
-                          value={formData.price}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.price &&
-                          Array.isArray(errors.price) &&
-                          errors.price.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label>{t('form.schedule.label')}</label>
-                        <div className="schedule-form">
-                          <select
-                            name="day"
-                            value={scheduleForm.day}
-                            onChange={handleScheduleChange}
-                          >
-                            {daysOfWeek.map((day) => (
-                              <option key={day} value={day}>
-                                {day.charAt(0).toUpperCase() + day.slice(1)}
-                              </option>
+                    <div className="card__buttons">
+                      <button
+                        className="form__submit --noArrow"
+                        onClick={() => handleEditClick(space.id)}
+                      >
+                        {t('actions.edit')}
+                      </button>
+                      <button className="form__submit --noArrow">
+                        {t('actions.delete')}
+                      </button>
+                    </div>
+                  </article>{' '}
+                  {editingId === space.id && (
+                    <article className="card--form--edit">
+                      <form onSubmit={handleSubmit}>
+                        <div className="form__section">
+                          <label htmlFor="places">
+                            {t('form.seats.label')}
+                          </label>
+                          <input
+                            id="places"
+                            name="places"
+                            type="number"
+                            placeholder={t('form.places.placeholder')}
+                            value={formData.places}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.places &&
+                            Array.isArray(errors.places) &&
+                            errors.places.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
                             ))}
-                          </select>
-                          <input
-                            type="time"
-                            name="startTime"
-                            value={scheduleForm.startTime}
-                            onChange={handleScheduleChange}
-                            placeholder="Start Time"
-                          />
-                          <input
-                            type="time"
-                            name="endTime"
-                            value={scheduleForm.endTime}
-                            onChange={handleScheduleChange}
-                            placeholder="End Time"
-                          />
-                          <button
-                            type="button"
-                            className="form__submit --noArrow"
-                            onClick={handleAddSchedule}
-                          >
-                            {t('actions.add')}
-                          </button>
                         </div>
-                        {scheduleEntries.length > 0 && (
-                          <div className="schedule-list">
-                            {scheduleEntries.map((entry, index) => (
-                              <div key={index} className="schedule-item">
-                                <span>
-                                  {entry.day.charAt(0).toUpperCase() +
-                                    entry.day.slice(1)}
-                                  : {entry.startTime} - {entry.endTime}
-                                </span>
-                                <button
-                                  type="button"
-                                  className="form__submit --noArrow"
-                                  onClick={() => handleRemoveSchedule(index)}
-                                >
-                                  {t('actions.remove')}
-                                </button>
-                              </div>
+                        <div className="form__section">
+                          <label htmlFor="price">{t('form.amount.label')}</label>
+                          <input
+                            id="price"
+                            name="price"
+                            type="number"
+                            step="0.01"
+                            placeholder={t('form.price.placeholder')}
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.price &&
+                            Array.isArray(errors.price) &&
+                            errors.price.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
                             ))}
+                        </div>
+                        <div className="form__section">
+                          <label>{t('form.spaceAvailability.label')}</label>
+                          <div className="schedule-form">
+                            <select
+                              name="day"
+                              value={scheduleForm.day}
+                              onChange={handleScheduleChange}
+                            >
+                              {daysOfWeek.map((day) => (
+                                <option key={day} value={day}>
+                                  {t(`form.days.${day.toLowerCase()}`)}
+                                </option>
+                              ))}
+                            </select>
+                            <input
+                              type="time"
+                              name="startTime"
+                              value={scheduleForm.startTime}
+                              onChange={handleScheduleChange}
+                              placeholder="Start Time"
+                            />
+                            <input
+                              type="time"
+                              name="endTime"
+                              value={scheduleForm.endTime}
+                              onChange={handleScheduleChange}
+                              placeholder="End Time"
+                            />
+                            <button
+                              type="button"
+                              className="form__submit --noArrow"
+                              onClick={handleAddSchedule}
+                            >
+                              {t('actions.add')}
+                            </button>
                           </div>
-                        )}
-                        {errors.schedule &&
-                          Array.isArray(errors.schedule) &&
-                          errors.schedule.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="images">{t('form.images.label')}</label>
+                          {scheduleEntries.length > 0 && (
+                            <div className="schedule-list">
+                              {scheduleEntries.map((entry, index) => (
+                                <div key={index} className="schedule-item">
+                                  <span>
+                                    {t(`form.days.${entry.day.toLowerCase()}`)}
+                                    : {entry.startTime} - {entry.endTime}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="form__submit --noArrow"
+                                    onClick={() => handleRemoveSchedule(index)}
+                                  >
+                                    {t('actions.remove')}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {errors.schedule &&
+                            Array.isArray(errors.schedule) &&
+                            errors.schedule.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="images">
+                            {t('form.images.label')}
+                          </label>
+                          <input
+                            id="images"
+                            name="images"
+                            placeholder={t('form.images.placeholder')}
+                            value={formData.images}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.images &&
+                            Array.isArray(errors.images) &&
+                            errors.images.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="description">
+                            {t('form.description.label')}
+                          </label>
+                          <textarea
+                            id="description"
+                            name="description"
+                            placeholder={t('form.description.placeholder')}
+                            value={formData.description}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.description &&
+                            Array.isArray(errors.description) &&
+                            errors.description.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="subtitle">
+                            {t('form.space.label')}
+                          </label>
+                          <input
+                            id="subtitle"
+                            name="subtitle"
+                            placeholder={t('form.subtitle.placeholder')}
+                            value={formData.subtitle}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.subtitle &&
+                            Array.isArray(errors.subtitle) &&
+                            errors.subtitle.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
                         <input
-                          id="images"
-                          name="images"
-                          placeholder={t('form.images.placeholder')}
-                          value={formData.images}
-                          onChange={handleChange}
-                          required
+                          type="submit"
+                          value={t('actions.edit')}
+                          className="form__submit"
                         />
-                        {errors.images &&
-                          Array.isArray(errors.images) &&
-                          errors.images.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="description">
-                          {t('form.description.label')}
-                        </label>
-                        <textarea
-                          id="description"
-                          name="description"
-                          placeholder={t('form.description.placeholder')}
-                          value={formData.description}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.description &&
-                          Array.isArray(errors.description) &&
-                          errors.description.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="subtitle">
-                          {t('form.subtitle.label')}
-                        </label>
-                        <input
-                          id="subtitle"
-                          name="subtitle"
-                          placeholder={t('form.subtitle.placeholder')}
-                          value={formData.subtitle}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.subtitle &&
-                          Array.isArray(errors.subtitle) &&
-                          errors.subtitle.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <input
-                        type="submit"
-                        value={t('actions.edit')}
-                        className="form__submit"
-                      />
-                    </form>
-                  </article>
-                )}
-              </React.Fragment>
-            ))}
-        </section>
+                      </form>
+                    </article>
+                  )}
+                </React.Fragment>
+              ))}
+          </section>
+          {!loading && !error && spaces.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((p) => 1)}
+                disabled={currentPage === 1}
+              >
+                <img src={arrowTopito} className="arrowTopito--left" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <img src={arrow} className="arrow--left" />
+              </button>
+              <span>
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrow} className="arrow--right" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrowTopito} className="arrowTopito--right" />
+              </button>
+            </div>
+          )}
+        </>
       )}
       {showForm && (
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
               <div className="form__section">
-                <label htmlFor="places">{t('form.places.label')}</label>
+                <label htmlFor="places">{t('form.seats.label')}</label>
                 <input
                   id="places"
                   name="places"
                   type="number"
-                  placeholder={t('form.places.placeholder')}
+                  placeholder={t('form.seats.placeholder')}
                   value={formData.places}
                   onChange={handleChange}
                   required
@@ -508,13 +565,13 @@ const SpaceList = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="price">{t('form.price.label')}</label>
+                <label htmlFor="price">{t('form.amount.label')}</label>
                 <input
                   id="price"
                   name="price"
                   type="number"
                   step="0.01"
-                  placeholder={t('form.price.placeholder')}
+                  placeholder={t('form.amount.placeholder')}
                   value={formData.price}
                   onChange={handleChange}
                   required
@@ -528,7 +585,7 @@ const SpaceList = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label>{t('form.schedule.label')}</label>
+                <label>{t('form.spaceAvailability.label')}</label>
                 <div className="schedule-form">
                   <select
                     name="day"
@@ -537,7 +594,7 @@ const SpaceList = () => {
                   >
                     {daysOfWeek.map((day) => (
                       <option key={day} value={day}>
-                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                        {t(`form.days.${day.toLowerCase()}`)}
                       </option>
                     ))}
                   </select>
@@ -568,8 +625,7 @@ const SpaceList = () => {
                     {scheduleEntries.map((entry, index) => (
                       <div key={index} className="schedule-item">
                         <span>
-                          {entry.day.charAt(0).toUpperCase() +
-                            entry.day.slice(1)}
+                          {t(`form.days.${entry.day.toLowerCase()}`)}
                           : {entry.startTime} - {entry.endTime}
                         </span>
                         <button
@@ -630,11 +686,11 @@ const SpaceList = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="subtitle">{t('form.subtitle.label')}</label>
+                <label htmlFor="subtitle">{t('form.space.label')}</label>
                 <input
                   id="subtitle"
                   name="subtitle"
-                  placeholder={t('form.subtitle.placeholder')}
+                  placeholder={t('form.space.placeholder')}
                   value={formData.subtitle}
                   onChange={handleChange}
                   required
@@ -655,25 +711,6 @@ const SpaceList = () => {
             </form>
           </article>
         </section>
-      )}
-      {!loading && !error && spaces.length > 0 && (
-        <div className="pagination">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            {t('common.previous')}
-          </button>
-          <span>
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            {t('common.next')}
-          </button>
-        </div>
       )}
     </>
   )
