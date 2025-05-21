@@ -439,7 +439,7 @@ textarea {
 }
 
 .nav__button--user:hover {
-  outline: 3px solid var(--color1);
+  text-decoration: underline;
 }
 
 .nav__button--user__img {
