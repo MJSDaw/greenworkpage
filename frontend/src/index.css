@@ -26,6 +26,40 @@
   box-sizing: border-box;
 }
 
+/* Schedule management styles */
+.schedule-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.schedule-form select,
+.schedule-form input {
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color3);
+  border-radius: 0.5rem;
+}
+
+.schedule-item button {
+  padding: 0.5rem 1rem;
+  background-color: var(--error1);
+}
+
 /* =========================
   GLOBAL
 ========================= */
@@ -994,6 +1028,40 @@ footer {
 
 .arrow--right {
   transform: rotate(90deg);
+}
+
+/* Schedule management styles */
+.schedule-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.schedule-form select,
+.schedule-form input {
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color3);
+  border-radius: 0.5rem;
+}
+
+.schedule-item button {
+  padding: 0.5rem 1rem;
+  background-color: var(--error1);
 }
 
 /* =========================
