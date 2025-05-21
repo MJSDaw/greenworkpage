@@ -14,15 +14,19 @@ class PaymentController extends Controller
     /**
      * Get all pending payments.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function getPendingPayments()
+    public function getPendingPayments(Request $request)
     {
         try {
-            $pendingPayments = Payment::where('status', '!=', 'completed')
+            $query = Payment::where('status', '!=', 'completed')
                 ->with(['user:id,name,email', 'reservation'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+                ->orderBy('created_at', 'desc');
+
+            // Pagination
+            $perPage = $request->input('per_page', 3);
+            $pendingPayments = $query->paginate($perPage);
 
             return response()->json([
                 'success' => true,
