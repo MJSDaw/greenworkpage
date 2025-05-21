@@ -439,7 +439,6 @@ textarea {
 }
 
 .nav__button--user:hover {
-  padding: .5rem 1.5rem;
   outline: 3px solid var(--color1);
 }
 
