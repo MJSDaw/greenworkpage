@@ -40,15 +40,19 @@ class PaymentController extends Controller
     /**
      * Get all completed payments.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function getCompletedPayments()
+    public function getCompletedPayments(Request $request)
     {
         try {
-            $completedPayments = Payment::where('status', 'completed')
+            $query = Payment::where('status', 'completed')
                 ->with(['user:id,name,email', 'reservation'])
-                ->orderBy('payment_date', 'desc')
-                ->get();
+                ->orderBy('payment_date', 'desc');
+
+            // Pagination
+            $perPage = $request->input('per_page', 3);
+            $completedPayments = $query->paginate($perPage);
 
             return response()->json([
                 'success' => true,

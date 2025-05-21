@@ -10,20 +10,24 @@ const CompletedPaymentList = () => {
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
 
   const fetchCompletedPayments = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await getCompletedPayments()
-      // Check if the data is paginated and extract the payments from the "data" property
-      if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setPayments(data.data) // Set only the payments array from the paginated data
-      } else {
-        setPayments(data) // Fallback to the original behavior if data is not paginated
-      }
+      const response = await getCompletedPayments(currentPage, perPage)
+      
+      // Extract the payments array from the paginated response
+      const paymentsArray = response?.data?.data || []
+      setPayments(paymentsArray)
+      
+      // Set pagination data
+      setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Error al obtener pagos completados')
     } finally {
       setLoading(false)
     }
@@ -33,7 +37,7 @@ const CompletedPaymentList = () => {
     if (showList) {
       fetchCompletedPayments()
     }
-  }, [showList])
+  }, [showList, currentPage])
 
   return (
     <>
@@ -69,10 +73,26 @@ const CompletedPaymentList = () => {
                     <p>{t('common.date')}: {new Date(payment.created_at || payment.date).toLocaleDateString()}</p>
                     <p>{t('common.status')}: {payment.status}</p>
                   </div>
-                </div>
-              </article>
+                </div>              </article>
             </React.Fragment>
           ))}
+          {!loading && !error && payments.length > 0 && (
+            <div className="pagination">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                {t('common.previous')}
+              </button>
+              <span>{currentPage} / {totalPages}</span>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                {t('common.next')}
+              </button>
+            </div>
+          )}
       </section>
     </>
   )

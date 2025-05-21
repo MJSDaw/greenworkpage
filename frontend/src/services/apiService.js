@@ -348,11 +348,30 @@ export const getPendingPayments = async () => {
 };
 
 /**
- * Obtiene la lista de pagos completados
- * @returns {Promise} Lista de pagos completados
+ * Obtiene la lista de pagos completados con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de pagos completados paginada
  */
-export const getCompletedPayments = async () => {
-  return baseFetch('/api/admin/payments/completed', 'GET');
+export const getCompletedPayments = async (page = 1, perPage = 3) => {
+  try {
+    const response = await baseFetch(`/api/admin/payments/completed?page=${page}&per_page=${perPage}`, 'GET');
+    // Handle the nested pagination structure
+    if (response && typeof response === 'object') {
+      if (response.success && response.data && response.data.data) {
+        // This is the paginated response structure
+        return response;
+      } else if (Array.isArray(response)) {
+        return { success: true, data: { data: response, last_page: 1, current_page: 1 } };
+      } else if (Array.isArray(response.data)) {
+        return { success: true, data: { data: response.data, last_page: 1, current_page: 1 } };
+      }
+    }
+    return { success: true, data: { data: [], last_page: 1, current_page: 1 } };
+  } catch (error) {
+    console.error('Error fetching completed payments:', error);
+    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
+  }
 };
 
 /**
