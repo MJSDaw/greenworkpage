@@ -31,7 +31,9 @@
     "bookingsRead": "Ver reservas",
     "bookingsCreate": "Crear reserva",
     "paymentsRead": "Ver pagos",
-    "paymentsCreate": "Crear pago"
+    "paymentsCreate": "Crear pago",
+    "add": "Añadir",
+    "remove": "Eliminar"
   },
   "alt": {
     "logo": "Logo de Greenwork",
@@ -169,7 +171,77 @@
       "text": "Registrarme"
     },
     "submitting": "Enviando...",
-    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible."
+    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible.",
+    "amount": {
+      "label": "Precio",
+      "placeholder": "Precio"
+    },
+    "paymentMethod": {
+      "label": "Método de pago",
+      "placeholder": "Método de pago",
+      "creditCard": "Tarjeta",
+      "cash": "Efectivo"
+    },
+    "datePayment": {
+      "label": "Fecha de pago",
+      "placeholder": "Fecha de pago"
+    },
+    "status": {
+      "label": "Estado",
+      "placeholder": "Estado",
+      "completed": "Completado",
+      "pending": "Pendiente"
+    },
+    "user": {
+      "label": "Usuario",
+      "placeholder": "Usuario"
+    },
+    "reservation": {
+      "label": "Reserva",
+      "placeholder": "Reserva"
+    },
+    "space": {
+      "label": "Espacio",
+      "placeholder": "Espacio"
+    },
+    "period": {
+      "label": "Periodo",
+      "placeholder": "Periodo"
+    },
+    "startDate": {
+      "label": "Fecha de inicio",
+      "placeholder": "Fecha de inicio"
+    },
+    "endDate": {
+      "label": "Fecha de finalización",
+      "placeholder": "Fecha de finalización"
+    },
+    "seats": {
+      "label": "Puestos",
+      "placeholder": "Puestos"
+    },
+    "spaceAvailability": {
+      "label": "Horarios de servicio",
+      "placeholder": "Horarios de servicio"
+    },
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "weekdays": "Días laborales"
+    },
+    "images": {
+      "label": "Imágenes",
+      "placeholder": "Imágenes"
+    },
+    "description": {
+      "label": "Descripción",
+      "placeholder": "Descripción"
+    }
   },
   "backup": {
     "success": "Copia de seguridad creada con éxito",

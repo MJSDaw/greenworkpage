@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { getBookings, getUsers, getSpaces, createBooking, updateBooking } from '../services/apiService'
+import {
+  getBookings,
+  getUsers,
+  getSpaces,
+  createBooking,
+  updateBooking,
+} from '../services/apiService'
 import { authenticatedFetch } from '../services/authService'
 
-import leonardo from '../assets/img/leonardo.svg'
+import arrowTopito from '../assets/img/arrowTopito.svg'
+import arrow from '../assets/img/arrow.svg'
 
 const BookingList = () => {
   const { t } = useTranslation()
@@ -39,11 +46,11 @@ const BookingList = () => {
     setError(null)
     try {
       const response = await getBookings(currentPage, perPage)
-      
+
       // Extract the bookings array from the paginated response
       const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)
-      
+
       // Set pagination data
       setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
@@ -86,12 +93,14 @@ const BookingList = () => {
     try {
       const [usersData, spacesData] = await Promise.all([
         getUsers(),
-        getSpaces()
+        getSpaces(),
       ])
 
       // Asegurarse de manejar tanto la respuesta paginada como la no paginada
-      const usersList = usersData?.data?.data || usersData?.data || usersData || []
-      const spacesList = spacesData?.data?.data || spacesData?.data || spacesData || []
+      const usersList =
+        usersData?.data?.data || usersData?.data || usersData || []
+      const spacesList =
+        spacesData?.data?.data || spacesData?.data || spacesData || []
 
       setUsers(usersList)
       setSpaces(spacesList)
@@ -736,10 +745,155 @@ const BookingList = () => {
                       />
                     </form>
                   </article>
-                )}
-              </React.Fragment>
-            ))}
-        </section>
+                  {editingId ===
+                    (booking.id ||
+                      `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`) && (
+                    <article className="card--form--edit">
+                      <form onSubmit={handleSubmit}>
+                        <div className="form__section">
+                          <label htmlFor="user_id">
+                            {t('form.user.label')}
+                          </label>
+                          <select
+                            id="user_id"
+                            name="user_id"
+                            value={formData.user_id}
+                            onChange={handleChange}
+                            required
+                          >
+                            <option value="">
+                              {t('form.user.placeholder')}
+                            </option>
+                            {users.map((user) => (
+                              <option key={user.id} value={user.id}>
+                                {user.email}
+                              </option>
+                            ))}
+                          </select>
+                          {errors.user_id &&
+                            Array.isArray(errors.user_id) &&
+                            errors.user_id.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="space_id">
+                            {t('form.space.label')}
+                          </label>
+                          <select
+                            id="space_id"
+                            name="space_id"
+                            value={formData.space_id}
+                            onChange={handleChange}
+                            required
+                          >
+                            <option value="">
+                              {t('form.space.placeholder')}
+                            </option>
+                            {spaces.map((space) => (
+                              <option key={space.id} value={space.id}>
+                                {space.subtitle} ({space.price}€ -{' '}
+                                {space.places} {t('form.seats.label')})
+                              </option>
+                            ))}
+                          </select>
+                          {errors.space_id &&
+                            Array.isArray(errors.space_id) &&
+                            errors.space_id.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="start_date">
+                            {t('form.startDate.label')}
+                          </label>
+                          <input
+                            id="start_date"
+                            name="start_date"
+                            type="datetime-local"
+                            placeholder={t('form.startDate.placeholder')}
+                            value={formData.start_date}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.start_date &&
+                            Array.isArray(errors.start_date) &&
+                            errors.start_date.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="end_date">
+                            {t('form.endDate.label')}
+                          </label>
+                          <input
+                            id="end_date"
+                            name="end_date"
+                            type="datetime-local"
+                            placeholder={t('form.endDate.placeholder')}
+                            value={formData.end_date}
+                            onChange={handleChange}
+                            required
+                          />
+                          {errors.end_date &&
+                            Array.isArray(errors.end_date) &&
+                            errors.end_date.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <input
+                          type="submit"
+                          value={t('actions.edit')}
+                          className="form__submit"
+                        />
+                      </form>
+                    </article>
+                  )}
+                </React.Fragment>
+              ))}
+          </section>
+          {!loading && !error && bookings.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((p) => 1)}
+                disabled={currentPage === 1}
+              >
+                <img src={arrowTopito} className="arrowTopito--left" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <img src={arrow} className="arrow--left" />
+              </button>
+              <span>
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrow} className="arrow--right" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrowTopito} className="arrowTopito--right" />
+              </button>
+            </div>
+          )}
+        </>
       )}
       {showForm && (
         <section className="card__container--form">
@@ -755,7 +909,7 @@ const BookingList = () => {
                   required
                 >
                   <option value="">{t('form.user.placeholder')}</option>
-                  {users.map(user => (
+                  {users.map((user) => (
                     <option key={user.id} value={user.id}>
                       {user.email}
                     </option>
@@ -780,9 +934,10 @@ const BookingList = () => {
                   required
                 >
                   <option value="">{t('form.space.placeholder')}</option>
-                  {spaces.map(space => (
+                  {spaces.map((space) => (
                     <option key={space.id} value={space.id}>
-                      {space.subtitle} ({space.price}€ - {space.places} {t('common.places')})
+                      {space.subtitle} ({space.price}€ - {space.places}{' '}
+                      {t('form.seats.label')})
                     </option>
                   ))}
                 </select>
@@ -952,23 +1107,6 @@ const BookingList = () => {
           </article>
         </section>
       )}
-      {!loading && !error && bookings.length > 0 && (
-            <div className="pagination">
-              <button 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                {t('common.previous')}
-              </button>
-              <span>{currentPage} / {totalPages}</span>
-              <button 
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                {t('common.next')}
-              </button>
-            </div>
-          )}
     </>
   )
 }

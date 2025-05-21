@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getCompletedPayments } from '../services/apiService'
 
-import leonardo from '../assets/img/leonardo.svg'
+import arrowTopito from '../assets/img/arrowTopito.svg'
+import arrow from '../assets/img/arrow.svg'
 
 const CompletedPaymentList = () => {
   const { t } = useTranslation()
@@ -19,11 +20,9 @@ const CompletedPaymentList = () => {
     setError(null)
     try {
       const response = await getCompletedPayments(currentPage, perPage)
-      
       // Extract the payments array from the paginated response
       const paymentsArray = response?.data?.data || []
       setPayments(paymentsArray)
-      
       // Set pagination data
       setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
@@ -54,46 +53,58 @@ const CompletedPaymentList = () => {
             <React.Fragment key={payment.id}>
               <article className="card">
                 <div className="card__content">
-                  <img
-                    src={leonardo}
-                    alt={t('alt.dashboardImg', { id: payment.id })}
-                    title={t('common.dashboardImg', { id: payment.id })}
-                    className="card__img"
-                  />
                   <div className="card__text">
                     {payment.user && (
                       <>
-                        <p>
-                          {payment.user.name} {payment.user.surname}
-                        </p>
-                        <p>{payment.user.email}</p>
+                        <p><span className='span--bold'>{t('form.name.label')}: </span>{payment.user.name} {payment.user.surname}</p>
+                        <p><span className='span--bold'>{t('form.email.label')}: </span>{payment.user.email}</p>
                       </>
                     )}
-                    <p>{t('common.amount')}: {payment.amount}</p>
-                    <p>{t('common.date')}: {new Date(payment.created_at || payment.date).toLocaleDateString()}</p>
-                    <p>{t('common.status')}: {payment.status}</p>
+                    <p><span className='span--bold'>{t('form.amount.label')}: </span>{payment.amount}€
+                    </p>
+                    <p>
+                      <span className='span--bold'>{t('form.datePayment.label')}: </span>
+                      {new Date(
+                        payment.created_at || payment.date
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
-                </div>              </article>
+                </div>{' '}
+              </article>
             </React.Fragment>
           ))}
-          {!loading && !error && payments.length > 0 && (
-            <div className="pagination">
-              <button 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                {t('common.previous')}
-              </button>
-              <span>{currentPage} / {totalPages}</span>
-              <button 
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                {t('common.next')}
-              </button>
-            </div>
-          )}
       </section>
+      {!loading && !error && payments.length > 0 && (
+          <div className="pagination">
+            <button
+              onClick={() => setCurrentPage((p) => 1)}
+              disabled={currentPage === 1}
+            >
+              <img src={arrowTopito} className="arrowTopito--left" />
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <img src={arrow} className="arrow--left" />
+            </button>
+            <span>
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <img src={arrow} className="arrow--right" />
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <img src={arrowTopito} className="arrowTopito--right" />
+            </button>
+          </div>
+        )}
     </>
   )
 }

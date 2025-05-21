@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import leonardo from '../assets/img/leonardo.svg'
 import { getAudits } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
