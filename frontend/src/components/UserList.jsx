@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { saveUser } from '../services/apiService'
 import { getAuthHeader } from '../services/authService'
 
+import arrowTopito from '../assets/img/arrowTopito.svg'
+import arrow from '../assets/img/arrow.svg'
+
 import leonardo from '../assets/img/leonardo.svg'
 
 const UserList = () => {
@@ -13,11 +16,12 @@ const UserList = () => {
     surname: '',
     birthdate: '',
     dni: '',
-    email: '',    password: '',
+    email: '',
+    password: '',
     passwordConfirm: '',
     termsAndConditions: false,
   })
-  
+
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
   const [users, setUsers] = useState([])
@@ -32,29 +36,32 @@ const UserList = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(`https://localhost:8443/api/admin/users?page=${currentPage}&per_page=${perPage}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // Añadir el token de autenticación si es necesario
-          ...getAuthHeader && getAuthHeader(),
+      const response = await fetch(
+        `https://localhost:8443/api/admin/users?page=${currentPage}&per_page=${perPage}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // Añadir el token de autenticación si es necesario
+            ...(getAuthHeader && getAuthHeader()),
+          },
         }
-      });
-      
+      )
+
       if (!response.ok) {
-        throw new Error('Error al obtener los usuarios');
+        throw new Error('Error al obtener los usuarios')
       }
-      
-      const data = await response.json();
-      
+
+      const data = await response.json()
+
       if (data && typeof data === 'object') {
-        setUsers(data.data || []); // Los usuarios están en la propiedad data
-        setTotalPages(data.last_page || 1);
-        setTotalItems(data.total || 0);
+        setUsers(data.data || []) // Los usuarios están en la propiedad data
+        setTotalPages(data.last_page || 1)
+        setTotalItems(data.total || 0)
       } else {
-        setUsers([]);
-        setTotalPages(1);
-        setTotalItems(0);
+        setUsers([])
+        setTotalPages(1)
+        setTotalItems(0)
       }
     } catch (err) {
       setError(err.message)
@@ -87,10 +94,12 @@ const UserList = () => {
     e.preventDefault()
     try {
       // Si estamos editando, obtener el usuario original para comparación
-      const originalUser = editingId ? users.find(user => user.id === editingId) : null;
-      
+      const originalUser = editingId
+        ? users.find((user) => user.id === editingId)
+        : null
+
       // Usar el servicio API centralizado para guardar usuario
-      const data = await saveUser(formData, editingId, originalUser);
+      const data = await saveUser(formData, editingId, originalUser)
 
       if (data && data.success) {
         if (editingId) {
@@ -126,12 +135,12 @@ const UserList = () => {
       const userToEdit = users.find((user) => user.id === id)
 
       // Format birthdate if it exists
-      let formattedBirthdate = '';
+      let formattedBirthdate = ''
       if (userToEdit.birthdate) {
         // Ensure the date is in YYYY-MM-DD format for input[type="date"]
-        const birthdate = new Date(userToEdit.birthdate);
+        const birthdate = new Date(userToEdit.birthdate)
         if (!isNaN(birthdate.getTime())) {
-          formattedBirthdate = birthdate.toISOString().split('T')[0];
+          formattedBirthdate = birthdate.toISOString().split('T')[0]
         }
       }
 
@@ -160,156 +169,189 @@ const UserList = () => {
         </button>
       </div>
       {showList && (
-        <section className="card__container">
-          {loading && <p>{t('common.userLoading')}</p>}
-          {error && <p>{t('common.commonError', { error: error })}</p>}
-          {!loading && !error && users.length === 0 && (
-            <p>{t('common.userNoUsers')}</p>
-          )}
-          {!loading &&
-            !error &&
-            users.map((user) => (
-              <React.Fragment key={user.id}>
-                <article className="card">
-                  <div className="card__content">
-                    <img
-                      src={leonardo}
-                      alt={t('alt.dashboardImg', { id: user.id })}
-                      title={t('common.dashboardImg', { id: user.id })}
-                      className="card__img"
-                    />
-                    <div className="card__text">
-                      <p>
-                        {user.name} {user.surname}
-                      </p>
-                      <p>{user.email}</p>
-                    </div>
-                  </div>
-                  <div className="card__buttons">
-                    <button
-                      className="form__submit --noArrow"
-                      onClick={() => handleEditClick(user.id)}
-                    >
-                      {t('actions.edit')}
-                    </button>
-                    <button className="form__submit --noArrow">
-                      {t('actions.delete')}
-                    </button>
-                  </div>
-                </article>
-
-                {editingId === user.id && (
-                  <article className="card--form--edit">
-                    <form onSubmit={handleSubmit}>
-                      <div className="form__section">
-                        <label htmlFor="name">{t('form.name.label')}</label>
-                        <input
-                          id="name"
-                          name="name"
-                          placeholder={t('form.name.placeholder')}
-                          value={formData.name}
-                          onChange={handleChange}
-                        />
-                        {error &&
-                          error.name &&
-                          Array.isArray(error.name) &&
-                          error.name.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="surname">
-                          {t('form.surname.label')}
-                        </label>
-                        <input
-                          id="surname"
-                          name="surname"
-                          placeholder={t('form.surname.placeholder')}
-                          value={formData.surname}
-                          onChange={handleChange}
-                        />
-                        {error &&
-                          error.surname &&
-                          Array.isArray(error.surname) &&
-                          error.surname.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="email">{t('form.email.label')}</label>
-                        <input
-                          id="email"
-                          name="email"
-                          placeholder={t('form.email.placeholder')}
-                          value={formData.email}
-                          onChange={handleChange}
-                        />
-                        {error &&
-                          error.email &&
-                          Array.isArray(error.email) &&
-                          error.email.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="password">
-                          {t('form.password.label')}
-                        </label>
-                        <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder={t('form.password.placeholder')}
-                          value={formData.password}
-                          onChange={handleChange}
-                        />
-                        {error &&
-                          error.password &&
-                          Array.isArray(error.password) &&
-                          error.password.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="confirmPassword">
-                          {t('form.confirmPassword.label')}
-                        </label>
-                        <input
-                          id="confirmPassword"
-                          name="passwordConfirm"
-                          type="password"
-                          placeholder={t('form.confirmPassword.placeholder')}
-                          value={formData.passwordConfirm}
-                          onChange={handleChange}
-                        />
-                        {error &&
-                          error.confirmPassword &&
-                          Array.isArray(error.confirmPassword) &&
-                          error.confirmPassword.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`error.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <input
-                        type="submit"
-                        value={t('actions.edit')}
-                        className="form__submit"
+        <>
+          <section className="card__container">
+            {loading && <p>{t('common.userLoading')}</p>}
+            {error && <p>{t('common.commonError', { error: error })}</p>}
+            {!loading && !error && users.length === 0 && (
+              <p>{t('common.userNoUsers')}</p>
+            )}
+            {!loading &&
+              !error &&
+              users.map((user) => (
+                <React.Fragment key={user.id}>
+                  <article className="card">
+                    <div className="card__content">
+                      <img
+                        src={leonardo}
+                        alt={t('alt.dashboardImg', { id: user.id })}
+                        title={t('common.dashboardImg', { id: user.id })}
+                        className="card__img"
                       />
-                    </form>
+                      <div className="card__text">
+                        <p><span className='span--bold'>{t('form.name.label')}: </span>{user.name} {user.surname}</p>
+                        <p><span className='span--bold'>{t('form.email.label')}: </span>{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="card__buttons">
+                      <button
+                        className="form__submit --noArrow"
+                        onClick={() => handleEditClick(user.id)}
+                      >
+                        {t('actions.edit')}
+                      </button>
+                      <button className="form__submit --noArrow">
+                        {t('actions.delete')}
+                      </button>
+                    </div>
                   </article>
-                )}
-              </React.Fragment>
-            ))}
-        </section>
+
+                  {editingId === user.id && (
+                    <article className="card--form--edit">
+                      <form onSubmit={handleSubmit}>
+                        <div className="form__section">
+                          <label htmlFor="name">{t('form.name.label')}</label>
+                          <input
+                            id="name"
+                            name="name"
+                            placeholder={t('form.name.placeholder')}
+                            value={formData.name}
+                            onChange={handleChange}
+                          />
+                          {error &&
+                            error.name &&
+                            Array.isArray(error.name) &&
+                            error.name.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`error.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="surname">
+                            {t('form.surname.label')}
+                          </label>
+                          <input
+                            id="surname"
+                            name="surname"
+                            placeholder={t('form.surname.placeholder')}
+                            value={formData.surname}
+                            onChange={handleChange}
+                          />
+                          {error &&
+                            error.surname &&
+                            Array.isArray(error.surname) &&
+                            error.surname.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`error.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="email">{t('form.email.label')}</label>
+                          <input
+                            id="email"
+                            name="email"
+                            placeholder={t('form.email.placeholder')}
+                            value={formData.email}
+                            onChange={handleChange}
+                          />
+                          {error &&
+                            error.email &&
+                            Array.isArray(error.email) &&
+                            error.email.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`error.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="password">
+                            {t('form.password.label')}
+                          </label>
+                          <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder={t('form.password.placeholder')}
+                            value={formData.password}
+                            onChange={handleChange}
+                          />
+                          {error &&
+                            error.password &&
+                            Array.isArray(error.password) &&
+                            error.password.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`error.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <div className="form__section">
+                          <label htmlFor="confirmPassword">
+                            {t('form.confirmPassword.label')}
+                          </label>
+                          <input
+                            id="confirmPassword"
+                            name="passwordConfirm"
+                            type="password"
+                            placeholder={t('form.confirmPassword.placeholder')}
+                            value={formData.passwordConfirm}
+                            onChange={handleChange}
+                          />
+                          {error &&
+                            error.confirmPassword &&
+                            Array.isArray(error.confirmPassword) &&
+                            error.confirmPassword.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`error.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                        <input
+                          type="submit"
+                          value={t('actions.edit')}
+                          className="form__submit"
+                        />
+                      </form>
+                    </article>
+                  )}
+                </React.Fragment>
+              ))}
+          </section>
+          {!loading && !error && users.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((p) => 1)}
+                disabled={currentPage === 1}
+              >
+                <img src={arrowTopito} className="arrowTopito--left" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <img src={arrow} className="arrow--left" />
+              </button>
+              <span>
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrow} className="arrow--right" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrowTopito} className="arrowTopito--right" />
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {showForm && (
@@ -497,25 +539,9 @@ const UserList = () => {
                 value={t('actions.usersCreate')}
                 className="form__submit"
               />
-            </form>          </article>
+            </form>{' '}
+          </article>
         </section>
-      )}
-      {showList && !loading && !error && users.length > 0 && (
-        <div className="pagination">
-          <button 
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            {t('common.previous')}
-          </button>
-          <span>{currentPage} / {totalPages}</span>
-          <button 
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            {t('common.next')}
-          </button>
-        </div>
       )}
     </>
   )

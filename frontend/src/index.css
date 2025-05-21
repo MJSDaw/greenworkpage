@@ -1322,6 +1322,10 @@ footer {
     justify-content: center;
   }
 
+  .card__img {
+    margin-right: 0;
+  }
+
   /* Schedule management styles */
   .schedule-form {
     flex-direction: column;
