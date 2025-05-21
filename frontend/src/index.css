@@ -1127,8 +1127,26 @@ footer {
     align-items: center;
   }
 
-  .user__section h1 {
+  .user__section h1, .user__section--part h2 {
     text-align: center;
     width: 100%;
+  }
+
+  .user__section--part, .user__section--part:last-child  {
+    flex-direction: column;
+    padding: 0 2rem 0;
+  }
+
+  .user__section--part:last-child  {
+    padding: 0 2rem 3rem 2rem;
+  }
+
+  .user__buttons {
+    flex-direction: column;
+  }
+
+  .user__buttons button{
+    width: 100%;
+    justify-content: center;
   }
 }

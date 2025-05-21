@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   })
   // Iniciar con defaultImage solo si no hay imagen de usuario
   const [image, setImage] = useState(defaultImage)
-  
+
   useEffect(() => {
     // Get admin data from local storage
     const adminData = getUserData()
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
       [section]: !prev[section],
     }))
   }
-  
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -115,7 +115,7 @@ const AdminDashboard = () => {
     try {
       // Enviar imagen al servidor usando el servicio centralizado
       const data = await updateAdminImage(adminData.id, file)
-      
+
       if (data && data.success) {
         // Actualizar la imagen con la ruta devuelta por el servidor
         if (data.data && data.data.image) {
