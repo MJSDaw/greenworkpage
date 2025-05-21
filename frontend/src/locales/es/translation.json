@@ -197,6 +197,14 @@
     "reservation": {
       "label": "Reserva",
       "placeholder": "Reserva"
+    },
+    "space": {
+      "label": "Espacio",
+      "placeholder": "Espacio"
+    },
+    "period": {
+      "label": "Periodo",
+      "placeholder": "Periodo"
     }
   },
   "backup": {
