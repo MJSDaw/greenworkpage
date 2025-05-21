@@ -86,7 +86,12 @@
     "paymentsLoading": "Cargando pagos...",
     "paymentsNoPayments": "No hay pagos disponibles",
     "auditsLoading": "Cargando auditorias...",
-    "auditsNoAudits": "No hay pagos auditorias"
+    "auditsNoAudits": "No hay auditorias",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "user": "Usuario",
+    "action": "Acción",
+    "table": "Tabla"
   },
   "links": {
     "home": "Inicio",

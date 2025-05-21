@@ -92,6 +92,11 @@ button, a, label, .form__submit {
   font-weight: bold;
 }
 
+.span--bold {
+  font-weight: bold;
+  color: var(--color1);
+}
+
 button, .form__submit, .nav__link, .nav__link:hover, .nav__button, .nav__button--white, .form__error{
   display: flex;
   align-self: center;
@@ -734,7 +739,7 @@ textarea {
 .card__container, .card__container--form {
   display: flex;
   flex-direction: column;
-  margin: 3rem 0 1rem 0;
+  margin: 3rem 0 3rem 0;
   background-color: var(--color3);
   gap: 3rem;
   padding: 3rem 0;
@@ -959,6 +964,37 @@ footer {
   border-radius: 100%;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.pagination button {
+  border: none;
+  box-shadow: 0 .3rem .3rem 0 var(--color1);
+  width: fit-content;
+}
+
+.arrowTopito--left {
+  transform: rotate(-90deg);
+}
+
+.arrowTopito--right {
+  transform: rotate(90deg);
+}
+
+.arrow--left {
+  transform: rotate(-90deg);
+}
+
+.arrow--right {
+  transform: rotate(90deg);
+}
+
 /* =========================
   MEDIA QUERIES
 ========================= */
@@ -1148,5 +1184,29 @@ footer {
   .user__buttons button{
     width: 100%;
     justify-content: center;
+  }
+
+  .card__container, .card__container--form {
+    padding: 3rem 0rem;
+  }
+
+  .card, .card__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card__content, .card__text {
+    width: 100%;
+  }
+
+  .card__img {
+    
+  }
+
+  .span--bold {
+    display: block;
+    align-items: start;
   }
 }
