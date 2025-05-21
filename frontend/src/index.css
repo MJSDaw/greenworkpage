@@ -20,6 +20,32 @@
   scrollbar-gutter: stable;
 }
 
+/* Global scrollbar styles */
+* {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: var(--color1) var(--color3); /* For Firefox */
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;  /* For vertical scrollbars */
+  height: 6px; /* For horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color2);
+}
+
 *,
 *::before,
 *::after {
@@ -1268,6 +1294,29 @@ footer {
 
   .card__content, .card__text {
     width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .card__text {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 8px; /* Add padding for the scrollbar */
+  }
+
+  /* Optional: Style the scrollbar */
+  .card__text::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .card__text::-webkit-scrollbar-track {
+    background: var(--color3);
+    border-radius: 4px;
+  }
+
+  .card__text::-webkit-scrollbar-thumb {
+    background: var(--color1);
+    border-radius: 4px;
   }
 
   .span--bold {

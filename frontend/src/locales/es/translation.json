@@ -169,7 +169,21 @@
       "text": "Registrarme"
     },
     "submitting": "Enviando...",
-    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible."
+    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible.",
+    "amount": {
+      "label": "Cantidad",
+      "placeholder": "Cantidad"
+    },
+    "datePayment": {
+      "label": "Fecha de pago",
+      "placeholder": "Fecha de pago"
+    },
+    "status": {
+      "label": "Estado",
+      "placeholder": "Estado",
+      "completed": "Completado",
+      "pending": "Pendiente"
+    }
   },
   "backup": {
     "success": "Copia de seguridad creada con éxito",
