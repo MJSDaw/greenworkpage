@@ -8,15 +8,19 @@ const AuditList = () => {
   const [audits, setAudits] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
 
   useEffect(() => {
     const fetchAudits = async () => {
       setLoading(true)
       setError(null)
       try {
-        const data = await getAudits()
+        const data = await getAudits(currentPage, perPage)
         const auditsArray = data?.data?.data || []
         setAudits(auditsArray)
+        setTotalPages(data?.data?.last_page || 1)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -24,7 +28,7 @@ const AuditList = () => {
       }
     }
     fetchAudits()
-  }, [])
+  }, [currentPage])
 
   return (
     <>
@@ -52,9 +56,25 @@ const AuditList = () => {
                   <p>{t('common.table')}: {audit.table_name}</p>
                 </div>
               </div>
-            </article>
-          ))}
+            </article>          ))}
       </section>
+      {!loading && !error && audits.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            {t('common.previous')}
+          </button>
+          <span>{currentPage} / {totalPages}</span>
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            {t('common.next')}
+          </button>
+        </div>
+      )}
     </>
   )
 }

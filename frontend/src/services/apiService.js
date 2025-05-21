@@ -347,11 +347,13 @@ export const updatePayment = async (paymentId, paymentData) => {
 // ==================== Auditorías ====================
 
 /**
- * Obtiene la lista de auditorías
- * @returns {Promise} Lista de auditorías
+ * Obtiene la lista de auditorías con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de auditorías paginada
  */
-export const getAudits = async () => {
-  return baseFetch('/api/admin/audits', 'GET');
+export const getAudits = async (page = 1, perPage = 3) => {
+  return baseFetch(`/api/admin/audits?page=${page}&per_page=${perPage}`, 'GET');
 };
 
 /**
