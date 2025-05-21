@@ -189,13 +189,13 @@ form, label, .input--checkbox__label {
   gap: 2rem;
 }
 
-input, .input--checkbox, textarea {
+input, .input--checkbox, textarea, select {
   border: 2px solid var(--color1);
   border-radius: 1.5rem;
   box-shadow: 0 .3rem .3rem 0 var(--shadow__light);
 }
 
-input, textarea {
+input, textarea, select {
   font-size: 1.8rem;
   padding: 1rem 2rem;
   width: 100%;
@@ -809,8 +809,11 @@ textarea {
 }
 
 .card__container--form {
-  width: fit-content;
-  justify-self: center;
+  min-width: 70%;
+  max-width: 100%;
+  margin: 3rem 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .card, .card--form, .card--form--edit {
@@ -826,9 +829,10 @@ textarea {
 }
 
 .card--form, .card--form--edit {
-  flex-direction: column;
-  padding: 6rem;
-  width: fit-content;
+  margin: 0;
+  padding: 3rem;
+  width: calc(100% - 6rem);
+  justify-content: center;
 }
 
 .card--form--edit {
@@ -836,7 +840,7 @@ textarea {
   align-self: center;
 }
 
-.card--form--edit form {
+.card--form--edit form, .card--form form {
   width: 100%;
 }
 
@@ -1269,7 +1273,7 @@ footer {
   }
 
   .user__section--part:last-child  {
-    padding: 0 2rem 3rem 2rem;
+    padding: 0 2rem 6rem 2rem;
   }
 
   .user__buttons {
@@ -1292,16 +1296,24 @@ footer {
     align-items: center;
   }
 
+  .card {
+    padding: 3rem;
+  }
+
   .card__content, .card__text {
     width: 100%;
     overflow-x: auto;
     white-space: nowrap;
   }
 
-  .card__text {
+  .card__text, .card--form form, .card--form--edit form  {
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 8px; /* Add padding for the scrollbar */
+    padding-bottom: 2rem; /* Add padding for the scrollbar */
+  }
+
+  .card--form--edit form .form__submit {
+    width: 100%;
   }
 
   /* Optional: Style the scrollbar */
@@ -1329,5 +1341,19 @@ footer {
     background-color: var(--error1);
     justify-content: center;
     width: 100%;
+  }
+
+  .card 
+
+  .card__buttons {
+    flex-direction: column;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    width: 100%;
+  }
+
+  .card__buttons button {
+    width: 100%;
+    justify-content: center;
   }
 }

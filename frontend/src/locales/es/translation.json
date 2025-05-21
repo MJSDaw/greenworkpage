@@ -174,6 +174,12 @@
       "label": "Cantidad",
       "placeholder": "Cantidad"
     },
+    "paymentMethod": {
+      "label": "Método de pago",
+      "placeholder": "Método de pago",
+      "creditCard": "Tarjeta",
+      "cash": "Efectivo"
+    },
     "datePayment": {
       "label": "Fecha de pago",
       "placeholder": "Fecha de pago"
@@ -183,6 +189,14 @@
       "placeholder": "Estado",
       "completed": "Completado",
       "pending": "Pendiente"
+    },
+    "user": {
+      "label": "Usuario",
+      "placeholder": "Usuario"
+    },
+    "reservation": {
+      "label": "Reserva",
+      "placeholder": "Reserva"
     }
   },
   "backup": {

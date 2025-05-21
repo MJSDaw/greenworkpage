@@ -21,7 +21,7 @@ class PaymentController extends Controller
     {
         try {
             $query = Payment::where('status', '!=', 'completed')
-                ->with(['user:id,name,email', 'reservation'])
+                ->with(['user:id,name,surname,email', 'reservation'])
                 ->orderBy('created_at', 'desc');
 
             // Pagination

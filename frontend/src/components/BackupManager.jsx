@@ -27,8 +27,8 @@ const BackupManager = () => {
     <div className="audit-list-container">
       <h3>{t('links.backup')}</h3>
       <p>{t('descriptions.backup')}</p>
-      <button 
-        className="form__submit backup-btn" 
+      <button
+        className="form__submit backup-btn"
         onClick={handleBackup}
         disabled={isLoading}
       >

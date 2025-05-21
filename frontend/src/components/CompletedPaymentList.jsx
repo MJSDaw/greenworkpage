@@ -68,10 +68,6 @@ const CompletedPaymentList = () => {
                         payment.created_at || payment.date
                       ).toLocaleDateString()}
                     </p>
-                    <p>
-                      <span className='span--bold'>{t('form.status.label')}: </span>
-                      {payment.status === 'completed' ? t('form.status.completed') : t('form.status.pending') }
-                    </p>
                   </div>
                 </div>{' '}
               </article>

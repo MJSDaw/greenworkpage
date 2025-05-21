@@ -14,7 +14,7 @@ const BookingList = () => {
     start_date: '',
     end_date: '',
   })
-  
+
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
   const [bookings, setBookings] = useState([])
@@ -31,11 +31,11 @@ const BookingList = () => {
     setError(null)
     try {
       const response = await getBookings(currentPage, perPage)
-      
+
       // Extract the bookings array from the paginated response
       const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)
-      
+
       // Set pagination data
       setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
