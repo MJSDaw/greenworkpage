@@ -44,6 +44,10 @@ export const baseFetch = async (
       headers = { ...headers, ...options.headers };
     }
     
+    // Base URL for the API
+    const baseURL = 'https://localhost:8443';  // Make sure this matches your Laravel backend URL
+    const apiUrl = url.startsWith('http') ? url : `${baseURL}${url}`;
+    
     // Configurar el cuerpo de la petición según el tipo de datos
     let body = undefined;
     if (data) {
@@ -395,6 +399,8 @@ export const getAudits = async (page = 1, perPage = 3) => {
   return baseFetch(`/api/admin/audits?page=${page}&per_page=${perPage}`, 'GET');
 };
 
+// ==================== Contacts ====================
+
 /**
  * Create a new contact (public endpoint - no auth required)
  * @param {object} contactData - Contact information (name, email, termsAndConditions)
@@ -403,6 +409,8 @@ export const getAudits = async (page = 1, perPage = 3) => {
 export const createContact = async (contactData) => {
   return baseFetch('/api/contacts', 'POST', contactData, {}, false);
 };
+
+// ==================== Backups ====================
 
 /**
  * Create a manual database backup

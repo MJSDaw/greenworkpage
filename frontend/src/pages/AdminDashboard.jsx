@@ -15,6 +15,9 @@ import defaultImage from '../assets/img/leonardo.svg'
 const AdminDashboard = () => {
   const { t } = useTranslation()
   const [userName, setUserName] = useState('')
+  const [isBackupLoading, setIsBackupLoading] = useState(false)
+  const [backupMessage, setBackupMessage] = useState('')
+  const [showBackupMessage, setShowBackupMessage] = useState(false)
 
   const [activeSection, setActiveSection] = useState({
     users: false,
@@ -61,9 +64,7 @@ const AdminDashboard = () => {
               if (updatedData.image.startsWith('http')) {
                 setImage(updatedData.image)
               } else {
-                setImage(
-                  `https://localhost:8443/storage/${updatedData.image}`
-                )
+                setImage(`https://localhost:8443/storage/${updatedData.image}`)
               }
             } else {
               // Si no hay imagen en los datos actualizados, usar la predeterminada
@@ -197,7 +198,7 @@ const AdminDashboard = () => {
           >
             <SpaceList />
           </section>
-           <section
+          <section
             className={`dropdown__container ${activeSection.bookings ? 'open' : ''}`}
           >
             <BookingList />
@@ -242,27 +243,45 @@ const AdminDashboard = () => {
 
       <section className="user__section--part">
         <h2>{t('common.management')}</h2>
-        <article className="user__buttons">          <button
+        <article className="user__buttons">
+          {' '}
+          <button
             className={`form__submit ${activeSection.audits ? 'active' : ''}`}
             onClick={() => toggleSection('audits')}
           >
             {t('links.audits')}
           </button>
-          <button 
+          <button
             className="form__submit --noArrow"
+            disabled={isBackupLoading}
             onClick={async () => {
               try {
-                const response = await createBackup();
-                console.log('Backup response:', response);
-                // Aquí podríamos hacer algo con la respuesta si es necesario
-                // pero sin mostrar alertas
+                setIsBackupLoading(true)
+                setBackupMessage('')
+                setShowBackupMessage(true)
+                const response = await createBackup()
+                // Use more specific translation keys for better clarity
+                setBackupMessage(
+                  t('backup.success', 'Backup created successfully')
+                )
               } catch (error) {
-                console.error('Error creating backup:', error);
+                setBackupMessage(t('backup.error', 'Failed to create backup'))
+              } finally {
+                setIsBackupLoading(false)
               }
             }}
           >
-            {t('links.backup')}
+            {isBackupLoading
+              ? t('backup.processing', 'Processing...')
+              : t('backup.create', 'Create Backup')}
           </button>
+          {showBackupMessage && (
+            <span
+              className='form__error'
+            >
+              {backupMessage}
+            </span>
+          )}
         </article>
         <article>
           <section

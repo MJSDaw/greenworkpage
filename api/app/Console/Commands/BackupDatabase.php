@@ -28,26 +28,33 @@ class BackupDatabase extends Command
     public function handle()
     {
         try {
-            // Set up variables
-            $backupDir = base_path('backups');
+            // Set up variables - use the backups directory as mounted in Docker
+            $backupDir = base_path('backups');  // Directory is mounted at /var/www/html/backups in Docker
             $timestamp = date('Ymd_His');
             $backupFile = "$backupDir/greenworkdb_backup_$timestamp.sql";
             
-            // Make sure backup directory exists
+            // Make sure backup directory exists and is writable
             if (!file_exists($backupDir)) {
-                mkdir($backupDir, 0755, true);
+                if (!@mkdir($backupDir, 0755, true)) {
+                    throw new \Exception("Failed to create backup directory at $backupDir");
+                }
+            }
+
+            // Ensure directory is writable
+            if (!is_writable($backupDir)) {
+                throw new \Exception("Backup directory is not writable: $backupDir");
             }
             
-            // Get database connection details from config
-            $host = config('database.connections.pgsql.host');
-            $port = config('database.connections.pgsql.port');
-            $database = config('database.connections.pgsql.database');
+            // Get database connection details from Docker environment variables
+            $host = env('DB_HOST', 'postgres');  // Use the postgres service name from docker-compose.yml
+            $port = env('DB_PORT', '5432');
+            $database = env('DB_DATABASE', 'greenworkdb');
             $username = config('database.connections.pgsql.username');
             $password = config('database.connections.pgsql.password');
             
-            // Build pg_dump command
+            // Build pg_dump command with error redirection and absolute path
             $command = sprintf(
-                'PGPASSWORD=%s pg_dump -h %s -p %s -U %s -d %s -F p > %s',
+                'PGPASSWORD=%s /usr/bin/pg_dump -h %s -p %s -U %s -d %s -F p -v > %s 2>&1',
                 escapeshellarg($password),
                 escapeshellarg($host),
                 escapeshellarg($port),
@@ -60,13 +67,18 @@ class BackupDatabase extends Command
             $this->info("Starting database backup...");
             $output = [];
             $returnVar = 0;
-            exec($command, $output, $returnVar);
+            
+            // Log the command (without password)
+            $logCommand = preg_replace('/PGPASSWORD=\'[^\']+\'/', 'PGPASSWORD=***', $command);
+            Log::info("Executing backup command: " . $logCommand);
+            
+            exec($command . ' 2>&1', $output, $returnVar);
             
             if ($returnVar !== 0) {
                 $error = 'Database backup failed: ' . implode("\n", $output);
                 $this->error($error);
                 Log::error($error);
-                return 1;
+                throw new \Exception($error);
             }
               // Compress the backup file
             $this->info("Compressing backup file...");
@@ -114,6 +126,9 @@ class BackupDatabase extends Command
                     ['backup_file' => "$backupFile.gz"]
                 );
             }
+            
+            // Set proper ownership of backup file
+            exec('chown www-data:www-data ' . escapeshellarg($backupFile . '.gz'));
             
             $this->info("Backup completed successfully: {$backupFile}.gz");
             Log::info("Database backup created: {$backupFile}.gz");

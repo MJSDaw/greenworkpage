@@ -171,6 +171,12 @@
     "submitting": "Enviando...",
     "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible."
   },
+  "backup": {
+    "success": "Copia de seguridad creada con éxito",
+    "error": "Error al crear la copia de seguridad",
+    "processing": "Procesando...",
+    "create": "Copia de seguridad manual"
+  },
   "terms": {
     "title1": "Introducción",
     "msg1": "greenwork.com es un portal web de titularidad de GREENWORK, que contiene un directorio de espacios de coworking, centros de negocio, business centers, oficinas compartidas y espacios similares de toda España y el resto del mundo, a través del cual los usuarios podrán insertar anuncios publicitando estos espacios, publicar logos, su ubicación, teléfono de contacto, descripción de los distintos espacios, tarifas, etc.<br><br>Los usuarios pueden buscar y solicitar información e incluso reservar espacios publicitados en la web coworkingspain.es, cumplimentando un formulario en el que se recogen los datos de los solicitantes. Tales datos podrán ser entregados a los usuarios que gestionan dichos espacios publicitados en la web.<br><br>Las presentes Condiciones de Uso regulan el acceso y la utilización del servicio alojado con el nombre de dominio www.greenwork.com así como de todos los contenidos que se muestran en el mismo o se pongan a disposición de los usuarios. En el momento en que se accede al sitio web, el usuario manifiesta que ha leído y que acepta cumplir con estas Condiciones de Uso.<br><br>GREENWORK se reserva el derecho de revisar y modificar estas Condiciones de Uso, por motivos legales, técnicos o de estrategia corporativa.<br><br>Por otro lado, la recogida y tratamiento de los datos personales de los usuarios, así como el ejercicio de sus derechos sobre los mismos, se regirán por estas Condiciones de Uso, y por la Política de Privacidad descrita con anterioridad.",

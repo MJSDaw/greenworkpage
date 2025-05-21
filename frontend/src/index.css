@@ -97,7 +97,7 @@ button, a, label, .form__submit {
   color: var(--color1);
 }
 
-button, .form__submit, .nav__link, .nav__link:hover, .nav__button, .nav__button--white, .form__error{
+button, .form__submit, .nav__link, .nav__link:hover, .nav__button, .nav__button--white, .form__error {
   display: flex;
   align-self: center;
   padding: 1.2rem 1.5rem;
@@ -361,7 +361,8 @@ textarea {
 .form__error {
   color: var(--color0);
   background-color: var(--error1);
-  width: 100%;
+  text-align: center;
+  padding: 1rem 1.5rem;
 }
 
 /* Span */
@@ -1201,12 +1202,15 @@ footer {
     width: 100%;
   }
 
-  .card__img {
-    
-  }
-
   .span--bold {
     display: block;
     align-items: start;
+  }
+
+  .form__error {
+    color: var(--color0);
+    background-color: var(--error1);
+    justify-content: center;
+    width: 100%;
   }
 }

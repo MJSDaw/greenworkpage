@@ -96,17 +96,35 @@ class AdminController extends Controller
             // Get current admin id
             $adminId = auth()->guard('admin')->id();
             
+            // Log the start of backup
+            \Log::info("Starting database backup initiated by admin ID: " . $adminId);
+            
             // Run the backup command
             $exitCode = \Artisan::call('db:backup', [
                 '--admin_id' => $adminId
             ]);
             
+            $output = \Artisan::output();
+            \Log::info("Backup command output: " . $output);
+            
             if ($exitCode !== 0) {
-                $output = \Artisan::output();
                 throw new \Exception("Backup command failed: " . $output);
             }
             
-            $output = \Artisan::output();
+            // Create audit record
+            try {
+                app(AuditController::class)->store([
+                    'admin_id' => $adminId,
+                    'action' => 'backup',
+                    'table_name' => 'database',
+                    'record_id' => null,
+                    'old_values' => null,
+                    'new_values' => json_encode(['timestamp' => date('Y-m-d H:i:s')])
+                ]);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to create audit record for backup: " . $e->getMessage());
+            }
+            
             // Extract the backup file path from the output
             if (preg_match('/Backup completed successfully: (.+)/', $output, $matches)) {
                 $backupFile = $matches[1];
