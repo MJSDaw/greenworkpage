@@ -5,8 +5,16 @@ import { setAuthToken, authenticatedFetch } from '../services/authService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
-const SpaceList = () => {
-  const { t } = useTranslation()
+const SpaceList = () => {  const { t } = useTranslation()
+  const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  const [scheduleEntries, setScheduleEntries] = useState([]);
+  const [scheduleForm, setScheduleForm] = useState({
+    day: 'monday',
+    startTime: '',
+    endTime: ''
+  });
+  
   const [formData, setFormData] = useState({
     places: '',
     price: '',
@@ -104,14 +112,110 @@ const SpaceList = () => {
     setShowList(true)
   }
 
+  // Schedule validation and handling functions
+  const timeToMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const hasTimeOverlap = (newStart, newEnd, day) => {
+    const newStartMinutes = timeToMinutes(newStart);
+    const newEndMinutes = timeToMinutes(newEnd);
+
+    return scheduleEntries.some(entry => {
+      if (entry.day !== day) return false;
+      const existingStartMinutes = timeToMinutes(entry.startTime);
+      const existingEndMinutes = timeToMinutes(entry.endTime);
+
+      return (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes);
+    });
+  };
+
+  const handleScheduleChange = (e) => {
+    const { name, value } = e.target;
+    setScheduleForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAddSchedule = (e) => {
+    e.preventDefault();
+    const { day, startTime, endTime } = scheduleForm;
+
+    if (!day || !startTime || !endTime) {
+      setErrors(prev => ({
+        ...prev,
+        schedule: ['All schedule fields are required']
+      }));
+      return;
+    }
+
+    if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
+      setErrors(prev => ({
+        ...prev,
+        schedule: ['End time must be after start time']
+      }));
+      return;
+    }
+
+    if (hasTimeOverlap(startTime, endTime, day)) {
+      setErrors(prev => ({
+        ...prev,
+        schedule: ['Time overlaps with existing schedule']
+      }));
+      return;
+    }
+
+    setScheduleEntries(prev => [...prev, { day, startTime, endTime }]);
+    setScheduleForm({
+      day: 'monday',
+      startTime: '',
+      endTime: ''
+    });
+    
+    // Update formData.schedule with the new format
+    const updatedEntries = [...scheduleEntries, { day, startTime, endTime }];
+    const scheduleString = updatedEntries
+      .map(entry => `${entry.day}-${entry.startTime}-${entry.endTime}`)
+      .join('|');
+    
+    setFormData(prev => ({
+      ...prev,
+      schedule: scheduleString
+    }));
+  };
+
+  const handleRemoveSchedule = (index) => {
+    const newEntries = scheduleEntries.filter((_, i) => i !== index);
+    setScheduleEntries(newEntries);
+    
+    const scheduleString = newEntries
+      .map(entry => `${entry.day}-${entry.startTime}-${entry.endTime}`)
+      .join('|');
+    
+    setFormData(prev => ({
+      ...prev,
+      schedule: scheduleString
+    }));
+  };
+
   const [editingId, setEditingId] = useState(null)
   // TODO: usalo para cargar el resto de atributos pertinentes
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
     } else {
-      setEditingId(id)
+      setEditingId(id);
       const spaceToEdit = spaces.find((space) => space.id === id)
+      
+      // Parse the schedule string into entries
+      const schedules = spaceToEdit.schedule ? spaceToEdit.schedule.split('|').map(schedule => {
+        const [day, startTime, endTime] = schedule.split('-');
+        return { day, startTime, endTime };
+      }) : [];
+      
+      setScheduleEntries(schedules);
       setFormData({
         places: spaceToEdit.places,
         price: spaceToEdit.price,
@@ -146,17 +250,36 @@ const SpaceList = () => {
             spaces.map((space) => (
               <React.Fragment key={space.id}>
                 <article className="card">
-                  <div className="card__content">
-                    <img
-                      src={leonardo}
-                      alt={t('alt.dashboardImg', { id: space.id })}
-                      title={t('common.dashboardImg', { id: space.id })}
-                      className="card__img"
-                    />
-                    <div className="card__text">
+                  <div className="card__content">                    <div className="card__text">
                       <p>{space.subtitle}</p>
-                      <p>{space.price}€ - {space.places} {t('common.places')}</p>
-                      <p>{space.schedule}</p>
+                      <p>{space.price}€ - {space.places} {t('common.places')}</p>                      <ul className="schedule-display">
+                        {space.schedule.split('|')
+                          .map(schedule => {
+                            const [day, start, end] = schedule.split('-');
+                            return { day, start, end };
+                          })
+                          .sort((a, b) => {
+                            // Primero ordenar por día                            
+                            const dayOrder = {
+                              monday: 1,
+                              tuesday: 2,
+                              wednesday: 3,
+                              thursday: 4,
+                              friday: 5
+                            };
+                            if (dayOrder[a.day] !== dayOrder[b.day]) {
+                              return dayOrder[a.day] - dayOrder[b.day];
+                            }
+                            // Si es el mismo día, ordenar por hora de inicio
+                            return a.start.localeCompare(b.start);
+                          })
+                          .map((schedule, index) => (
+                            <li key={index}>
+                              {schedule.day.charAt(0).toUpperCase() + schedule.day.slice(1)}: {schedule.start} - {schedule.end}
+                            </li>
+                          ))
+                        }
+                      </ul>
                     </div>
                   </div>
                   <div className="card__buttons">
@@ -215,17 +338,60 @@ const SpaceList = () => {
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="schedule">
-                          {t('form.schedule.label')}
-                        </label>
-                        <input
-                          id="schedule"
-                          name="schedule"
-                          placeholder={t('form.schedule.placeholder')}
-                          value={formData.schedule}
-                          onChange={handleChange}
-                          required
-                        />
+                        <label>{t('form.schedule.label')}</label>
+                        <div className="schedule-form">
+                          <select
+                            name="day"
+                            value={scheduleForm.day}
+                            onChange={handleScheduleChange}
+                          >
+                            {daysOfWeek.map(day => (
+                              <option key={day} value={day}>
+                                {day.charAt(0).toUpperCase() + day.slice(1)}
+                              </option>
+                            ))}
+                          </select>
+                          <input
+                            type="time"
+                            name="startTime"
+                            value={scheduleForm.startTime}
+                            onChange={handleScheduleChange}
+                            placeholder="Start Time"
+                          />
+                          <input
+                            type="time"
+                            name="endTime"
+                            value={scheduleForm.endTime}
+                            onChange={handleScheduleChange}
+                            placeholder="End Time"
+                          />
+                          <button
+                            type="button"
+                            className="form__submit --noArrow"
+                            onClick={handleAddSchedule}
+                          >
+                            {t('actions.add')}
+                          </button>
+                        </div>
+                        {scheduleEntries.length > 0 && (
+                          <div className="schedule-list">
+                            {scheduleEntries.map((entry, index) => (
+                              <div key={index} className="schedule-item">
+                                <span>
+                                  {entry.day.charAt(0).toUpperCase() + entry.day.slice(1)}:
+                                  {' '}{entry.startTime} - {entry.endTime}
+                                </span>
+                                <button
+                                  type="button"
+                                  className="form__submit --noArrow"
+                                  onClick={() => handleRemoveSchedule(index)}
+                                >
+                                  {t('actions.remove')}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         {errors.schedule &&
                           Array.isArray(errors.schedule) &&
                           errors.schedule.map((err, idx) => (
@@ -235,7 +401,9 @@ const SpaceList = () => {
                           ))}
                       </div>
                       <div className="form__section">
-                        <label htmlFor="images">{t('form.images.label')}</label>
+                        <label htmlFor="images">
+                          {t('form.images.label')}
+                        </label>
                         <input
                           id="images"
                           name="images"
@@ -346,15 +514,60 @@ const SpaceList = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="schedule">{t('form.schedule.label')}</label>
-                <input
-                  id="schedule"
-                  name="schedule"
-                  placeholder={t('form.schedule.placeholder')}
-                  value={formData.schedule}
-                  onChange={handleChange}
-                  required
-                />
+                <label>{t('form.schedule.label')}</label>
+                <div className="schedule-form">
+                  <select
+                    name="day"
+                    value={scheduleForm.day}
+                    onChange={handleScheduleChange}
+                  >
+                    {daysOfWeek.map(day => (
+                      <option key={day} value={day}>
+                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="time"
+                    name="startTime"
+                    value={scheduleForm.startTime}
+                    onChange={handleScheduleChange}
+                    placeholder="Start Time"
+                  />
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={scheduleForm.endTime}
+                    onChange={handleScheduleChange}
+                    placeholder="End Time"
+                  />
+                  <button
+                    type="button"
+                    className="form__submit --noArrow"
+                    onClick={handleAddSchedule}
+                  >
+                    {t('actions.add')}
+                  </button>
+                </div>
+                {scheduleEntries.length > 0 && (
+                  <div className="schedule-list">
+                    {scheduleEntries.map((entry, index) => (
+                      <div key={index} className="schedule-item">
+                        <span>
+                          {entry.day.charAt(0).toUpperCase() + entry.day.slice(1)}:
+                          {' '}{entry.startTime} - {entry.endTime}
+                        </span>
+                        <button
+                          type="button"
+                          className="form__submit --noArrow"
+                          onClick={() => handleRemoveSchedule(index)}
+                        >
+                          {t('actions.remove')}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {errors.schedule &&
                   Array.isArray(errors.schedule) &&
                   errors.schedule.map((err, idx) => (
