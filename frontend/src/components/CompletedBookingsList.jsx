@@ -8,23 +8,32 @@ const BookingList = () => {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
+
+  const fetchBookings = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await getCompletedBookings(currentPage, perPage)
+      
+      // Extract the bookings array from the paginated response
+      const bookingsArray = response?.data?.data || []
+      setBookings(bookingsArray)
+      
+      // Set pagination data
+      setTotalPages(response?.data?.last_page || 1)
+    } catch (err) {
+      setError(err.message || 'Error al obtener reservas completadas')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const data = await getCompletedBookings()
-        const bookingsArray = data?.data?.data || []
-        setBookings(bookingsArray)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchBookings()
-  }, [])
+  }, [currentPage])
 
   return (
     <>
@@ -49,12 +58,28 @@ const BookingList = () => {
                   </p>
                   <p>
                     {t('common.period')}: {booking.start_date || booking.reservation_period?.split('|')[0]} - {booking.end_date || booking.reservation_period?.split('|')[1]}
-                  </p>
-                </div>
+                  </p>                </div>
               </div>
             </article>
           ))}
       </section>
+      {!loading && !error && bookings.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            {t('common.previous')}
+          </button>
+          <span>{currentPage} / {totalPages}</span>
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            {t('common.next')}
+          </button>
+        </div>
+      )}
     </>
   )
 }

@@ -125,24 +125,18 @@ export const getUserProfile = async () => {
 };
 
 /**
- * Obtiene la lista de usuarios (solo admin)
- * @returns {Promise} Lista de usuarios
+ * Obtiene la lista de usuarios con paginación (solo admin)
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de usuarios paginada
  */
-export const getUsers = async () => {
+export const getUsers = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/admin/users', 'GET');
-    // Ensure we always return an array
-    if (response && typeof response === 'object') {
-      if (Array.isArray(response)) {
-        return response;
-      } else if (Array.isArray(response.data)) {
-        return response.data;
-      }
-    }
-    return [];
+    const response = await baseFetch(`/api/admin/users?page=${page}&per_page=${perPage}`, 'GET');
+    return response;
   } catch (error) {
     console.error('Error fetching users:', error);
-    return [];
+    return { data: [], current_page: 1, last_page: 1, total: 0 };
   }
 };
 
@@ -225,12 +219,14 @@ export const saveSpace = async (spaceData, spaceId = null) => {
 // ==================== Reservas ====================
 
 /**
- * Obtiene la lista de reservas
- * @returns {Promise} Lista de reservas
+ * Obtiene la lista de reservas con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de reservas paginada
  */
-export const getBookings = async () => {
+export const getBookings = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/getactivebookings', 'GET');
+    const response = await baseFetch(`/api/getactivebookings?page=${page}&per_page=${perPage}`, 'GET');
     // Handle the nested pagination structure
     if (response && typeof response === 'object') {
       if (response.success && response.data && response.data.data) {
@@ -250,11 +246,30 @@ export const getBookings = async () => {
 };
 
 /**
- * Obtiene la lista de reservas completadas
- * @returns {Promise} Lista de reservas completadas
+ * Obtiene la lista de reservas completadas con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de reservas completadas paginada
  */
-export const getCompletedBookings = async () => {
-  return baseFetch('/api/getinactivebookings', 'GET');
+export const getCompletedBookings = async (page = 1, perPage = 3) => {
+  try {
+    const response = await baseFetch(`/api/getinactivebookings?page=${page}&per_page=${perPage}`, 'GET');
+    // Handle the nested pagination structure
+    if (response && typeof response === 'object') {
+      if (response.success && response.data && response.data.data) {
+        // This is the paginated response structure
+        return response;
+      } else if (Array.isArray(response)) {
+        return { success: true, data: { data: response, last_page: 1, current_page: 1 } };
+      } else if (Array.isArray(response.data)) {
+        return { success: true, data: { data: response.data, last_page: 1, current_page: 1 } };
+      }
+    }
+    return { success: true, data: { data: [], last_page: 1, current_page: 1 } };
+  } catch (error) {
+    console.error('Error fetching completed bookings:', error);
+    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
+  }
 };
 
 /**
@@ -305,33 +320,57 @@ export const savePayment = async (paymentData, paymentId = null) => {
 };
 
 /**
- * Obtiene la lista de pagos pendientes
- * @returns {Promise} Lista de pagos pendientes
+ * Obtiene la lista de pagos pendientes con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de pagos pendientes paginada
  */
-export const getPendingPayments = async () => {
+export const getPendingPayments = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/admin/payments/pending', 'GET');
-    // Ensure we always return an array
+    const response = await baseFetch(`/api/admin/payments/pending?page=${page}&per_page=${perPage}`, 'GET');
+    // Handle the nested pagination structure
     if (response && typeof response === 'object') {
-      if (Array.isArray(response)) {
+      if (response.success && response.data && response.data.data) {
+        // This is the paginated response structure
         return response;
+      } else if (Array.isArray(response)) {
+        return { success: true, data: { data: response, last_page: 1, current_page: 1 } };
       } else if (Array.isArray(response.data)) {
-        return response.data;
+        return { success: true, data: { data: response.data, last_page: 1, current_page: 1 } };
       }
     }
-    return [];
+    return { success: true, data: { data: [], last_page: 1, current_page: 1 } };
   } catch (error) {
     console.error('Error fetching pending payments:', error);
-    return [];
+    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
   }
 };
 
 /**
- * Obtiene la lista de pagos completados
- * @returns {Promise} Lista de pagos completados
+ * Obtiene la lista de pagos completados con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de pagos completados paginada
  */
-export const getCompletedPayments = async () => {
-  return baseFetch('/api/admin/payments/completed', 'GET');
+export const getCompletedPayments = async (page = 1, perPage = 3) => {
+  try {
+    const response = await baseFetch(`/api/admin/payments/completed?page=${page}&per_page=${perPage}`, 'GET');
+    // Handle the nested pagination structure
+    if (response && typeof response === 'object') {
+      if (response.success && response.data && response.data.data) {
+        // This is the paginated response structure
+        return response;
+      } else if (Array.isArray(response)) {
+        return { success: true, data: { data: response, last_page: 1, current_page: 1 } };
+      } else if (Array.isArray(response.data)) {
+        return { success: true, data: { data: response.data, last_page: 1, current_page: 1 } };
+      }
+    }
+    return { success: true, data: { data: [], last_page: 1, current_page: 1 } };
+  } catch (error) {
+    console.error('Error fetching completed payments:', error);
+    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
+  }
 };
 
 /**
@@ -347,11 +386,13 @@ export const updatePayment = async (paymentId, paymentData) => {
 // ==================== Auditorías ====================
 
 /**
- * Obtiene la lista de auditorías
- * @returns {Promise} Lista de auditorías
+ * Obtiene la lista de auditorías con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de auditorías paginada
  */
-export const getAudits = async () => {
-  return baseFetch('/api/admin/audits', 'GET');
+export const getAudits = async (page = 1, perPage = 3) => {
+  return baseFetch(`/api/admin/audits?page=${page}&per_page=${perPage}`, 'GET');
 };
 
 /**

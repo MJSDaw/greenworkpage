@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { getUsers, saveUser } from '../services/apiService'
+import { saveUser } from '../services/apiService'
+import { getAuthHeader } from '../services/authService'
 
 import leonardo from '../assets/img/leonardo.svg'
 
@@ -12,28 +13,48 @@ const UserList = () => {
     surname: '',
     birthdate: '',
     dni: '',
-    email: '',
-    password: '',
+    email: '',    password: '',
     passwordConfirm: '',
     termsAndConditions: false,
   })
+  
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+  const perPage = 3
   // Función para obtener usuarios desde el servicio API
   const fetchUsers = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await getUsers()
-      // Check if the data is paginated and extract the users from the "data" property
-      if (data && typeof data === 'object' && Array.isArray(data.data)) {
-        setUsers(data.data) // Set only the users array from the paginated data
+      const response = await fetch(`https://localhost:8443/api/admin/users?page=${currentPage}&per_page=${perPage}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Añadir el token de autenticación si es necesario
+          ...getAuthHeader && getAuthHeader(),
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener los usuarios');
+      }
+      
+      const data = await response.json();
+      
+      if (data && typeof data === 'object') {
+        setUsers(data.data || []); // Los usuarios están en la propiedad data
+        setTotalPages(data.last_page || 1);
+        setTotalItems(data.total || 0);
       } else {
-        setUsers(data) // Fallback to the original behavior if data is not paginated
+        setUsers([]);
+        setTotalPages(1);
+        setTotalItems(0);
       }
     } catch (err) {
       setError(err.message)
@@ -41,12 +62,11 @@ const UserList = () => {
       setLoading(false)
     }
   }
-
   useEffect(() => {
     if (showList) {
       fetchUsers()
     }
-  }, [showList])
+  }, [showList, currentPage])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -477,9 +497,25 @@ const UserList = () => {
                 value={t('actions.usersCreate')}
                 className="form__submit"
               />
-            </form>
-          </article>
+            </form>          </article>
         </section>
+      )}
+      {showList && !loading && !error && users.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            {t('common.previous')}
+          </button>
+          <span>{currentPage} / {totalPages}</span>
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            {t('common.next')}
+          </button>
+        </div>
       )}
     </>
   )

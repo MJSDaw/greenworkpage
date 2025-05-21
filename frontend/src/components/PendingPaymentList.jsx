@@ -26,16 +26,25 @@ const PendingPaymentList = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [errors, setErrors] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
 
   // TODO: Organiza esto porfi
   const fetchPayments = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await getPendingPayments();
-      setPayments(data); // The API service now ensures this is an array
+      const response = await getPendingPayments(currentPage, perPage);
+      
+      // Extract the payments array from the paginated response
+      const paymentsArray = response?.data?.data || []
+      setPayments(paymentsArray)
+      
+      // Set pagination data
+      setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Error al obtener pagos pendientes')
     } finally {
       setLoading(false)
     }
@@ -69,13 +78,12 @@ const PendingPaymentList = () => {
     } catch (err) {
       // Set an empty array as a fallback
       setReservations([]);
-    }
-  }
+    }  }
   useEffect(() => {
     if (showList) {
       fetchPayments()
     }
-  }, [showList])
+  }, [showList, currentPage])
 
   useEffect(() => {
     fetchUsers()
@@ -346,11 +354,27 @@ const PendingPaymentList = () => {
                         type="submit"
                         value={t('actions.edit')}
                         className="form__submit"
-                      />
-                    </form>
+                      />                    </form>
                   </article>                )}
               </React.Fragment>
             ))}
+          {!loading && !error && payments.length > 0 && (
+            <div className="pagination">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                {t('common.previous')}
+              </button>
+              <span>{currentPage} / {totalPages}</span>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                {t('common.next')}
+              </button>
+            </div>
+          )}
         </section>
       )}
       

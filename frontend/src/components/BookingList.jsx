@@ -23,15 +23,21 @@ const BookingList = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [errors, setErrors] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
   const fetchBookings = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await getBookings()
+      const response = await getBookings(currentPage, perPage)
       
       // Extract the bookings array from the paginated response
       const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)
+      
+      // Set pagination data
+      setTotalPages(response?.data?.last_page || 1)
     } catch (err) {
       setError(err.message || 'Error al obtener reservas')
     } finally {
@@ -45,7 +51,7 @@ const BookingList = () => {
       // Fetch users and spaces for dropdowns
       fetchUsersAndSpaces()
     }
-  }, [showList])
+  }, [showList, currentPage])
   const fetchUsersAndSpaces = async () => {
     try {
       const [usersData, spacesData] = await Promise.all([
@@ -386,6 +392,23 @@ const BookingList = () => {
           </article>
         </section>
       )}
+      {!loading && !error && bookings.length > 0 && (
+            <div className="pagination">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                {t('common.previous')}
+              </button>
+              <span>{currentPage} / {totalPages}</span>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                {t('common.next')}
+              </button>
+            </div>
+          )}
     </>
   )
 }

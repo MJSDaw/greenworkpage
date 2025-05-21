@@ -21,12 +21,14 @@ const SpaceList = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [errors, setErrors] = useState({})
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
   const fetchSpaces = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await authenticatedFetch('/api/spaces', {
+      const response = await authenticatedFetch(`/api/spaces?page=${currentPage}&per_page=${perPage}`, {
         method: 'GET',
       })
       if (!response.ok) {
@@ -36,20 +38,22 @@ const SpaceList = () => {
       // Check if the data is paginated and extract the spaces from the "data" property
       if (data && typeof data === 'object' && Array.isArray(data.data)) {
         setSpaces(data.data) // Set only the spaces array from the paginated data
+        setTotalPages(data.last_page || 1) // Set total pages from the pagination metadata
       } else {
         setSpaces(data) // Fallback to the original behavior if data is not paginated
+        setTotalPages(1)
       }
     } catch (err) {
-      setError(err.message)
-    } finally {
+      setError(err.message)    } finally {
       setLoading(false)
     }
   }
+  
   useEffect(() => {
     if (showList) {
       fetchSpaces()
     }
-  }, [showList])
+  }, [showList, currentPage])
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prevData) => ({
@@ -297,7 +301,8 @@ const SpaceList = () => {
               </React.Fragment>
             ))}
         </section>
-      )}      {showForm && (
+      )}
+      {showForm && (
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
@@ -421,6 +426,23 @@ const SpaceList = () => {
           </article>
         </section>
       )}
+      {!loading && !error && spaces.length > 0 && (
+            <div className="pagination">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                {t('common.previous')}
+              </button>
+              <span>{currentPage} / {totalPages}</span>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                {t('common.next')}
+              </button>
+            </div>
+          )}
     </>
   )
 }
