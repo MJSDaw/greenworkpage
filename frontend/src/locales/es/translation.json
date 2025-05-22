@@ -38,7 +38,9 @@
     "doBookingTitle": "Hacer una reserva",
     "doBooking": "Reservar",
     "servicesRead": "Ver servicios",
-    "servicesCreate": "Crear servicio"
+    "servicesCreate": "Crear servicio",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar?",
+    "deleteError": "No se ha podido eliminar"
   },
   "alt": {
     "logo": "Logo de Greenwork",
