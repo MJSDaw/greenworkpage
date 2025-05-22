@@ -31,6 +31,9 @@ Route::post('admin/login', [AuthController::class, 'adminLogin']);
 // Public routes for contacts
 Route::post('contacts', [ContactController::class, 'store']);
 
+// Public routes for services
+Route::get('services', [ServiceController::class, 'index']);
+
 // Public routes for spaces
 Route::get('spaces', [SpaceController::class, 'index']);
 Route::get('spaces/{id}', [SpaceController::class, 'show']);
@@ -46,7 +49,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes for spaces
     
     // Routes for services
-    Route::get('services', [ServiceController::class, 'index']);
     // Routes for reservations
     Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);
     Route::get('getinactivebookings', [ReservationController::class, 'getInactiveReservations']);

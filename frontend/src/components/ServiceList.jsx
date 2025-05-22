@@ -27,17 +27,19 @@ const ServiceList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const perPage = 3
-
   const fetchServices = async () => {
     setLoading(true)
     setError(null)
     try {
       const response = await getServices(currentPage, perPage)
-      // Extract the services array from the paginated response
-      const servicesArray = response?.data || []
-      setServices(servicesArray)
-      // Set pagination data if available
-      setTotalPages(response?.last_page || 1)
+      console.log('Services response:', response) // Para debug
+      if (response && response.status === 'success') {
+        setServices(response.data || [])
+        setTotalPages(response.meta.last_page || 1)
+        setCurrentPage(response.meta.current_page || 1)
+      } else {
+        throw new Error('Formato de respuesta inválido')
+      }
     } catch (err) {
       setError(err.message || 'Error al obtener servicios')
     } finally {

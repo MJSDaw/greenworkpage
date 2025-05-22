@@ -14,12 +14,16 @@ class SpaceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $spaces = Space::all();
+        $perPage = $request->input('per_page', 3);
+        $spaces = Space::paginate($perPage);
         return response()->json([
             'status' => 'success',
-            'data' => $spaces
+            'data' => $spaces->items(),
+            'current_page' => $spaces->currentPage(),
+            'last_page' => $spaces->lastPage(),
+            'total' => $spaces->total()
         ]);
     }
 

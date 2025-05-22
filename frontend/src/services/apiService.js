@@ -459,22 +459,14 @@ export const createBackup = async () => {
  */
 export const getServices = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch(`/api/services?page=${page}&per_page=${perPage}`, 'GET', null, {}, true);
-    // Handle different response formats
-    if (response && typeof response === 'object') {
-      if (response.data && response.data.data) {
-        // This is the paginated response structure
-        return response.data;
-      } else if (Array.isArray(response)) {
-        return { data: response, last_page: 1, current_page: 1 };
-      } else if (Array.isArray(response.data)) {
-        return { data: response.data, last_page: 1, current_page: 1 };
-      }
+    const response = await baseFetch(`/api/services?page=${page}&per_page=${perPage}`, 'GET');
+    if (!response) {
+      throw new Error('No se recibió respuesta del servidor');
     }
-    return { data: [], last_page: 1, current_page: 1 };
+    return response;
   } catch (error) {
     console.error('Error fetching services:', error);
-    return { data: [], last_page: 1, current_page: 1 };
+    throw error;
   }
 };
 

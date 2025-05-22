@@ -14,10 +14,20 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::all();
-        return response()->json($services);
+        $perPage = $request->input('per_page', 3);
+        $services = Service::paginate($perPage);
+        return response()->json([
+            'status' => 'success',
+            'data' => $services->items(),
+            'meta' => [
+                'current_page' => $services->currentPage(),
+                'last_page' => $services->lastPage(),
+                'total' => $services->total(),
+                'per_page' => $services->perPage()
+            ]
+        ]);
     }
 
     /**
