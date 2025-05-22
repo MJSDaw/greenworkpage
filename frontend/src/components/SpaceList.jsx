@@ -526,6 +526,7 @@ const SpaceList = () => {
                           value={formData.places}
                           onChange={handleChange}
                           required
+                          min={1}
                         />
                         {errors.places &&
                           Array.isArray(errors.places) &&
@@ -546,6 +547,7 @@ const SpaceList = () => {
                           value={formData.price}
                           onChange={handleChange}
                           required
+                          min={0}
                         />
                         {errors.price &&
                           Array.isArray(errors.price) &&
@@ -771,6 +773,7 @@ const SpaceList = () => {
                   value={formData.places}
                   onChange={handleChange}
                   required
+                  min={1}
                 />
                 {errors.places &&
                   Array.isArray(errors.places) &&
@@ -791,6 +794,7 @@ const SpaceList = () => {
                   value={formData.price}
                   onChange={handleChange}
                   required
+                  min={0}
                 />
                 {errors.price &&
                   Array.isArray(errors.price) &&
