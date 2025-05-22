@@ -200,11 +200,18 @@ export const updateAdminImage = async (adminId, imageFile) => {
 // ==================== Espacios ====================
 
 /**
- * Obtiene la lista de espacios
- * @returns {Promise} Lista de espacios
+ * Obtiene la lista de espacios con paginación
+ * @param {number} page - Número de página actual
+ * @param {number} perPage - Cantidad de registros por página
+ * @returns {Promise} Lista de espacios paginada
  */
-export const getSpaces = async () => {
-  return baseFetch('/api/spaces', 'GET', null, {}, false);
+export const getSpaces = async (page = 1, perPage = 3) => {
+  try {
+    return await baseFetch(`/api/spaces?page=${page}&per_page=${perPage}`, 'GET', null, {}, false);
+  } catch (error) {
+    console.error('Error fetching spaces:', error);
+    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
+  }
 };
 
 /**

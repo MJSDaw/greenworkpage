@@ -50,7 +50,7 @@ const SpacesCarousel = () => {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        const response = await getSpaces()
+        const response = await getSpaces(1, 4)
         if (response && response.data) {
           const spacesData = response.data.slice(0, 4).map(space => ({
             id: space.id,

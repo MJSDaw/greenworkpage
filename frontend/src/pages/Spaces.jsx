@@ -122,7 +122,7 @@ const Spaces = () => {
     const fetchSpaces = async () => {
       try {
         setLoading(true)
-        const response = await getSpaces()
+        const response = await getSpaces(1, 0)
         if (response && response.data) {
           const spacesData = response.data.map((space) => ({
             id: space.id,
