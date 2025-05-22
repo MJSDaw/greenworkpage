@@ -13,7 +13,7 @@ import arrow from '../assets/img/arrow.svg'
 const ServiceList = () => {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({
-    nombre: '',
+    name: '',
     image_url: '',
   })
 
@@ -98,8 +98,8 @@ const ServiceList = () => {
 
     // Validate the form
     let formErrors = {}
-    if (!formData.nombre.trim()) {
-      formErrors.nombre = t('validation.required', {
+    if (!formData.name.trim()) {
+      formErrors.name = t('validation.required', {
         field: t('form.name.label'),
       })
     }
@@ -121,9 +121,9 @@ const ServiceList = () => {
       // Create FormData for sending both the image file and other data
       const serviceData = new FormData()
 
-      // Always append nombre
-      if (formData.nombre.trim()) {
-        serviceData.append('nombre', formData.nombre.trim())
+      // Always append name
+      if (formData.name.trim()) {
+        serviceData.append('name', formData.name.trim())
       }
 
       // Always append image if we have one
@@ -138,7 +138,7 @@ const ServiceList = () => {
 
       // Reset form and state
       setFormData({
-        nombre: '',
+        name: '',
         image_url: '',
       })
       setImageForm({
@@ -165,7 +165,7 @@ const ServiceList = () => {
     setErrors({})
     // Reset form data
     setFormData({
-      nombre: '',
+      name: '',
       image_url: '',
     })
     setImageForm({
@@ -188,7 +188,7 @@ const ServiceList = () => {
     const serviceToEdit = services.find((service) => service.id === id)
     if (serviceToEdit) {
       setFormData({
-        nombre: serviceToEdit.nombre,
+        name: serviceToEdit.name,
         image_url: serviceToEdit.image_url,
       })
       setShowForm(true)
@@ -223,7 +223,7 @@ const ServiceList = () => {
         </button>
       </div>
       {showList && (
-        <div className="admin__container">
+        <>
           <section className="card__container">
             {loading && <p>{t('common.servicesLoading')}</p>}
             {error && <p>{t('common.commonError', { error: error })}</p>}
@@ -239,16 +239,14 @@ const ServiceList = () => {
                       {service.image_url && (
                         <img
                           src={`https://localhost:8443/storage/${service.image_url}`}
-                          alt={service.nombre}
+                          alt={service.name}
                         />
                       )}
                     </div>
                     <div className="card__text">
                       <p>
-                        <span className="span--bold">
-                          {t('form.name.label')}:{' '}
-                        </span>
-                        {service.nombre}
+                        <span className="span--bold">{t('form.name.label')}: </span>
+                        {service.name}
                       </p>
                     </div>
                     <div className="card__actions">
@@ -302,9 +300,8 @@ const ServiceList = () => {
               </button>
             </div>
           )}
-        </div>
+        </>
       )}{' '}
-      
       {showForm && (
         <div className="admin__container">
           <h4>
@@ -312,17 +309,17 @@ const ServiceList = () => {
           </h4>
           <form onSubmit={handleSubmit} className="form">
             <div className="form__group">
-              <label htmlFor="nombre">{t('form.name.label')}:</label>
+              <label htmlFor="name">{t('form.name.label')}:</label>
               <input
                 type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                className={errors.nombre ? 'input--error' : ''}
+                className={errors.name ? 'input--error' : ''}
               />
-              {errors.nombre && (
-                <p className="error-message">{errors.nombre}</p>
+              {errors.name && (
+                <p className="error-message">{errors.name}</p>
               )}
             </div>
             <div className="form__group">
