@@ -19,6 +19,7 @@ const Footer = () => {
             src={logo}
             alt={t('alt.logoVariant1')}
             title={t('actions.goToHomePage')}
+            onClick={() => window.scrollTo(0, 0)}
           />
         </Link>
         <article className="footer__icons">
@@ -99,6 +100,7 @@ const Footer = () => {
           to="/spaces"
           title={t('actions.goToSpaces')}
           className="footer__anchor"
+          onClick={() => window.scrollTo(0, 0)}
         >
           {t('links.spaces')}
         </Link>
@@ -107,6 +109,7 @@ const Footer = () => {
           to="/about"
           title={t('actions.goToAbout')}
           className="footer__anchor"
+          onClick={() => window.scrollTo(0, 0)}
         >
           {t('links.about')}
         </Link>
@@ -114,6 +117,7 @@ const Footer = () => {
           to="/contact"
           title={t('actions.goToContact')}
           className="footer__anchor"
+          onClick={() => window.scrollTo(0, 0)}
         >
           {t('links.contact')}
         </Link>
@@ -128,11 +132,11 @@ const Footer = () => {
         >
           {t('links.problemSolvers')}
         </Link>
-        <article className="footer__content--links">
-          <Link
+        <article className="footer__content--links">          <Link
             to="/terms"
             title={t('actions.goToTerms')}
             className="footer__anchor"
+            onClick={() => window.scrollTo(0, 0)}
           >
             {t('links.terms')}
           </Link>
@@ -141,6 +145,7 @@ const Footer = () => {
             to="/privacy"
             title={t('actions.goToPrivacy')}
             className="footer__anchor"
+            onClick={() => window.scrollTo(0, 0)}
           >
             {t('links.privacy')}
           </Link>
