@@ -99,14 +99,14 @@ const ServiceList = () => {
     // Validate the form
     let formErrors = {}
     if (!formData.name.trim()) {
-      formErrors.name = t('validation.required', {
+      formErrors.name = t('errors.required', {
         field: t('form.name.label'),
       })
     }
 
     // Check for image when creating new service
     if (!imageForm.file && !editingId) {
-      formErrors.image = t('validation.required', {
+      formErrors.image = t('errors.required', {
         field: t('form.image.label'),
       })
     }
@@ -245,24 +245,26 @@ const ServiceList = () => {
                     </div>
                     <div className="card__text">
                       <p>
-                        <span className="span--bold">{t('form.name.label')}: </span>
+                        <span className="span--bold">
+                          {t('form.name.label')}:{' '}
+                        </span>
                         {service.name}
                       </p>
                     </div>
-                    <div className="card__actions">
-                      <button
-                        className="button button--small"
-                        onClick={() => handleEditClick(service.id)}
-                      >
-                        {t('buttons.edit')}
-                      </button>
-                      <button
-                        className="button button--small button--danger"
-                        onClick={() => handleDeleteClick(service.id)}
-                      >
-                        {t('buttons.delete')}
-                      </button>
-                    </div>
+                  </div>
+                  <div className="card__buttons">
+                    <button
+                      className="form__submit --noArrow"
+                      onClick={() => handleEditClick(service.id)}
+                    >
+                      {t('actions.edit')}
+                    </button>
+                    <button
+                      className="form__submit --noArrow"
+                      onClick={() => handleDeleteClick(service.id)}
+                    >
+                      {t('actions.delete')}
+                    </button>
                   </div>
                 </article>
               ))}
@@ -303,57 +305,58 @@ const ServiceList = () => {
         </>
       )}{' '}
       {showForm && (
-        <div className="admin__container">
-          <h4>
-            {editingId ? t('common.editService') : t('common.addService')}
-          </h4>
-          <form onSubmit={handleSubmit} className="form">
-            <div className="form__group">
-              <label htmlFor="name">{t('form.name.label')}:</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={errors.name ? 'input--error' : ''}
-              />
-              {errors.name && (
-                <p className="error-message">{errors.name}</p>
-              )}
-            </div>
-            <div className="form__group">
-              <label htmlFor="image">{t('form.image.label')}:</label>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                onChange={handleImageChange}
-                className={errors.image ? 'input--error' : ''}
-              />
-              {errors.image && <p className="error-message">{errors.image}</p>}
-            </div>
-            {formData.image_url && (
-              <div className="form__group">
-                <div className="image-preview">
-                  <img
-                    src={formData.image_url.startsWith('data:') 
-                      ? formData.image_url  // Si es un data URL (imagen local)
-                      : `https://localhost:8443/storage/${formData.image_url}`} // Si es una ruta del servidor
-                    alt={t('form.imagePreview.alt')}
-                  />
-                </div>
+        <section className="card__container--form">
+          <article className="card--form">
+            <form onSubmit={handleSubmit}>
+              <div className="form__section">
+                <label htmlFor="name">{t('form.name.label')}:</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={errors.name ? 'input--error' : ''}
+                />
+                {errors.name && <p className="form__error --width100">{errors.name}</p>}
               </div>
-            )}
+              <div className="form__section">
+                <label htmlFor="image">{t('form.images.label')}:</label>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className={errors.image ? 'input--error' : ''}
+                />
+                {errors.image && (
+                  <p className="form__error --width100">{errors.image}</p>
+                )}
+              </div>
+              {formData.image_url && (
+                <div className="form__section">
+                  <div className="image-preview">
+                    <img
+                      src={
+                        formData.image_url.startsWith('data:')
+                          ? formData.image_url // Si es un data URL (imagen local)
+                          : `https://localhost:8443/storage/${formData.image_url}`
+                      } // Si es una ruta del servidor
+                      alt={t('form.imagePreview.alt')}
+                    />
+                  </div>
+                </div>
+              )}
 
-            <div className="form__group">
-              <button type="submit" className="button" disabled={loading}>
-                {loading ? t('buttons.saving') : t('buttons.save')}
-              </button>
-            </div>
-          </form>
-        </div>
+              <input
+                type="submit"
+                value={t('actions.servicesCreate')}
+                className="form__submit"
+              />
+            </form>
+          </article>
+        </section>
       )}
     </>
   )

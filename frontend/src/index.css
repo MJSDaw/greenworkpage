@@ -1359,6 +1359,14 @@ footer {
 .main__about {
   margin: 0 20rem;
 }
+
+.card__image {
+  margin-right: 3rem;
+}
+
+.--width100 {
+  width: 100%;
+}
 /* =========================
   MEDIA QUERIES
 ========================= */
