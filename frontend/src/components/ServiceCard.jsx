@@ -1,10 +1,8 @@
-import pc from '../assets/img/pc.svg'
-
-const ServiceCard = () => {
+const ServiceCard = ({ src, title }) => {
   return (
     <div className="service__card">
-      <img src={pc} />
-      <span>Prueba</span>
+      <img src={`https://localhost:8443/storage/${src}`} alt={title} />
+      <span>{title}</span>
     </div>
   )
 }

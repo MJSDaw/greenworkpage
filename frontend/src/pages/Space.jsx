@@ -4,6 +4,7 @@ import ContactUs from '../components/ContactUs'
 import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
+import { getServices } from '../services/apiService'
 
 import pc from '../assets/img/pc.svg'
 import maps from '../assets/img/maps.svg'
@@ -14,6 +15,7 @@ const Space = () => {
   const { id } = useParams()
   const [space, setSpace] = useState([])
   const [loading, setLoading] = useState(true)
+  const [services, setServices] = useState([])
   const [formData, setFormData] = useState({
     user_id: '',
     space_id: '',
@@ -41,8 +43,20 @@ const Space = () => {
             maps: response.data.address || '',
             seats: response.data.places,
             description: response.data.description,
+            services: response.data.services ? response.data.services.split(',').map(id => parseInt(id, 10)) : []
           }
           setSpace(spacesData)
+          
+          // Obtener servicios activos del espacio
+          if (spacesData.services && spacesData.services.length > 0) {
+            const servicesResponse = await getServices()
+            if (servicesResponse && servicesResponse.data) {
+              const activeServices = servicesResponse.data.filter(service => 
+                spacesData.services.includes(service.id)
+              )
+              setServices(activeServices)
+            }
+          }
         }
       } catch (error) {
         console.error('Error al cargar espacios:', error)
@@ -240,13 +254,16 @@ const Space = () => {
             </div>
           </article>
           <article className="space__services">
-            <ServiceCard src="" text="" />
-            <ServiceCard />
-            <ServiceCard />
-            <ServiceCard />
-            <ServiceCard />
-            <ServiceCard />
-            <ServiceCard />
+            {services.length > 0 && <h2>{t('common.services')}</h2>}
+            <div className="services__grid">
+              {services.map((service) => (
+                <ServiceCard 
+                  key={service.id}
+                  src={service.image_url}
+                  title={service.nombre}
+                />
+              ))}
+            </div>
           </article>
           <article className="space__description">
             <div>
@@ -372,7 +389,7 @@ const Space = () => {
                           </div>
                           <div className="form__section">
                             <label htmlFor="start_time">
-                              {t('form.time.startTime')}:{' '}
+                              {t('form.time.startTime')}: 
                             </label>
                             <select
                               id="start_time"
