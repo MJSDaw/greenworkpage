@@ -40,7 +40,7 @@ class SpaceController extends Controller
             'price' => 'required|numeric',
             'schedule' => 'required|string',
             'imageFiles' => 'sometimes|array',
-            'imageFiles.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imageFiles.*' => 'sometimes|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
             'images' => 'sometimes|string',
             'description' => 'required|string',
             'subtitle' => 'required|string',
