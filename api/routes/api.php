@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,10 @@ Route::post('admin/login', [AuthController::class, 'adminLogin']);
 
 // Public routes for contacts
 Route::post('contacts', [ContactController::class, 'store']);
+
+// Public routes for services
+Route::get('services', [ServiceController::class, 'index']);
+Route::get('services/{id}', [ServiceController::class, 'show']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -82,4 +87,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('payments/completed', [PaymentController::class, 'getCompletedPayments']);
     Route::post('payments', [PaymentController::class, 'store']);
     Route::put('payments/{id}', [PaymentController::class, 'update']);
+    
+    // Admin routes for services
+    Route::post('services', [ServiceController::class, 'store']);
+    Route::put('services/{id}', [ServiceController::class, 'update']);
+    Route::delete('services/{id}', [ServiceController::class, 'destroy']);
 });
