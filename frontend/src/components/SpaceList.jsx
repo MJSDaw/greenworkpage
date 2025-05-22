@@ -527,6 +527,7 @@ const SpaceList = () => {
                           onChange={handleChange}
                           required
                           min={1}
+                          onWheel={(e) => e.target.blur()}
                         />
                         {errors.places &&
                           Array.isArray(errors.places) &&
@@ -548,6 +549,7 @@ const SpaceList = () => {
                           onChange={handleChange}
                           required
                           min={0}
+                          onWheel={(e) => e.target.blur()}
                         />
                         {errors.price &&
                           Array.isArray(errors.price) &&
@@ -774,6 +776,7 @@ const SpaceList = () => {
                   onChange={handleChange}
                   required
                   min={1}
+                  onWheel={(e) => e.target.blur()}
                 />
                 {errors.places &&
                   Array.isArray(errors.places) &&
@@ -795,6 +798,7 @@ const SpaceList = () => {
                   onChange={handleChange}
                   required
                   min={0}
+                  onWheel={(e) => e.target.blur()}
                 />
                 {errors.price &&
                   Array.isArray(errors.price) &&
