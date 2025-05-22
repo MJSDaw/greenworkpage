@@ -36,7 +36,9 @@
     "remove": "Eliminar",
     "checkSpace": "Ver espacio",
     "doBookingTitle": "Hacer una reserva",
-    "doBooking": "Reservar"
+    "doBooking": "Reservar",
+    "servicesRead": "Ver servicios",
+    "servicesCreate": "Crear servicio"
   },
   "alt": {
     "logo": "Logo de Greenwork",
@@ -94,6 +96,8 @@
     "paymentsNoPayments": "No hay pagos disponibles",
     "auditsLoading": "Cargando auditorias...",
     "auditsNoAudits": "No hay auditorias",
+    "servicesLoading": "Cargando servicios...",
+    "servicesNoServices": "No hay servicios",
     "previous": "Anterior",
     "next": "Siguiente",
     "user": "Usuario",
@@ -125,7 +129,8 @@
     "completedPayments": "Pagos realizados",
     "pendingPayments": "Pagos pendientes",
     "audits": "Auditorias",
-    "backup": "Copia de seguridad manual"
+    "backup": "Copia de seguridad manual",
+    "services": "Servicios"
   },
   "form":{
     "name": {
@@ -265,7 +270,9 @@
     "description": {
       "label": "Descripción",
       "placeholder": "Descripción"
-    }
+    },
+    "loginRequired": "Por favor, inicia sesión antes de reservar.",
+    "adminNoBooking": "No puedes hacer reservas desde espacios siendo administrador."
   },
   "backup": {
     "success": "Copia de seguridad creada con éxito",

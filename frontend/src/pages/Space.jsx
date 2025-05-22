@@ -5,7 +5,11 @@ import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
 import { getServices } from '../services/apiService'
-import { isAuthenticated, getUserType, getUserData } from '../services/authService'
+import {
+  isAuthenticated,
+  getUserType,
+  getUserData,
+} from '../services/authService'
 
 import pc from '../assets/img/pc.svg'
 import maps from '../assets/img/maps.svg'
@@ -33,9 +37,9 @@ const Space = () => {
   const [selectedSpace, setSelectedSpace] = useState(null)
 
   useEffect(() => {
-    const userType = getUserType();
-    setIsUser(isAuthenticated() && userType === 'user');
-  }, []);
+    const userType = getUserType()
+    setIsUser(isAuthenticated() && userType === 'user')
+  }, [])
 
   useEffect(() => {
     const fetchSpace = async () => {
@@ -50,15 +54,17 @@ const Space = () => {
             maps: response.data.address || '',
             seats: response.data.places,
             description: response.data.description,
-            services: response.data.services ? response.data.services.split(',').map(id => parseInt(id, 10)) : []
+            services: response.data.services
+              ? response.data.services.split(',').map((id) => parseInt(id, 10))
+              : [],
           }
           setSpace(spacesData)
-          
+
           // Obtener servicios activos del espacio
           if (spacesData.services && spacesData.services.length > 0) {
             const servicesResponse = await getServices()
             if (servicesResponse && servicesResponse.data) {
-              const activeServices = servicesResponse.data.filter(service => 
+              const activeServices = servicesResponse.data.filter((service) =>
                 spacesData.services.includes(service.id)
               )
               setServices(activeServices)
@@ -264,7 +270,7 @@ const Space = () => {
             {services.length > 0 && <h2>{t('common.services')}</h2>}
             <div className="services__grid">
               {services.map((service) => (
-                <ServiceCard 
+                <ServiceCard
                   key={service.id}
                   src={service.image_url}
                   title={service.nombre}
@@ -284,15 +290,15 @@ const Space = () => {
                   <section className="card__container--form">
                     <article className="card--form">
                       <form onSubmit={handleSubmit}>
-                        <input 
-                          type="hidden" 
-                          name="user_id" 
-                          value={formData.user_id} 
+                        <input
+                          type="hidden"
+                          name="user_id"
+                          value={formData.user_id}
                         />
-                        <input 
-                          type="hidden" 
-                          name="space_id" 
-                          value={formData.space_id} 
+                        <input
+                          type="hidden"
+                          name="space_id"
+                          value={formData.space_id}
                         />
                         {selectedSpace && (
                           <div className="form__section">
@@ -314,8 +320,10 @@ const Space = () => {
                                 })
                                 .map((schedule, index) => (
                                   <p key={index}>
-                                    {t(`form.days.${schedule.day.toLowerCase()}`)}:{' '}
-                                    {schedule.start} - {schedule.end}
+                                    {t(
+                                      `form.days.${schedule.day.toLowerCase()}`
+                                    )}
+                                    : {schedule.start} - {schedule.end}
                                   </p>
                                 ))}
                             </div>
@@ -357,7 +365,7 @@ const Space = () => {
                               </div>
                               <div className="form__section">
                                 <label htmlFor="start_time">
-                                  {t('form.time.startTime')}: 
+                                  {t('form.time.startTime')}:
                                 </label>
                                 <select
                                   id="start_time"
@@ -379,7 +387,9 @@ const Space = () => {
                                       const startMinutes = timeToMinutes(
                                         schedule.start
                                       )
-                                      const endMinutes = timeToMinutes(schedule.end)
+                                      const endMinutes = timeToMinutes(
+                                        schedule.end
+                                      )
                                       const options = []
                                       for (
                                         let time = startMinutes;
@@ -408,7 +418,9 @@ const Space = () => {
                                     onChange={handleChange}
                                     required
                                   >
-                                    <option value="">Selecciona hora de fin</option>
+                                    <option value="">
+                                      Selecciona hora de fin
+                                    </option>
                                     {parseSpaceSchedule(selectedSpace.schedule)
                                       .filter(
                                         (s) =>
@@ -418,12 +430,15 @@ const Space = () => {
                                       .map((schedule, index) => {
                                         if (
                                           timeToMinutes(schedule.start) <=
-                                            timeToMinutes(formData.start_time) &&
+                                            timeToMinutes(
+                                              formData.start_time
+                                            ) &&
                                           timeToMinutes(schedule.end) >
                                             timeToMinutes(formData.start_time)
                                         ) {
                                           const startMinutes =
-                                            timeToMinutes(formData.start_time) + 60
+                                            timeToMinutes(formData.start_time) +
+                                            60
                                           const endMinutes = timeToMinutes(
                                             schedule.end
                                           )
@@ -435,7 +450,10 @@ const Space = () => {
                                           ) {
                                             const timeStr = minutesToTime(time)
                                             options.push(
-                                              <option key={timeStr} value={timeStr}>
+                                              <option
+                                                key={timeStr}
+                                                value={timeStr}
+                                              >
                                                 {timeStr}
                                               </option>
                                             )
@@ -452,7 +470,9 @@ const Space = () => {
                         {formData.selected_date &&
                           availableSchedules.length === 0 && (
                             <div className="form__section">
-                              <p className="form__error">{t('form.date.noSlot')}</p>
+                              <p className="form__error">
+                                {t('form.date.noSlot')}
+                              </p>
                               {existingBookings
                                 .filter(
                                   (b) =>
@@ -482,7 +502,7 @@ const Space = () => {
                           value={t('actions.bookingsCreate')}
                           className="form__submit"
                           disabled={!formData.reservation_period}
-                          />
+                        />
                       </form>
                     </article>
                   </section>
@@ -494,7 +514,7 @@ const Space = () => {
               ) : (
                 <div className="login-message">
                   <p>{t('form.loginRequired')}</p>
-                  <Link to="/login" className="form__submit">
+                  <Link to="/login" className="form__submit --noArrow">
                     {t('actions.login')}
                   </Link>
                 </div>
