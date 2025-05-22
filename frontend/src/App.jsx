@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Spaces from './pages/Spaces'
 import Space from './pages/Space'
@@ -21,7 +22,8 @@ const App = () => {
     <Router>
       <div className="app">
         <Header />
-        <div className="app__content">          <Routes>
+        <div className="app__content">          
+          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/spaces" element={<Spaces />} />
             <Route path="/space/:id" element={<Space />} />
@@ -44,6 +46,7 @@ const App = () => {
           </Routes>
         </div>
         <Footer />
+        <ScrollToTop />
       </div>
     </Router>
   )
