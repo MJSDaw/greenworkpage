@@ -9,10 +9,12 @@ import coworking3 from '../assets/img/coworking3.webp'
 import { useTranslation } from 'react-i18next'
 import SpaceCard from '../components/SpaceCard'
 import prueba from '../assets/img/pruebas.webp'
+import { getSpaces } from '../services/apiService'
 
 const Spaces = () => {
   const { t } = useTranslation()
   const [isMobile, setIsMobile] = useState(false)
+  const [loading, setLoading] = useState(true)
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -114,44 +116,33 @@ const Spaces = () => {
     },
   }
 
-  const spaces = [
-    {
-      id: 1,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: '',
-    },
-    {
-      id: 2,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: '',
-    },
-    {
-      id: 3,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: '',
-    },
-    {
-      id: 4,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: '',
-    },
-  ]
+  const [spaces, setSpaces] = useState([])
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const response = await getSpaces()
+        if (response && response.data) {
+          const spacesData = response.data.map((space) => ({
+            id: space.id,
+            src: `https://localhost:8443/storage/${space.images.split('|')[0]}`,
+            subtitle: space.subtitle,
+            amount: space.price,
+            maps: space.address || '',
+            seats: space.places,
+            link: '',
+          }))
+          setSpaces(spacesData)
+        }
+      } catch (error) {
+        console.error('Error al cargar espacios:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSpaces()
+  }, [])
+
 
   return (
     <div style={{ overflowX: 'hidden' }}>
