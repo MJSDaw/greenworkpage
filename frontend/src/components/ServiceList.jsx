@@ -334,13 +334,13 @@ const ServiceList = () => {
               />
               {errors.image && <p className="error-message">{errors.image}</p>}
             </div>
-
             {formData.image_url && (
               <div className="form__group">
-                <label>{t('form.imagePreview.label')}:</label>
                 <div className="image-preview">
                   <img
-                    src={`https://localhost:8443/storage/${formData.image_url}`}
+                    src={formData.image_url.startsWith('data:') 
+                      ? formData.image_url  // Si es un data URL (imagen local)
+                      : `https://localhost:8443/storage/${formData.image_url}`} // Si es una ruta del servidor
                     alt={t('form.imagePreview.alt')}
                   />
                 </div>
