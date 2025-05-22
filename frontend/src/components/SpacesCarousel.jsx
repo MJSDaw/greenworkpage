@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Slider from 'react-slick'
 import { useTranslation } from 'react-i18next'
 import 'slick-carousel/slick/slick.css'
@@ -6,6 +6,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import SpaceCard from './SpaceCard'
 import prueba from '../assets/img/pruebas.webp'
 import arrow from '../assets/img/arrow.svg'
+import { getSpaces } from '../services/apiService'
 
 const NextArrow = (props) => {
   const { className, onClick } = props
@@ -43,6 +44,33 @@ const PrevArrow = (props) => {
 
 const SpacesCarousel = () => {
   const { t } = useTranslation()
+  const [spaces, setSpaces] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const response = await getSpaces()
+        if (response && response.data) {
+          const spacesData = response.data.slice(0, 4).map(space => ({
+            id: space.id,
+            src: `https://localhost:8443/storage/${space.images.split('|')[0]}`,
+            subtitle: space.subtitle,
+            amount: space.price,
+            maps: '',
+            seats: space.places,
+            link: ''
+          }))
+          setSpaces(spacesData)
+        }
+      } catch (error) {
+        console.error('Error al cargar espacios:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSpaces()
+  }, [])
 
   const settings = {
     className: 'center',
@@ -83,56 +111,21 @@ const SpacesCarousel = () => {
     ],
   }
 
-  const spaces = [
-    {
-      id: 1,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: ''
-    },
-    {
-      id: 2,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: ''
-    },
-    {
-      id: 3,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: ''
-    },
-    {
-      id: 4,
-      src: prueba,
-      subtitle: 'Oficina Privada',
-      amount: '12',
-      maps: 'Direccion, 31',
-      seats: '20',
-      link: ''
-    },
-  ]
-
   return (
     <div className="slider-container">
       <h2>{t('common.ourSpaces')}</h2>
       <div className="slider-wrapper">
-        <Slider {...settings}>
-          {spaces.map((space) => (
-            <div key={space.id}>
-              <SpaceCard {...space} />
-            </div>
-          ))}
-        </Slider>
+        {loading ? (
+          <div className="loading-spaces">Cargando espacios...</div>
+        ) : (
+          <Slider {...settings}>
+            {spaces.map((space) => (
+              <div key={space.id}>
+                <SpaceCard {...space} />
+              </div>
+            ))}
+          </Slider>
+        )}
       </div>
     </div>
   )
