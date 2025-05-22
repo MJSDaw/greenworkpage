@@ -31,7 +31,9 @@ Route::post('admin/login', [AuthController::class, 'adminLogin']);
 // Public routes for contacts
 Route::post('contacts', [ContactController::class, 'store']);
 
-// Public routes for services
+// Public routes for spaces
+Route::get('spaces', [SpaceController::class, 'index']);
+Route::get('spaces/{id}', [SpaceController::class, 'show']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -42,8 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     
     // Routes for spaces
-    Route::get('spaces', [SpaceController::class, 'index']);
-    Route::get('spaces/{id}', [SpaceController::class, 'show']);
     
     // Routes for services
     Route::get('services', [ServiceController::class, 'index']);

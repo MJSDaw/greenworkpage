@@ -69,26 +69,36 @@ const SpaceList = () => {
 
   const fetchServices = async () => {
     try {
-      const servicesData = await getServices()
-      if (Array.isArray(servicesData)) {
-        setServices(servicesData)
+      const response = await getServices()
+      if (response && response.data) {
+        // Manejar tanto respuesta paginada como no paginada
+        const servicesData = Array.isArray(response.data) ? response.data : response.data.data
+        if (Array.isArray(servicesData)) {
+          setServices(servicesData)
+        } else {
+          console.error('Formato de servicios inesperado:', servicesData)
+          setServices([])
+        }
       } else {
-        console.error('Unexpected services data format:', servicesData)
+        console.error('Respuesta de servicios inválida:', response)
         setServices([])
       }
     } catch (err) {
-      console.error('Error fetching services:', err)
+      console.error('Error al cargar servicios:', err)
       setServices([])
     }
   }
+
   useEffect(() => {
-    if (showList) {
+    if (showForm || showList) {
       fetchSpaces()
     }
-    
-    // Always fetch services regardless of view
-    fetchServices()
-  }, [showList, currentPage])  
+    // Cargar servicios cuando se muestra el formulario
+    if (showForm) {
+      fetchServices()
+    }
+  }, [showForm, showList])
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
@@ -116,26 +126,30 @@ const SpaceList = () => {
     try {
       // Create FormData object for file uploads
       const formDataToSend = new FormData()
-        // Add all text fields
+      
+      // Add all text fields
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key])
       })
-      
-      // Add selected services
+        // Add selected services
       if (selectedServices.length > 0) {
-        selectedServices.forEach((serviceId, index) => {
-          formDataToSend.append(`services[${index}]`, serviceId)
-        })
+        // Convert array of IDs to comma-separated string
+        formDataToSend.append('services', selectedServices.join(','))
+      } else {
+        // Send empty string if no services selected
+        formDataToSend.append('services', '')
       }
       
-      // Add all image files added individually
+      // Add all image files
       if (imageEntries.length > 0) {
         imageEntries.forEach((entry, index) => {
-          formDataToSend.append(`imageFiles[${index}]`, entry.file)
+          if (entry.file) {
+            formDataToSend.append(`imageFiles[${index}]`, entry.file)
+          }
         })
       }
 
-      const data = await saveSpace(formDataToSend, editingId, true) // true para indicar que es FormData
+      const data = await saveSpace(formDataToSend, editingId, true)
 
       if (data && data.status === 'success') {
         if (editingId) {
@@ -276,7 +290,9 @@ const SpaceList = () => {
       setEditingId(null)
     } else {
       setEditingId(id)
-      const spaceToEdit = spaces.find((space) => space.id === id)      // Parse the schedule string into entries
+      const spaceToEdit = spaces.find((space) => space.id === id)
+      
+      // Procesar el horario
       const schedules = spaceToEdit.schedule
         ? spaceToEdit.schedule.split('|').map((schedule) => {
             const [day, startTime, endTime] = schedule.split('-')
@@ -284,39 +300,36 @@ const SpaceList = () => {
           })
         : []
       
-      // Inicializar las entradas de imagen existentes con nombres de archivo
+      // Procesar las imágenes
       const imageNames = spaceToEdit.images 
         ? spaceToEdit.images.split('|').map(imagePath => {
-            const fileName = imagePath.split('/').pop() // Obtener solo el nombre del archivo
-              // Construir la URL completa para la vista previa apuntando al puerto 8443
-            let fullPath = '';
+            const fileName = imagePath.split('/').pop()
+            let fullPath = ''
             if (imagePath.startsWith('http')) {
-              // Ya es una URL completa
-              fullPath = imagePath;
+              fullPath = imagePath
             } else if (imagePath.startsWith('storage/')) {
-              // Ruta relativa desde la raíz
-              fullPath = `https://localhost:8443/${imagePath}`;
+              fullPath = `https://localhost:8443/${imagePath}`
             } else {
-              // Otras rutas (asumiendo que están en storage)
-              fullPath = `https://localhost:8443/storage/${imagePath}`;
+              fullPath = `https://localhost:8443/storage/${imagePath}`
             }
-            
             return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
           })
-        : []      
-      setImageEntries(imageNames)
-      setScheduleEntries(schedules)
-      
-      // Handle any existing services
-      if (spaceToEdit.services && Array.isArray(spaceToEdit.services)) {
-        const serviceIds = spaceToEdit.services.map(service => service.id)
-        setSelectedServices(serviceIds)
-      } else if (spaceToEdit.service_ids && Array.isArray(spaceToEdit.service_ids)) {
-        setSelectedServices(spaceToEdit.service_ids)
-      } else {
-        setSelectedServices([])
+        : []
+        
+      // Procesar los servicios
+      let serviceIds = []
+      if (spaceToEdit.services) {
+        if (typeof spaceToEdit.services === 'string') {
+          // Si es una cadena, dividir por comas y convertir a números
+          serviceIds = spaceToEdit.services.split(',').map(id => parseInt(id, 10))
+        } else if (Array.isArray(spaceToEdit.services)) {
+          // Si ya es un array, usar directamente
+          serviceIds = spaceToEdit.services.map(service => service.id || parseInt(service, 10))
+        }
       }
+      setSelectedServices(serviceIds)
       
+      // Configurar el estado del formulario
       setFormData({
         places: spaceToEdit.places,
         price: spaceToEdit.price,
@@ -326,6 +339,11 @@ const SpaceList = () => {
         subtitle: spaceToEdit.subtitle,
         address: spaceToEdit.address || '',
       })
+      
+      setImageEntries(imageNames)
+      setScheduleEntries(schedules)
+      setShowForm(true)
+      setShowList(false)
     }
   }
 
@@ -902,49 +920,7 @@ const SpaceList = () => {
                       {t(`errors.${err}`)}
                     </span>
                   ))}              </div>
-              <div className="form__section">
-                <label>Servicios Disponibles</label>
-                <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                  {services.length > 0 ? (
-                    services.map((service) => (
-                      <div key={service.id} className="service-checkbox" style={{ 
-                        border: '1px solid #ccc', 
-                        borderRadius: '5px',
-                        padding: '10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        width: '120px'
-                      }}>
-                        <img 
-                          src={
-                            service.image_url.startsWith('http') 
-                              ? service.image_url 
-                              : `https://localhost:8443/${service.image_url}`
-                          }
-                          alt={service.nombre}
-                          style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
-                        />
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
-                          <input
-                            type="checkbox"
-                            id={`service-${service.id}`}
-                            name={`service_${service.id}`}
-                            checked={selectedServices.includes(service.id)}
-                            onChange={handleChange}
-                            style={{ marginRight: '5px' }}
-                          />
-                          <label htmlFor={`service-${service.id}`} style={{ fontSize: '0.9em' }}>
-                            {service.nombre}
-                          </label>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
-                  )}
-                </div>
-              </div>
+              
               <div className="form__section">
                 <label htmlFor="description">
                   {t('form.description.label')}
