@@ -59,7 +59,7 @@ const SpacesCarousel = () => {
             amount: space.price,
             maps: space.address || '',
             seats: space.places,
-            link: ''
+            link: `/space/${space.id}`
           }))
           setSpaces(spacesData)
         }

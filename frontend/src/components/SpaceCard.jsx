@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 const SpaceCard = ({ src, subtitle, amount, maps, seats, link }) => {
   const { t } = useTranslation()
@@ -17,7 +18,9 @@ const SpaceCard = ({ src, subtitle, amount, maps, seats, link }) => {
           <p>{seats} {t('form.seats.label')}</p>
         </div>
       </div>
-      <button className='form__submit --noArrow'>{t('actions.checkSpace')}</button>
+      <Link to={link} className='form__submit --noArrow' style={{ textDecoration: 'none', display: 'inline-block' }}>
+        {t('actions.checkSpace')}
+      </Link>
     </div>
   )
 }

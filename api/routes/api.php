@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes for spaces
     Route::get('spaces', [SpaceController::class, 'index']);
+    Route::get('spaces/{id}', [SpaceController::class, 'show']);
     
     // Routes for reservations
     Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);

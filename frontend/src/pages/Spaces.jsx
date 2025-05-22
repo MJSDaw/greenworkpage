@@ -121,6 +121,7 @@ const Spaces = () => {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
+        setLoading(true)
         const response = await getSpaces()
         if (response && response.data) {
           const spacesData = response.data.map((space) => ({
@@ -130,7 +131,7 @@ const Spaces = () => {
             amount: space.price,
             maps: space.address || '',
             seats: space.places,
-            link: '',
+            link: `/space/${space.id}`,
           }))
           setSpaces(spacesData)
         }

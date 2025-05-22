@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Spaces from './pages/Spaces'
+import Space from './pages/Space'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Signin from './pages/Signin'
@@ -20,10 +21,10 @@ const App = () => {
     <Router>
       <div className="app">
         <Header />
-        <div className="app__content">
-          <Routes>
+        <div className="app__content">          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/spaces" element={<Spaces />} />
+            <Route path="/space/:id" element={<Space />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/signin" element={<Signin />} />

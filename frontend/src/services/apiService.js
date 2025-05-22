@@ -227,6 +227,21 @@ export const saveSpace = async (spaceData, spaceId = null, isFormData = false) =
   return baseFetch(url, method, spaceData, {}, true, isFormData);
 };
 
+/**
+ * Obtiene un espacio específico por su ID
+ * @param {Number} spaceId - ID del espacio a consultar
+ * @returns {Promise} Los datos del espacio
+ */
+export const getSpaceById = async (spaceId) => {
+  try {
+    const response = await baseFetch(`/api/spaces/${spaceId}`, 'GET');
+    return response;
+  } catch (error) {
+    console.error(`Error fetching space with ID ${spaceId}:`, error);
+    throw error;
+  }
+};
+
 // ==================== Reservas ====================
 
 /**
