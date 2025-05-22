@@ -1182,6 +1182,19 @@ footer {
   right: -2rem !important;
 }
 
+.slider__container {
+  position: 'absolute';
+  top: '50%';
+  left: '25%';
+  transform: 'translate(-50%, -50%)';
+  background-color: 'rgba(255, 255, 255, 1)';
+  padding: '3rem';
+  border-radius: '1.5rem';
+  max-width: '60rem';
+  width: '80%';
+  text-align: 'center';
+}
+
 /* =========================
   MEDIA QUERIES
 ========================= */
@@ -1471,5 +1484,9 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+
+  .slider-container {
+    margin: 0 auto;
   }
 }

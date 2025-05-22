@@ -348,5 +348,16 @@
     "termsNotAcceptedError": "Debes aceptar los términos y condiciones",
     "invalidCredentialsError": "Credenciales inválidas",
     "invalidAdminCredentialsError": "Credenciales de administrador inválidas"
+  },
+  "sliders": {
+    "title1": "Tu espacio a tan solo un click",
+    "msg1": "En GreenWork, trabajamos cada día con un objetivo claro: que todas las personas puedan acceder a un espacio de coworking cómodo, accesible y cerca de donde estén.",
+    "msg2": "Con tecnología, cercanía y una red en expansión, en GreenWork queremos que encuentres el lugar perfecto para crear, trabajar y crecer, estés donde estés.",
+    "title2": "Flexibilidad que se adapta a ti",
+    "msg3": "Olvídate de contratos rígidos y horarios inflexibles. En GreenWork ofrecemos soluciones adaptables a tus necesidades reales.",
+    "msg4": "Desde horas sueltas hasta membresías mensuales, con acceso a todas nuestras ubicaciones y servicios premium diseñados para potenciar tu productividad.",
+    "title3": "Más que un espacio, una comunidad",
+    "msg5": "Conecta con profesionales de diversos sectores en un entorno colaborativo diseñado para inspirar.",
+    "msg6": "GreenWork no solo te proporciona un lugar para trabajar, sino oportunidades para networking, eventos exclusivos y el ecosistema perfecto para hacer crecer tu negocio."
   }
 }
