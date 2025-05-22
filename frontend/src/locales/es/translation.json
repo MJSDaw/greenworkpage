@@ -33,7 +33,8 @@
     "paymentsRead": "Ver pagos",
     "paymentsCreate": "Crear pago",
     "add": "Añadir",
-    "remove": "Eliminar"
+    "remove": "Eliminar",
+    "checkSpace": "Ver espacio"
   },
   "alt": {
     "logo": "Logo de Greenwork",

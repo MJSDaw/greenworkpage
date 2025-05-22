@@ -591,90 +591,6 @@ textarea {
   text-align: left;
 }
 
-.carousel__container {
-  display: flex;
-  flex-direction: column;
-  padding: 6rem 20rem;
-  overflow: hidden; /* Añadido para permitir que la imagen sobresalga */
-}
-
-.carousel__content {
-  width: 100%;
-  margin: 0 auto;
-  padding: 6rem 0;
-  overflow: visible; /* Añadido para permitir que la imagen sobresalga */
-}
-
-/* Contenedor del slider - importante para el overflow */
-.slick-list {
-  overflow: visible !important;
-  margin: 0 -5%; /* Compensa el aumento de tamaño */
-}
-
-/* Estilo para las imágenes del carousel */
-.carousel-img {
-  width: 100%;
-  height: 300px; /* Altura fija para consistencia */
-  object-fit: cover; /* Asegura que la imagen cubra el espacio */
-  transition: all 0.3s ease;
-  border-radius: 1.5rem;
-  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark);
-}
-
-/* Imagen central - más grande y con mayor z-index */
-.slick-center .carousel-img {
-  transform: scale(1.5);
-  z-index: 10; /* Aumentado para asegurar que esté por encima */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  position: relative; /* Necesario para el z-index */
-}
-
-/* Imágenes laterales - más pequeñas y detrás */
-.slick-slide:not(.slick-center) .carousel-img {
-  transform: scale(0.9);
-  opacity: 0.7;
-  z-index: 1;
-  position: relative;
-}
-
-/* Espaciado entre slides */
-.slick-slide {
-  padding: 0 20px; /* Aumentado para dar más espacio */
-  transition: transform 0.3s ease;
-}
-
-/* Flechas de navegación */
-.slick-prev, .slick-next {
-  z-index: 20; /* Asegura que estén sobre las imágenes */
-  width: 40px;
-  height: 40px;
-}
-
-.slick-prev:before,
-.slick-next:before {
-  color: #333;
-  font-size: 30px;
-}
-
-/* Puntos indicadores */
-.slick-dots {
-  bottom: -50px; /* Aleja los dots del carousel */
-}
-
-.slick-dots li button:before {
-  font-size: 12px;
-  color: #333;
-}
-
-.slick-dots li.slick-active button:before {
-  color: #333;
-}
-
-.slick-slide:not(.slick-active):not(.slick-current) {
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* =========================
   USER / ADMIN
 ========================= */
@@ -1064,6 +980,208 @@ footer {
   background-color: var(--color3);
 }
 
+/* Contenedor principal */
+.slider-container {
+  padding: 4rem 0;
+  max-width: 80%;
+  margin: 0 20rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Contenedor del slider */
+.slider-wrapper {
+  position: relative;
+  padding: 0 5%;
+  overflow: visible;
+}
+
+/* Estilos para las slides */
+.slick-slide {
+  transition: all 0.4s ease-in-out;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.slick-list {
+  padding: 5rem 0 !important;
+  margin: -5rem 0;
+  overflow: visible !important;
+}
+
+.slick-center .space-card {
+  transform: scale(1);
+  z-index: 10;
+  opacity: 1;
+  margin: 0 auto;
+  position: relative;
+  top: 0;
+  margin-bottom: 20px;
+}
+
+.slick-slide:not(.slick-center) .space-card {
+  transform: scale(0.7);
+  opacity: 0.7;
+  z-index: 1;
+  filter: brightness(0.9);
+  margin-top: 2rem;
+}
+
+/* Efecto hover */
+.slick-slide:not(.slick-center) .space-card:hover {
+  transform: scale(0.8);
+  opacity: 0.9;
+}
+
+/* Dots del carousel */
+.slick-dots li button:before {
+  color: var(--color3) !important;
+  opacity: 1 !important;
+  font-size: 1.2rem !important;
+}
+
+.slick-dots li.slick-active button:before {
+  color: var(--color1) !important;
+  opacity: 1 !important;
+}
+
+/* Flechas de navegación */
+.slick-prev, .slick-next {
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+}
+
+.slick-prev {
+  left: -50px;
+}
+
+.slick-next {
+  right: -50px;
+}
+
+.slick-prev:before, .slick-next:before {
+  font-size: 40px;
+  color: #4CAF50;
+  opacity: 1;
+}
+
+/* Estilos para la SpaceCard */
+.space-card {
+  background: white;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  height: auto;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 1rem;
+  padding-bottom: 3rem;
+}
+
+.space-card__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.space-card__image-container {
+  width: 100%;
+  height: 0;
+  padding-bottom: 60%; /* Proporción aspecto */
+  position: relative;
+  overflow: hidden;
+}
+
+.space-card__content {
+  padding: 3rem 3rem 1rem 3rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.space-card__content__text {
+  display: flex;
+  justify-content: space-between;
+}
+
+.space-card__title {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  color: #222;
+}
+
+.space-card__description {
+  color: #666;
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+}
+
+.space-card__button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.space-card__button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.custom-arrow {
+  background-color: var(--color4) !important;
+  width: 4.5rem !important;
+  height: 4.5rem !important;
+  border-radius: 1.5rem !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.arrow-image {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+
+.arrow-image.prev {
+  transform: rotate(-90deg);
+}
+
+.arrow-image:not(.prev) {
+  transform: rotate(90deg);
+}
+
+.custom-arrow:hover {
+  background-color: var(--color3) !important;
+  box-shadow: 0 .3rem .3rem 0 var(--shadow__dark)
+}
+
+.custom-arrow::before {
+  display: none !important;
+}
+
+.prev-arrow {
+  left: -2rem !important;
+}
+
+.next-arrow {
+  right: -2rem !important;
+}
+
 /* =========================
   MEDIA QUERIES
 ========================= */
@@ -1145,6 +1263,7 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 3rem;
   }
 
   .leonardo--overForm {
@@ -1346,5 +1465,11 @@ footer {
   .schedule-item button {
     margin: 1rem 0;
     justify-content: center;
+  }
+
+  .space-card__content__text {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
