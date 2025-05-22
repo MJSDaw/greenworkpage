@@ -23,6 +23,7 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|unique:services,nombre',
             'image_url' => 'required|string|url',
         ]);
 
@@ -31,6 +32,7 @@ class ServiceController extends Controller
         }
 
         $service = Service::create([
+            'nombre' => $request->nombre,
             'image_url' => $request->image_url,
         ]);
 
@@ -54,6 +56,7 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
         
         $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|unique:services,nombre,'.$id,
             'image_url' => 'required|string|url',
         ]);
 
@@ -62,6 +65,7 @@ class ServiceController extends Controller
         }
 
         $service->update([
+            'nombre' => $request->nombre,
             'image_url' => $request->image_url,
         ]);
 
