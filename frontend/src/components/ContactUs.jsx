@@ -14,17 +14,18 @@ const ContactUs = () => {
     name: '',
     email: '',
     message: '',
-    termsAndConditions: false
+    termsAndConditions: false,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState(null)
 
   const handleChange = (e) => {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    const value =
+      e.target.type === 'checkbox' ? e.target.checked : e.target.value
     setFormData({
       ...formData,
-      [e.target.name]: value
+      [e.target.name]: value,
     })
   }
 
@@ -32,20 +33,21 @@ const ContactUs = () => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitError(null)
-    
-    try {      await createContact({
+
+    try {
+      await createContact({
         name: formData.name,
         email: formData.email,
         message: formData.message,
-        termsAndConditions: formData.termsAndConditions
+        termsAndConditions: formData.termsAndConditions,
       })
-      
+
       setSubmitSuccess(true)
       setFormData({
         name: '',
         email: '',
         message: '',
-        termsAndConditions: false
+        termsAndConditions: false,
       })
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -54,18 +56,30 @@ const ContactUs = () => {
       setIsSubmitting(false)
     }
   }
-  
+
   return (
     <section className="contact__background">
       <h2 className="h1--left--up">{t('common.contactUs')}</h2>
       <article className="white__container--contact">
-        <img src={greenwork3} alt={t('alt.greenwork3')} title={t('common.greenwork3')} />
-        <img src={greenwork1} alt={t('alt.greenwork1')} title={t('common.greenwork1')} />
-        <img src={greenwork2} alt={t('alt.greenwork2')} title={t('common.greenwork2')} />
+        <img
+          src={greenwork3}
+          alt={t('alt.greenwork3')}
+          title={t('common.greenwork3')}
+        />
+        <img
+          src={greenwork1}
+          alt={t('alt.greenwork1')}
+          title={t('common.greenwork1')}
+        />
+        <img
+          src={greenwork2}
+          alt={t('alt.greenwork2')}
+          title={t('common.greenwork2')}
+        />
         <section className="white__container">
-          <h3>{t('common.contact.title')}</h3>          <p>{t('common.contact.msg1')}</p>
+          <h3>{t('common.contact.title')}</h3>
+          <p>{t('common.contact.msg1')}</p>
           <p>{t('common.contact.msg2')}</p>
-          
           {submitSuccess ? (
             <div className="form__error">
               <p>{t('form.success')}</p>
@@ -116,37 +130,39 @@ const ContactUs = () => {
                   onChange={handleChange}
                   required
                 />
-              <span className="input--checkbox__text">
-                {t('form.checkbox.contact.msg1')}
-                <Link
-                  to="/terms"
-                  className="input--checkbox__text--link"
-                  title={t('actions.goToTerms')}
-                >
-                  {t('links.terms')}
-                </Link>{' '}
-                {t('form.checkbox.contact.msg2')}
-                <Link
-                  to="/privacy"
-                  className="input--checkbox__text--link"
-                  title={t('actions.goToPrivacy')}
-                >
-                  {t('links.privacy')}
-                </Link>
-              </span>
-            </label>
-            <input
-              type="submit"
-              value={isSubmitting ? t('form.submitting') : t('common.contactUs')}
-              disabled={isSubmitting}
-              className="form__submit"
-            />
-            {submitError && (
+                <span className="input--checkbox__text">
+                  {t('form.checkbox.contact.msg1')}
+                  <Link
+                    to="/terms"
+                    className="input--checkbox__text--link"
+                    title={t('actions.goToTerms')}
+                  >
+                    {t('links.terms')}
+                  </Link>{' '}
+                  {t('form.checkbox.contact.msg2')}
+                  <Link
+                    to="/privacy"
+                    className="input--checkbox__text--link"
+                    title={t('actions.goToPrivacy')}
+                  >
+                    {t('links.privacy')}
+                  </Link>
+                </span>
+              </label>
+              <input
+                type="submit"
+                value={
+                  isSubmitting ? t('form.submitting') : t('common.contactUs')
+                }
+                disabled={isSubmitting}
+                className="form__submit"
+              />
+              {submitError && (
                 <div className="form__error">
-                  <p>{submitError}</p>
+                  <p>{t('errors.wait24hours')}</p>
                 </div>
               )}
-          </form>
+            </form>
           )}
         </section>
         <img

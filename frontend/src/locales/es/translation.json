@@ -356,7 +356,8 @@
     "termsTypeError": "Los términos y condiciones no son válidos",
     "termsNotAcceptedError": "Debes aceptar los términos y condiciones",
     "invalidCredentialsError": "Credenciales inválidas",
-    "invalidAdminCredentialsError": "Credenciales de administrador inválidas"
+    "invalidAdminCredentialsError": "Credenciales de administrador inválidas",
+    "wait24hours": "Ya has mandado un mensaje en las últimas 24 horas. Inténtalo más tarde."
   },
   "sliders": {
     "title1": "Tu espacio a tan solo un click",

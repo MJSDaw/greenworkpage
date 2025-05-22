@@ -229,8 +229,10 @@ textarea {
   z-index: 1;
 }
 
-.white__container--home {
-  min-width: fit-content;
+.home__section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .white__container--terms {
