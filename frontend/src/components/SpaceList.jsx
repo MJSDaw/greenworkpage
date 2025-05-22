@@ -1004,11 +1004,7 @@ const SpaceList = () => {
                         width: '120px'
                       }}>
                         <img 
-                          src={
-                            service.image_url.startsWith('http') 
-                              ? service.image_url 
-                              : `https://localhost:8443/${service.image_url}`
-                          }
+                          src={`https://localhost:8443/storage/${service.image_url}`}
                           alt={service.nombre}
                           style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
                         />
