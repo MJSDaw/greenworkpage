@@ -40,6 +40,7 @@ class SpaceController extends Controller
             'images' => 'sometimes|string',
             'description' => 'required|string',
             'subtitle' => 'required|string',
+            'address' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -105,16 +106,24 @@ class SpaceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        // Base validation rules
+        $validationRules = [
             'places' => 'required|integer',
             'price' => 'required|numeric',
             'schedule' => 'required|string',
-            'imageFiles' => 'sometimes|array',
-            'imageFiles.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'images' => 'sometimes|string',
             'description' => 'required|string',
             'subtitle' => 'required|string',
-        ]);
+            'address' => 'required|string',
+        ];
+        
+        // Add image validation rules only when files are present
+        if ($request->hasFile('imageFiles')) {
+            $validationRules['imageFiles'] = 'sometimes|array';
+            $validationRules['imageFiles.*'] = 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048';
+        }
+        
+        $validator = Validator::make($request->all(), $validationRules);
 
         if ($validator->fails()) {
             return response()->json([

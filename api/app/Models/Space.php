@@ -21,6 +21,7 @@ class Space extends Model
         'images',
         'description',
         'subtitle',
+        'address',
     ];
 
     /**

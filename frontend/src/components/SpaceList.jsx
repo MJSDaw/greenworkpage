@@ -22,6 +22,7 @@ const SpaceList = () => {
     images: '',
     description: '',
     subtitle: '',
+    address: '',
   })
   
   // Nuevo estado para manejar las imágenes individuales
@@ -126,6 +127,7 @@ const SpaceList = () => {
       images: '',
       description: '',
       subtitle: '',
+      address: '',
     })
     setImageEntries([])
     setScheduleEntries([])
@@ -276,6 +278,7 @@ const SpaceList = () => {
         images: spaceToEdit.images,
         description: spaceToEdit.description,
         subtitle: spaceToEdit.subtitle,
+        address: spaceToEdit.address || '',
       })
     }
   }
@@ -632,6 +635,24 @@ const SpaceList = () => {
                             </span>
                           ))}
                       </div>
+                      <div className="form__section">
+                        <label htmlFor="direccion">Dirección</label>
+                        <input
+                          id="direccion"
+                          name="address"
+                          placeholder="Introduce la dirección"
+                          value={formData.address}
+                          onChange={handleChange}
+                          required
+                        />
+                        {errors.address &&
+                          Array.isArray(errors.address) &&
+                          errors.address.map((err, idx) => (
+                            <span className="form__error" key={idx}>
+                              {t(`errors.${err}`)}
+                            </span>
+                          ))}
+                      </div>
                       <input
                         type="submit"
                         value={t('actions.edit')}
@@ -885,6 +906,24 @@ const SpaceList = () => {
                 {errors.subtitle &&
                   Array.isArray(errors.subtitle) &&
                   errors.subtitle.map((err, idx) => (
+                    <span className="form__error" key={idx}>
+                      {t(`errors.${err}`)}
+                    </span>
+                  ))}
+              </div>
+              <div className="form__section">
+                <label htmlFor="direccion">Dirección</label>
+                <input
+                  id="direccion"
+                  name="address"
+                  placeholder="Introduce la dirección"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.address &&
+                  Array.isArray(errors.address) &&
+                  errors.address.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>

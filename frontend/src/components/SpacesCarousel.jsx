@@ -57,7 +57,7 @@ const SpacesCarousel = () => {
             src: `https://localhost:8443/storage/${space.images.split('|')[0]}`,
             subtitle: space.subtitle,
             amount: space.price,
-            maps: '',
+            maps: space.address || '',
             seats: space.places,
             link: ''
           }))
