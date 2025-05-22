@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getSpaces, saveSpace } from '../services/apiService'
+import { getSpaces, saveSpace, getServices } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
@@ -40,6 +40,8 @@ const SpaceList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const perPage = 3
+  const [services, setServices] = useState([])
+  const [selectedServices, setSelectedServices] = useState([])
 
   const fetchSpaces = async () => {
     setLoading(true)
@@ -65,19 +67,57 @@ const SpaceList = () => {
     }
   }
 
+  const fetchServices = async () => {
+    try {
+      const response = await getServices()
+      if (response && response.data) {
+        // Manejar tanto respuesta paginada como no paginada
+        const servicesData = Array.isArray(response.data) ? response.data : response.data.data
+        if (Array.isArray(servicesData)) {
+          setServices(servicesData)
+        } else {
+          console.error('Formato de servicios inesperado:', servicesData)
+          setServices([])
+        }
+      } else {
+        console.error('Respuesta de servicios inválida:', response)
+        setServices([])
+      }
+    } catch (err) {
+      console.error('Error al cargar servicios:', err)
+      setServices([])
+    }
+  }
+
   useEffect(() => {
-    if (showList) {
+    if (showForm || showList) {
       fetchSpaces()
     }
-  }, [showList, currentPage])  
+    // Cargar servicios cuando se muestra el formulario
+    if (showForm) {
+      fetchServices()
+    }
+  }, [showForm, showList])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
+    if (name.startsWith('service_')) {
+      // Handle service checkbox selection
+      const serviceId = parseInt(name.split('_')[1])
+      
+      if (checked) {
+        setSelectedServices(prev => [...prev, serviceId])
+      } else {
+        setSelectedServices(prev => prev.filter(id => id !== serviceId))
+      }
+    } else {
+      // Handle other form inputs
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === 'checkbox' ? checked : value,
+      }))
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -91,15 +131,25 @@ const SpaceList = () => {
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key])
       })
+        // Add selected services
+      if (selectedServices.length > 0) {
+        // Convert array of IDs to comma-separated string
+        formDataToSend.append('services', selectedServices.join(','))
+      } else {
+        // Send empty string if no services selected
+        formDataToSend.append('services', '')
+      }
       
-      // Add all image files added individually
+      // Add all image files
       if (imageEntries.length > 0) {
         imageEntries.forEach((entry, index) => {
-          formDataToSend.append(`imageFiles[${index}]`, entry.file)
+          if (entry.file) {
+            formDataToSend.append(`imageFiles[${index}]`, entry.file)
+          }
         })
       }
 
-      const data = await saveSpace(formDataToSend, editingId, true) // true para indicar que es FormData
+      const data = await saveSpace(formDataToSend, editingId, true)
 
       if (data && data.status === 'success') {
         if (editingId) {
@@ -119,7 +169,7 @@ const SpaceList = () => {
     }
   }
   const handleShowForm = () => {
-    // Limpiar formulario y reset estados
+    // Siempre limpiar el formulario al mostrar el formulario de creación
     setFormData({
       places: '',
       price: '',
@@ -131,13 +181,29 @@ const SpaceList = () => {
     })
     setImageEntries([])
     setScheduleEntries([])
+    setSelectedServices([])
+    setEditingId(null) // Asegurarnos de que no estamos en modo edición
     setShowForm(true)
     setShowList(false)
+    // Cargar servicios al mostrar el formulario
+    fetchServices()
   }
-
   const handleShowList = () => {
     setShowForm(false)
     setShowList(true)
+    // Limpiar todos los estados
+    setFormData({
+      places: '',
+      price: '',
+      schedule: '',
+      images: '',
+      description: '',
+      subtitle: '',
+      address: '',
+    })
+    setImageEntries([])
+    setScheduleEntries([])
+    setSelectedServices([])
     // Limpiar el estado de edición si hay alguno activo
     setEditingId(null)
   }
@@ -233,54 +299,69 @@ const SpaceList = () => {
     }))
   }
 
-  const [editingId, setEditingId] = useState(null);
-  const handleEditClick = (id) => {
+  const [editingId, setEditingId] = useState(null);  const handleEditClick = (id) => {
+    const spaceToEdit = spaces.find((space) => space.id === id)
+    if (!spaceToEdit) return
+
+    // Si ya estábamos editando este espacio, cerrar el formulario
     if (editingId === id) {
       setEditingId(null)
-    } else {
-      setEditingId(id)
-      const spaceToEdit = spaces.find((space) => space.id === id)
-
-      // Parse the schedule string into entries
-      const schedules = spaceToEdit.schedule
-        ? spaceToEdit.schedule.split('|').map((schedule) => {
-            const [day, startTime, endTime] = schedule.split('-')
-            return { day, startTime, endTime }
-          })
-        : []      // Inicializar las entradas de imagen existentes con nombres de archivo
-      const imageNames = spaceToEdit.images 
-        ? spaceToEdit.images.split('|').map(imagePath => {
-            const fileName = imagePath.split('/').pop() // Obtener solo el nombre del archivo
-              // Construir la URL completa para la vista previa apuntando al puerto 8443
-            let fullPath = '';
-            if (imagePath.startsWith('http')) {
-              // Ya es una URL completa
-              fullPath = imagePath;
-            } else if (imagePath.startsWith('storage/')) {
-              // Ruta relativa desde la raíz
-              fullPath = `https://localhost:8443/${imagePath}`;
-            } else {
-              // Otras rutas (asumiendo que están en storage)
-              fullPath = `https://localhost:8443/storage/${imagePath}`;
-            }
-            
-            return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
-          })
-        : []
-
-      setImageEntries(imageNames)
-      setScheduleEntries(schedules)
-      
-      setFormData({
-        places: spaceToEdit.places,
-        price: spaceToEdit.price,
-        schedule: spaceToEdit.schedule,
-        images: spaceToEdit.images,
-        description: spaceToEdit.description,
-        subtitle: spaceToEdit.subtitle,
-        address: spaceToEdit.address || '',
-      })
+      return
     }
+    
+    // Procesar el horario
+    const schedules = spaceToEdit.schedule
+      ? spaceToEdit.schedule.split('|').map((schedule) => {
+          const [day, startTime, endTime] = schedule.split('-')
+          return { day, startTime, endTime }
+        })
+      : []
+    
+    // Procesar las imágenes
+    const imageNames = spaceToEdit.images 
+      ? spaceToEdit.images.split('|').map(imagePath => {
+          const fileName = imagePath.split('/').pop()
+          let fullPath = ''
+          if (imagePath.startsWith('http')) {
+            fullPath = imagePath
+          } else if (imagePath.startsWith('storage/')) {
+            fullPath = `https://localhost:8443/${imagePath}`
+          } else {
+            fullPath = `https://localhost:8443/storage/${imagePath}`
+          }
+          return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
+        })
+      : []
+        
+    // Procesar los servicios
+    let serviceIds = []
+    if (spaceToEdit.services) {
+      if (typeof spaceToEdit.services === 'string') {
+        // Si es una cadena, dividir por comas y convertir a números
+        serviceIds = spaceToEdit.services.split(',').map(id => parseInt(id, 10))
+      } else if (Array.isArray(spaceToEdit.services)) {
+        // Si ya es un array, usar directamente
+        serviceIds = spaceToEdit.services.map(service => service.id || parseInt(service, 10))
+      }
+    }
+    
+    // Actualizar todos los estados
+    setEditingId(id)
+    setSelectedServices(serviceIds)
+    setFormData({
+      places: spaceToEdit.places || '',
+      price: spaceToEdit.price || '',
+      schedule: spaceToEdit.schedule || '',
+      images: spaceToEdit.images || '',
+      description: spaceToEdit.description || '',
+      subtitle: spaceToEdit.subtitle || '',
+      address: spaceToEdit.address || '',
+    })
+    setImageEntries(imageNames)
+    setScheduleEntries(schedules)
+    
+    // Cargar servicios sin cambiar la vista
+    fetchServices()
   }
 
   // Funciones para manejar las imágenes
@@ -594,64 +675,44 @@ const SpaceList = () => {
                               {t(`errors.${err}`)}
                             </span>
                           ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="description">
-                          {t('form.description.label')}
-                        </label>
-                        <textarea
-                          id="description"
-                          name="description"
-                          placeholder={t('form.description.placeholder')}
-                          value={formData.description}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.description &&
-                          Array.isArray(errors.description) &&
-                          errors.description.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="subtitle">
-                          {t('form.space.label')}
-                        </label>
-                        <input
-                          id="subtitle"
-                          name="subtitle"
-                          placeholder={t('form.space.placeholder')}
-                          value={formData.subtitle}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.subtitle &&
-                          Array.isArray(errors.subtitle) &&
-                          errors.subtitle.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="direccion">Dirección</label>
-                        <input
-                          id="direccion"
-                          name="address"
-                          placeholder="Introduce la dirección"
-                          value={formData.address}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.address &&
-                          Array.isArray(errors.address) &&
-                          errors.address.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
+                      </div>                      <div className="form__section">
+                        <label>Servicios Disponibles</label>
+                        <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                          {services.length > 0 ? (
+                            services.map((service) => (
+                              <div key={service.id} className="service-checkbox" style={{ 
+                                border: '1px solid #ccc', 
+                                borderRadius: '5px',
+                                padding: '10px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                width: '120px'
+                              }}>
+                                <img 
+                                  src={`https://localhost:8443/storage/${service.image_url}`}
+                                  alt={service.nombre}
+                                  style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                                />
+                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                                  <input
+                                    type="checkbox"
+                                    id={`edit-service-${service.id}`}
+                                    name={`service_${service.id}`}
+                                    checked={selectedServices.includes(service.id)}
+                                    onChange={handleChange}
+                                    style={{ marginRight: '5px' }}
+                                  />
+                                  <label htmlFor={`edit-service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                                    {service.nombre}
+                                  </label>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                          )}
+                        </div>
                       </div>
                       <input
                         type="submit"
@@ -871,8 +932,8 @@ const SpaceList = () => {
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
-                  ))}
-              </div>
+                  ))}              </div>
+              
               <div className="form__section">
                 <label htmlFor="description">
                   {t('form.description.label')}
@@ -926,8 +987,46 @@ const SpaceList = () => {
                   errors.address.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
-                    </span>
-                  ))}
+                    </span>                  ))}
+              </div>
+              <div className="form__section">
+                <label>Servicios Disponibles</label>
+                <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {services.length > 0 ? (
+                    services.map((service) => (
+                      <div key={service.id} className="service-checkbox" style={{ 
+                        border: '1px solid #ccc', 
+                        borderRadius: '5px',
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        width: '120px'
+                      }}>
+                        <img 
+                          src={`https://localhost:8443/storage/${service.image_url}`}
+                          alt={service.nombre}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                        />
+                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                          <input
+                            type="checkbox"
+                            id={`service-${service.id}`}
+                            name={`service_${service.id}`}
+                            checked={selectedServices.includes(service.id)}
+                            onChange={handleChange}
+                            style={{ marginRight: '5px' }}
+                          />
+                          <label htmlFor={`service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                            {service.nombre}
+                          </label>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                  )}
+                </div>
               </div>
               <input
                 type="submit"
