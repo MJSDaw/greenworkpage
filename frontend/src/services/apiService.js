@@ -450,3 +450,19 @@ export const createContact = async (contactData) => {
 export const createBackup = async () => {
   return baseFetch('/api/admin/backup', 'POST');
 };
+
+// ==================== Services ====================
+
+/**
+ * Obtiene la lista de servicios disponibles
+ * @returns {Promise} Lista de servicios
+ */
+export const getServices = async () => {
+  try {
+    const response = await baseFetch('/api/services', 'GET', null, {}, true);
+    return response;
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    return [];
+  }
+};

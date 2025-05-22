@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getSpaces, saveSpace } from '../services/apiService'
+import { getSpaces, saveSpace, getServices } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
@@ -40,6 +40,8 @@ const SpaceList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const perPage = 3
+  const [services, setServices] = useState([])
+  const [selectedServices, setSelectedServices] = useState([])
 
   const fetchSpaces = async () => {
     setLoading(true)
@@ -65,19 +67,47 @@ const SpaceList = () => {
     }
   }
 
+  const fetchServices = async () => {
+    try {
+      const servicesData = await getServices()
+      if (Array.isArray(servicesData)) {
+        setServices(servicesData)
+      } else {
+        console.error('Unexpected services data format:', servicesData)
+        setServices([])
+      }
+    } catch (err) {
+      console.error('Error fetching services:', err)
+      setServices([])
+    }
+  }
   useEffect(() => {
     if (showList) {
       fetchSpaces()
     }
+    
+    // Always fetch services regardless of view
+    fetchServices()
   }, [showList, currentPage])  
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
+    if (name.startsWith('service_')) {
+      // Handle service checkbox selection
+      const serviceId = parseInt(name.split('_')[1])
+      
+      if (checked) {
+        setSelectedServices(prev => [...prev, serviceId])
+      } else {
+        setSelectedServices(prev => prev.filter(id => id !== serviceId))
+      }
+    } else {
+      // Handle other form inputs
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === 'checkbox' ? checked : value,
+      }))
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -86,11 +116,17 @@ const SpaceList = () => {
     try {
       // Create FormData object for file uploads
       const formDataToSend = new FormData()
-      
-      // Add all text fields
+        // Add all text fields
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key])
       })
+      
+      // Add selected services
+      if (selectedServices.length > 0) {
+        selectedServices.forEach((serviceId, index) => {
+          formDataToSend.append(`services[${index}]`, serviceId)
+        })
+      }
       
       // Add all image files added individually
       if (imageEntries.length > 0) {
@@ -131,6 +167,7 @@ const SpaceList = () => {
     })
     setImageEntries([])
     setScheduleEntries([])
+    setSelectedServices([])
     setShowForm(true)
     setShowList(false)
   }
@@ -239,15 +276,15 @@ const SpaceList = () => {
       setEditingId(null)
     } else {
       setEditingId(id)
-      const spaceToEdit = spaces.find((space) => space.id === id)
-
-      // Parse the schedule string into entries
+      const spaceToEdit = spaces.find((space) => space.id === id)      // Parse the schedule string into entries
       const schedules = spaceToEdit.schedule
         ? spaceToEdit.schedule.split('|').map((schedule) => {
             const [day, startTime, endTime] = schedule.split('-')
             return { day, startTime, endTime }
           })
-        : []      // Inicializar las entradas de imagen existentes con nombres de archivo
+        : []
+      
+      // Inicializar las entradas de imagen existentes con nombres de archivo
       const imageNames = spaceToEdit.images 
         ? spaceToEdit.images.split('|').map(imagePath => {
             const fileName = imagePath.split('/').pop() // Obtener solo el nombre del archivo
@@ -266,10 +303,19 @@ const SpaceList = () => {
             
             return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
           })
-        : []
-
+        : []      
       setImageEntries(imageNames)
       setScheduleEntries(schedules)
+      
+      // Handle any existing services
+      if (spaceToEdit.services && Array.isArray(spaceToEdit.services)) {
+        const serviceIds = spaceToEdit.services.map(service => service.id)
+        setSelectedServices(serviceIds)
+      } else if (spaceToEdit.service_ids && Array.isArray(spaceToEdit.service_ids)) {
+        setSelectedServices(spaceToEdit.service_ids)
+      } else {
+        setSelectedServices([])
+      }
       
       setFormData({
         places: spaceToEdit.places,
@@ -594,64 +640,48 @@ const SpaceList = () => {
                               {t(`errors.${err}`)}
                             </span>
                           ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="description">
-                          {t('form.description.label')}
-                        </label>
-                        <textarea
-                          id="description"
-                          name="description"
-                          placeholder={t('form.description.placeholder')}
-                          value={formData.description}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.description &&
-                          Array.isArray(errors.description) &&
-                          errors.description.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="subtitle">
-                          {t('form.space.label')}
-                        </label>
-                        <input
-                          id="subtitle"
-                          name="subtitle"
-                          placeholder={t('form.space.placeholder')}
-                          value={formData.subtitle}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.subtitle &&
-                          Array.isArray(errors.subtitle) &&
-                          errors.subtitle.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="direccion">Dirección</label>
-                        <input
-                          id="direccion"
-                          name="address"
-                          placeholder="Introduce la dirección"
-                          value={formData.address}
-                          onChange={handleChange}
-                          required
-                        />
-                        {errors.address &&
-                          Array.isArray(errors.address) &&
-                          errors.address.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
+                      </div>                      <div className="form__section">
+                        <label>Servicios Disponibles</label>
+                        <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                          {services.length > 0 ? (
+                            services.map((service) => (
+                              <div key={service.id} className="service-checkbox" style={{ 
+                                border: '1px solid #ccc', 
+                                borderRadius: '5px',
+                                padding: '10px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                width: '120px'
+                              }}>
+                                <img 
+                                  src={
+                                    service.image_url.startsWith('http') 
+                                      ? service.image_url 
+                                      : `https://localhost:8443/${service.image_url}`
+                                  }
+                                  alt={service.nombre}
+                                  style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                                />
+                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                                  <input
+                                    type="checkbox"
+                                    id={`edit-service-${service.id}`}
+                                    name={`service_${service.id}`}
+                                    checked={selectedServices.includes(service.id)}
+                                    onChange={handleChange}
+                                    style={{ marginRight: '5px' }}
+                                  />
+                                  <label htmlFor={`edit-service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                                    {service.nombre}
+                                  </label>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                          )}
+                        </div>
                       </div>
                       <input
                         type="submit"
@@ -871,7 +901,49 @@ const SpaceList = () => {
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
-                  ))}
+                  ))}              </div>
+              <div className="form__section">
+                <label>Servicios Disponibles</label>
+                <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {services.length > 0 ? (
+                    services.map((service) => (
+                      <div key={service.id} className="service-checkbox" style={{ 
+                        border: '1px solid #ccc', 
+                        borderRadius: '5px',
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        width: '120px'
+                      }}>
+                        <img 
+                          src={
+                            service.image_url.startsWith('http') 
+                              ? service.image_url 
+                              : `https://localhost:8443/${service.image_url}`
+                          }
+                          alt={service.nombre}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                        />
+                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                          <input
+                            type="checkbox"
+                            id={`service-${service.id}`}
+                            name={`service_${service.id}`}
+                            checked={selectedServices.includes(service.id)}
+                            onChange={handleChange}
+                            style={{ marginRight: '5px' }}
+                          />
+                          <label htmlFor={`service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                            {service.nombre}
+                          </label>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                  )}
+                </div>
               </div>
               <div className="form__section">
                 <label htmlFor="description">
@@ -926,8 +998,50 @@ const SpaceList = () => {
                   errors.address.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
-                    </span>
-                  ))}
+                    </span>                  ))}
+              </div>
+              <div className="form__section">
+                <label>Servicios Disponibles</label>
+                <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {services.length > 0 ? (
+                    services.map((service) => (
+                      <div key={service.id} className="service-checkbox" style={{ 
+                        border: '1px solid #ccc', 
+                        borderRadius: '5px',
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        width: '120px'
+                      }}>
+                        <img 
+                          src={
+                            service.image_url.startsWith('http') 
+                              ? service.image_url 
+                              : `https://localhost:8443/${service.image_url}`
+                          }
+                          alt={service.nombre}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                        />
+                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                          <input
+                            type="checkbox"
+                            id={`service-${service.id}`}
+                            name={`service_${service.id}`}
+                            checked={selectedServices.includes(service.id)}
+                            onChange={handleChange}
+                            style={{ marginRight: '5px' }}
+                          />
+                          <label htmlFor={`service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                            {service.nombre}
+                          </label>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                  )}
+                </div>
               </div>
               <input
                 type="submit"

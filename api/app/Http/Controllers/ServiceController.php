@@ -40,15 +40,6 @@ class ServiceController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $service = Service::findOrFail($id);
-        return response()->json($service);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
