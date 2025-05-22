@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import ContactUs from '../components/ContactUs'
 import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
 import { getServices } from '../services/apiService'
+import { isAuthenticated } from '../services/authService'
 
 import pc from '../assets/img/pc.svg'
 import maps from '../assets/img/maps.svg'
@@ -65,7 +66,7 @@ const Space = () => {
       }
     }
     fetchSpace()
-  }, [])
+  }, [id])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -272,18 +273,19 @@ const Space = () => {
             </div>
             <div className="space__booking">
               <h2>{t('actions.doBookingTitle')}</h2>
-              <section className="card__container--form">
-                <article className="card--form">
-                  <form onSubmit={handleSubmit}>
-                    <div className="form__section">
-                      <label htmlFor="user_id">{t('form.user.label')}</label>
-                      <select
-                        id="user_id"
-                        name="user_id"
-                        value={formData.user_id}
-                        onChange={handleChange}
-                        required
-                      >
+              {isAuthenticated() ? (
+                <section className="card__container--form">
+                  <article className="card--form">
+                    <form onSubmit={handleSubmit}>
+                      <div className="form__section">
+                        <label htmlFor="user_id">{t('form.user.label')}</label>
+                        <select
+                          id="user_id"
+                          name="user_id"
+                          value={formData.user_id}
+                          onChange={handleChange}
+                          required
+                        >
                         <option value="">{t('form.user.placeholder')}</option>
                         {users.map((user) => (
                           <option key={user.id} value={user.id}>
@@ -514,10 +516,18 @@ const Space = () => {
                       value={t('actions.bookingsCreate')}
                       className="form__submit"
                       disabled={!formData.reservation_period}
-                    />
+                      />
                   </form>
                 </article>
               </section>
+              ) : (
+                <div className="login-message">
+                  <p>{t('form.loginRequired')}</p>
+                  <Link to="/login" className="form__submit">
+                    {t('actions.login')}
+                  </Link>
+                </div>
+              )}
             </div>
           </article>
         </section>
