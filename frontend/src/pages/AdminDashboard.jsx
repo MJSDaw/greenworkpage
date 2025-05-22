@@ -9,6 +9,7 @@ import CompletedBookingList from '../components/CompletedBookingsList'
 import AuditList from '../components/AuditList'
 import PendingPaymentList from '../components/PendingPaymentList'
 import CompletedPaymentList from '../components/CompletedPaymentList'
+import ServiceList from '../components/ServiceList'
 
 import defaultImage from '../assets/img/leonardo.svg'
 
@@ -18,7 +19,6 @@ const AdminDashboard = () => {
   const [isBackupLoading, setIsBackupLoading] = useState(false)
   const [backupMessage, setBackupMessage] = useState('')
   const [showBackupMessage, setShowBackupMessage] = useState(false)
-
   const [activeSection, setActiveSection] = useState({
     users: false,
     spaces: false,
@@ -27,6 +27,7 @@ const AdminDashboard = () => {
     completedPayments: false,
     pendingPayments: false,
     audits: false,
+    services: false,
   })
   // Iniciar con defaultImage solo si no hay imagen de usuario
   const [image, setImage] = useState(defaultImage)
@@ -79,7 +80,6 @@ const AdminDashboard = () => {
       fetchAdminData()
     }
   }, [])
-
   const toggleSection = (section) => {
     setActiveSection((prev) => ({
       users: false,
@@ -89,6 +89,7 @@ const AdminDashboard = () => {
       completedPayments: false,
       pendingPayments: false,
       audits: false,
+      services: false,
       [section]: !prev[section],
     }))
   }
@@ -186,6 +187,12 @@ const AdminDashboard = () => {
           >
             {t('links.completedBookings')}
           </button>
+          <button
+            className={`form__submit ${activeSection.services ? 'active' : ''}`}
+            onClick={() => toggleSection('services')}
+          >
+            {t('links.services')}
+          </button>
         </article>
         <article>
           <section
@@ -207,6 +214,11 @@ const AdminDashboard = () => {
             className={`dropdown__container ${activeSection.completedBookings ? 'open' : ''}`}
           >
             <CompletedBookingList />
+          </section>
+          <section
+            className={`dropdown__container ${activeSection.services ? 'open' : ''}`}
+          >
+            <ServiceList />
           </section>
         </article>
       </section>

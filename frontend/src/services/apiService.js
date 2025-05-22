@@ -348,7 +348,7 @@ export const updateBooking = async (id, bookingData) => {
  * @returns {Promise} Respuesta del servidor
  */
 export const savePayment = async (paymentData, paymentId = null) => {
-  const url = paymentId ? `/api/admin/payments/${paymentId}` : '/api/admin/payments';
+  const url = paymentId ? `/api/admin/payments/${paymentId}` : `/api/admin/payments`;
   const method = paymentId ? 'PUT' : 'POST';
   
   return baseFetch(url, method, paymentData);
@@ -457,12 +457,94 @@ export const createBackup = async () => {
  * Obtiene la lista de servicios disponibles
  * @returns {Promise} Lista de servicios
  */
-export const getServices = async () => {
+export const getServices = async (page = 1, perPage = 3) => {
   try {
-    const response = await baseFetch('/api/services', 'GET', null, {}, true);
-    return response;
+    const response = await baseFetch(`/api/services?page=${page}&per_page=${perPage}`, 'GET', null, {}, true);
+    // Handle different response formats
+    if (response && typeof response === 'object') {
+      if (response.data && response.data.data) {
+        // This is the paginated response structure
+        return response.data;
+      } else if (Array.isArray(response)) {
+        return { data: response, last_page: 1, current_page: 1 };
+      } else if (Array.isArray(response.data)) {
+        return { data: response.data, last_page: 1, current_page: 1 };
+      }
+    }
+    return { data: [], last_page: 1, current_page: 1 };
   } catch (error) {
     console.error('Error fetching services:', error);
-    return [];
+    return { data: [], last_page: 1, current_page: 1 };
+  }
+};
+
+/**
+ * Crea un nuevo servicio
+ * @param {FormData} serviceData - Datos del servicio (incluido el archivo de imagen)
+ * @param {Boolean} isFormData - Indica si los datos son FormData (para subir archivos)
+ * @returns {Promise} Respuesta del servidor
+ */
+export const createService = async (serviceData, isFormData = false) => {
+  return baseFetch('/api/admin/services', 'POST', serviceData, {}, true, isFormData);
+};
+
+/**
+ * Actualiza un servicio existente
+ * @param {Number} serviceId - ID del servicio a actualizar
+ * @param {FormData|Object} serviceData - Datos del servicio (incluido el archivo de imagen)
+ * @param {Boolean} isFormData - Indica si los datos son FormData (para subir archivos)
+ * @returns {Promise} Respuesta del servidor
+ */
+export const updateService = async (serviceId, serviceData, isFormData = false) => {
+  // Si es FormData, necesitamos agregar el método _method para simular PUT
+  if (isFormData) {
+    serviceData.append('_method', 'PUT');
+    return baseFetch(`/api/admin/services/${serviceId}`, 'POST', serviceData, {}, true, true);
+  }
+  return baseFetch(`/api/admin/services/${serviceId}`, 'PUT', serviceData, {}, true, isFormData);
+};
+
+/**
+ * Elimina un servicio
+ * @param {Number} serviceId - ID del servicio a eliminar
+ * @returns {Promise} Respuesta del servidor
+ */
+export const deleteService = async (serviceId) => {
+  return baseFetch(`/api/admin/services/${serviceId}`, 'DELETE');
+};
+
+/**
+ * Guardar o actualizar un servicio
+ * @param {Object} serviceData - Datos del servicio
+ * @param {number|null} id - ID del servicio a editar (null si es nuevo)
+ * @returns {Promise} Resultado de la operación
+ */
+export const saveService = async (serviceData, id = null) => {
+  try {
+    const url = id 
+      ? `/api/services/${id}` 
+      : '/api/services';
+    
+    const method = id ? 'PUT' : 'POST';
+    
+    const response = await baseFetch(
+      url,
+      method,
+      serviceData,
+      {},
+      true,
+      false
+    );
+    
+    return {
+      success: true,
+      data: response
+    };
+  } catch (error) {
+    console.error('Error saving service:', error);
+    return {
+      success: false,
+      errors: error.errors || { general: 'Error al guardar el servicio' }
+    };
   }
 };
