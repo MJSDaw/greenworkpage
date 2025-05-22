@@ -50,7 +50,9 @@
     "greenwork1": "Greenwork 1",
     "greenwork2": "Greenwork 2",
     "greenwork3": "Greenwork 3",
-    "dashboardImg": "Usuario {{id}}"
+    "dashboardImg": "Usuario {{id}}",
+    "location": "Icono de ubicación",
+    "phone": "Icono de teléfono"
   },
   "common": {
     "github": "Logo de Github",
@@ -97,7 +99,11 @@
     "user": "Usuario",
     "action": "Acción",
     "table": "Tabla",
-    "features": "Características"
+    "features": "Características",
+    "maps": "Ubicación",
+    "location": "Localización",
+    "phone": "Teléfono",
+    "profile": "Perfil"
   },
   "links": {
     "home": "Inicio",

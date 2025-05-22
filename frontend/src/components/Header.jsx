@@ -150,6 +150,7 @@ const Header = () => {
                     src={userImage}
                     className="nav__button--user__img"
                     alt={t('alt.userProfile')}
+                    title={t('common.profile')}
                     onError={(e) => {
                       // Si hay un error al cargar la imagen, usar la predeterminada
                       e.target.onerror = null
