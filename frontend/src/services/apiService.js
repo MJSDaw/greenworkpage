@@ -204,7 +204,7 @@ export const updateAdminImage = async (adminId, imageFile) => {
  * @returns {Promise} Lista de espacios
  */
 export const getSpaces = async () => {
-  return baseFetch('/api/spaces', 'GET');
+  return baseFetch('/api/spaces', 'GET', null, {}, false);
 };
 
 /**
