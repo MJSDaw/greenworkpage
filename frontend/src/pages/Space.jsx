@@ -5,7 +5,7 @@ import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
 import { getServices } from '../services/apiService'
-import { isAuthenticated } from '../services/authService'
+import { isAuthenticated, getUserType } from '../services/authService'
 
 import pc from '../assets/img/pc.svg'
 import maps from '../assets/img/maps.svg'
@@ -17,6 +17,7 @@ const Space = () => {
   const [space, setSpace] = useState([])
   const [loading, setLoading] = useState(true)
   const [services, setServices] = useState([])
+  const [isUser, setIsUser] = useState(false)
   const [formData, setFormData] = useState({
     user_id: '',
     space_id: '',
@@ -30,6 +31,11 @@ const Space = () => {
   const [errors, setErrors] = useState({})
   const [spaces, setSpaces] = useState([])
   const [selectedSpace, setSelectedSpace] = useState(null)
+
+  useEffect(() => {
+    const userType = getUserType();
+    setIsUser(isAuthenticated() && userType === 'user');
+  }, []);
 
   useEffect(() => {
     const fetchSpace = async () => {
@@ -274,175 +280,136 @@ const Space = () => {
             <div className="space__booking">
               <h2>{t('actions.doBookingTitle')}</h2>
               {isAuthenticated() ? (
-                <section className="card__container--form">
-                  <article className="card--form">
-                    <form onSubmit={handleSubmit}>
-                      <div className="form__section">
-                        <label htmlFor="user_id">{t('form.user.label')}</label>
-                        <select
-                          id="user_id"
-                          name="user_id"
-                          value={formData.user_id}
-                          onChange={handleChange}
-                          required
-                        >
-                        <option value="">{t('form.user.placeholder')}</option>
-                        {users.map((user) => (
-                          <option key={user.id} value={user.id}>
-                            {user.email}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.user_id &&
-                        Array.isArray(errors.user_id) &&
-                        errors.user_id.map((err, idx) => (
-                          <span className="form__error" key={idx}>
-                            {t(`errors.${err}`)}
-                          </span>
-                        ))}
-                    </div>
-                    <div className="form__section">
-                      <label htmlFor="space_id">{t('form.space.label')}</label>
-                      <select
-                        id="space_id"
-                        name="space_id"
-                        value={formData.space_id}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">{t('form.space.placeholder')}</option>
-                        {spaces.map((space) => (
-                          <option key={space.id} value={space.id}>
-                            {space.subtitle} ({space.price}€ - {space.places}{' '}
-                            {t('form.seats.label')})
-                          </option>
-                        ))}
-                      </select>
-                      {errors.space_id &&
-                        Array.isArray(errors.space_id) &&
-                        errors.space_id.map((err, idx) => (
-                          <span className="form__error" key={idx}>
-                            {t(`errors.${err}`)}
-                          </span>
-                        ))}
-                    </div>
-                    {selectedSpace && (
-                      <div className="form__section">
-                        <label>{t('form.spaceAvailability.label')}</label>
-                        <div className="schedule-display">
-                          {parseSpaceSchedule(selectedSpace.schedule)
-                            .sort((a, b) => {
-                              const dayOrder = {
-                                monday: 1,
-                                tuesday: 2,
-                                wednesday: 3,
-                                thursday: 4,
-                                friday: 5,
-                              }
-                              if (dayOrder[a.day] !== dayOrder[b.day]) {
-                                return dayOrder[a.day] - dayOrder[b.day]
-                              }
-                              return a.start.localeCompare(b.start)
-                            })
-                            .map((schedule, index) => (
-                              <p key={index}>
-                                {t(`form.days.${schedule.day.toLowerCase()}`)}:{' '}
-                                {schedule.start} - {schedule.end}
-                              </p>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                    {formData.space_id && (
-                      <div className="form__section">
-                        <label htmlFor="selected_date">
-                          {t('form.date.label')}
-                        </label>
-                        <input
-                          id="selected_date"
-                          name="selected_date"
-                          type="date"
-                          value={formData.selected_date}
-                          onChange={handleChange}
-                          min={new Date().toISOString().split('T')[0]}
-                          required
-                        />
-                        {errors.selected_date &&
-                          Array.isArray(errors.selected_date) &&
-                          errors.selected_date.map((err, idx) => (
+                isUser ? (
+                  <section className="card__container--form">
+                    <article className="card--form">
+                      <form onSubmit={handleSubmit}>
+                        <div className="form__section">
+                          <label htmlFor="user_id">{t('form.user.label')}</label>
+                          <select
+                            id="user_id"
+                            name="user_id"
+                            value={formData.user_id}
+                            onChange={handleChange}
+                            required
+                          >
+                          <option value="">{t('form.user.placeholder')}</option>
+                          {users.map((user) => (
+                            <option key={user.id} value={user.id}>
+                              {user.email}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.user_id &&
+                          Array.isArray(errors.user_id) &&
+                          errors.user_id.map((err, idx) => (
                             <span className="form__error" key={idx}>
                               {t(`errors.${err}`)}
                             </span>
                           ))}
                       </div>
-                    )}{' '}
-                    {formData.selected_date &&
-                      availableSchedules.length > 0 && (
-                        <>
-                          <div className="form__section">
-                            <label>{t('form.date.available')}: </label>
-                            <div className="schedule-display">
-                              {availableSchedules.map((range, index) => (
+                      <div className="form__section">
+                        <label htmlFor="space_id">{t('form.space.label')}</label>
+                        <select
+                          id="space_id"
+                          name="space_id"
+                          value={formData.space_id}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="">{t('form.space.placeholder')}</option>
+                          {spaces.map((space) => (
+                            <option key={space.id} value={space.id}>
+                              {space.subtitle} ({space.price}€ - {space.places}{' '}
+                              {t('form.seats.label')})
+                            </option>
+                          ))}
+                        </select>
+                        {errors.space_id &&
+                          Array.isArray(errors.space_id) &&
+                          errors.space_id.map((err, idx) => (
+                            <span className="form__error" key={idx}>
+                              {t(`errors.${err}`)}
+                            </span>
+                          ))}
+                      </div>
+                      {selectedSpace && (
+                        <div className="form__section">
+                          <label>{t('form.spaceAvailability.label')}</label>
+                          <div className="schedule-display">
+                            {parseSpaceSchedule(selectedSpace.schedule)
+                              .sort((a, b) => {
+                                const dayOrder = {
+                                  monday: 1,
+                                  tuesday: 2,
+                                  wednesday: 3,
+                                  thursday: 4,
+                                  friday: 5,
+                                }
+                                if (dayOrder[a.day] !== dayOrder[b.day]) {
+                                  return dayOrder[a.day] - dayOrder[b.day]
+                                }
+                                return a.start.localeCompare(b.start)
+                              })
+                              .map((schedule, index) => (
                                 <p key={index}>
-                                  {range.start} - {range.end}
+                                  {t(`form.days.${schedule.day.toLowerCase()}`)}:{' '}
+                                  {schedule.start} - {schedule.end}
                                 </p>
                               ))}
-                            </div>
                           </div>
-                          <div className="form__section">
-                            <label htmlFor="start_time">
-                              {t('form.time.startTime')}: 
-                            </label>
-                            <select
-                              id="start_time"
-                              name="start_time"
-                              value={formData.start_time || ''}
-                              onChange={handleChange}
-                              required
-                            >
-                              <option value="">
-                                {t('form.time.selectStartTime')}
-                              </option>
-                              {parseSpaceSchedule(selectedSpace.schedule)
-                                .filter(
-                                  (s) =>
-                                    s.day ===
-                                    getDayOfWeek(formData.selected_date)
-                                )
-                                .map((schedule, index) => {
-                                  const startMinutes = timeToMinutes(
-                                    schedule.start
-                                  )
-                                  const endMinutes = timeToMinutes(schedule.end)
-                                  const options = []
-                                  for (
-                                    let time = startMinutes;
-                                    time < endMinutes;
-                                    time += 60
-                                  ) {
-                                    const timeStr = minutesToTime(time)
-                                    options.push(
-                                      <option key={timeStr} value={timeStr}>
-                                        {timeStr}
-                                      </option>
-                                    )
-                                  }
-                                  return options
-                                })}
-                            </select>
-                          </div>
-
-                          {formData.start_time && (
+                        </div>
+                      )}
+                      {formData.space_id && (
+                        <div className="form__section">
+                          <label htmlFor="selected_date">
+                            {t('form.date.label')}
+                          </label>
+                          <input
+                            id="selected_date"
+                            name="selected_date"
+                            type="date"
+                            value={formData.selected_date}
+                            onChange={handleChange}
+                            min={new Date().toISOString().split('T')[0]}
+                            required
+                          />
+                          {errors.selected_date &&
+                            Array.isArray(errors.selected_date) &&
+                            errors.selected_date.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>
+                      )}{' '}
+                      {formData.selected_date &&
+                        availableSchedules.length > 0 && (
+                          <>
                             <div className="form__section">
-                              <label htmlFor="end_time">Hora de fin:</label>
+                              <label>{t('form.date.available')}: </label>
+                              <div className="schedule-display">
+                                {availableSchedules.map((range, index) => (
+                                  <p key={index}>
+                                    {range.start} - {range.end}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="form__section">
+                              <label htmlFor="start_time">
+                                {t('form.time.startTime')}: 
+                              </label>
                               <select
-                                id="end_time"
-                                name="end_time"
-                                value={formData.end_time || ''}
+                                id="start_time"
+                                name="start_time"
+                                value={formData.start_time || ''}
                                 onChange={handleChange}
                                 required
                               >
-                                <option value="">Selecciona hora de fin</option>
+                                <option value="">
+                                  {t('form.time.selectStartTime')}
+                                </option>
                                 {parseSpaceSchedule(selectedSpace.schedule)
                                   .filter(
                                     (s) =>
@@ -450,76 +417,121 @@ const Space = () => {
                                       getDayOfWeek(formData.selected_date)
                                   )
                                   .map((schedule, index) => {
-                                    if (
-                                      timeToMinutes(schedule.start) <=
-                                        timeToMinutes(formData.start_time) &&
-                                      timeToMinutes(schedule.end) >
-                                        timeToMinutes(formData.start_time)
+                                    const startMinutes = timeToMinutes(
+                                      schedule.start
+                                    )
+                                    const endMinutes = timeToMinutes(schedule.end)
+                                    const options = []
+                                    for (
+                                      let time = startMinutes;
+                                      time < endMinutes;
+                                      time += 60
                                     ) {
-                                      const startMinutes =
-                                        timeToMinutes(formData.start_time) + 60
-                                      const endMinutes = timeToMinutes(
-                                        schedule.end
+                                      const timeStr = minutesToTime(time)
+                                      options.push(
+                                        <option key={timeStr} value={timeStr}>
+                                          {timeStr}
+                                        </option>
                                       )
-                                      const options = []
-                                      for (
-                                        let time = startMinutes;
-                                        time <= endMinutes;
-                                        time += 60
-                                      ) {
-                                        const timeStr = minutesToTime(time)
-                                        options.push(
-                                          <option key={timeStr} value={timeStr}>
-                                            {timeStr}
-                                          </option>
-                                        )
-                                      }
-                                      return options
                                     }
-                                    return null
+                                    return options
                                   })}
                               </select>
                             </div>
-                          )}
-                        </>
-                      )}
-                    {formData.selected_date &&
-                      availableSchedules.length === 0 && (
-                        <div className="form__section">
-                          <p className="form__error">{t('form.date.noSlot')}</p>
-                          {existingBookings
-                            .filter(
-                              (b) =>
-                                b.space_id === formData.space_id &&
-                                b.reservation_period.includes(
-                                  formData.selected_date
-                                )
-                            )
-                            .map((booking, index) => (
-                              <p key={index} className="booking-info">
-                                Reserved:{' '}
-                                {booking.reservation_period.split(' ')[1]} -{' '}
-                                {booking.reservation_period.split(' ')[3]}
-                              </p>
-                            ))}
-                        </div>
-                      )}
-                    {errors.form &&
-                      Array.isArray(errors.form) &&
-                      errors.form.map((err, idx) => (
-                        <span className="form__error" key={idx}>
-                          {t(`errors.${err}`)}
-                        </span>
-                      ))}
-                    <input
-                      type="submit"
-                      value={t('actions.bookingsCreate')}
-                      className="form__submit"
-                      disabled={!formData.reservation_period}
-                      />
-                  </form>
-                </article>
-              </section>
+
+                            {formData.start_time && (
+                              <div className="form__section">
+                                <label htmlFor="end_time">Hora de fin:</label>
+                                <select
+                                  id="end_time"
+                                  name="end_time"
+                                  value={formData.end_time || ''}
+                                  onChange={handleChange}
+                                  required
+                                >
+                                  <option value="">Selecciona hora de fin</option>
+                                  {parseSpaceSchedule(selectedSpace.schedule)
+                                    .filter(
+                                      (s) =>
+                                        s.day ===
+                                        getDayOfWeek(formData.selected_date)
+                                    )
+                                    .map((schedule, index) => {
+                                      if (
+                                        timeToMinutes(schedule.start) <=
+                                          timeToMinutes(formData.start_time) &&
+                                        timeToMinutes(schedule.end) >
+                                          timeToMinutes(formData.start_time)
+                                      ) {
+                                        const startMinutes =
+                                          timeToMinutes(formData.start_time) + 60
+                                        const endMinutes = timeToMinutes(
+                                          schedule.end
+                                        )
+                                        const options = []
+                                        for (
+                                          let time = startMinutes;
+                                          time <= endMinutes;
+                                          time += 60
+                                        ) {
+                                          const timeStr = minutesToTime(time)
+                                          options.push(
+                                            <option key={timeStr} value={timeStr}>
+                                              {timeStr}
+                                            </option>
+                                          )
+                                        }
+                                        return options
+                                      }
+                                      return null
+                                    })}
+                                </select>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      {formData.selected_date &&
+                        availableSchedules.length === 0 && (
+                          <div className="form__section">
+                            <p className="form__error">{t('form.date.noSlot')}</p>
+                            {existingBookings
+                              .filter(
+                                (b) =>
+                                  b.space_id === formData.space_id &&
+                                  b.reservation_period.includes(
+                                    formData.selected_date
+                                  )
+                              )
+                              .map((booking, index) => (
+                                <p key={index} className="booking-info">
+                                  Reserved:{' '}
+                                  {booking.reservation_period.split(' ')[1]} -{' '}
+                                  {booking.reservation_period.split(' ')[3]}
+                                </p>
+                              ))}
+                          </div>
+                        )}
+                      {errors.form &&
+                        Array.isArray(errors.form) &&
+                        errors.form.map((err, idx) => (
+                          <span className="form__error" key={idx}>
+                            {t(`errors.${err}`)}
+                          </span>
+                        ))}
+                      <input
+                        type="submit"
+                        value={t('actions.bookingsCreate')}
+                        className="form__submit"
+                        disabled={!formData.reservation_period}
+                        />
+                    </form>
+                  </article>
+                </section>
+                ) : (
+                  <div className="login-message">
+                    <p>{t('form.adminNoBooking')}</p>
+                  </div>
+                )
               ) : (
                 <div className="login-message">
                   <p>{t('form.loginRequired')}</p>
