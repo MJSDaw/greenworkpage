@@ -39,7 +39,7 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|unique:services,nombre',
+            'name' => 'required|string|unique:services,name',
             'image' => 'required|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
         ]);
 
@@ -52,7 +52,7 @@ class ServiceController extends Controller
             $path = $request->file('image')->store('services', 'public');
             
             $service = Service::create([
-                'nombre' => $request->nombre,
+                'name' => $request->name,
                 'image_url' => $path,
             ]);
 
@@ -88,7 +88,7 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
         
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|unique:services,nombre,'.$id,
+            'name' => 'required|string|unique:services,name,'.$id,
             'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -97,7 +97,7 @@ class ServiceController extends Controller
         }
 
         try {
-            $updateData = ['nombre' => $request->nombre];
+            $updateData = ['name' => $request->name];
 
             // If a new image is uploaded
             if ($request->hasFile('image')) {
