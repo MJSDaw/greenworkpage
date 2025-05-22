@@ -22,6 +22,7 @@ class Space extends Model
         'description',
         'subtitle',
         'address',
+        'services',
     ];
 
     /**
