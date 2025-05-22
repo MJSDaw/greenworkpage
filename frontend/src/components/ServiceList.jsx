@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getServices, createService, updateService, deleteService } from '../services/apiService'
+import {
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+} from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
@@ -15,7 +20,7 @@ const ServiceList = () => {
   // State for handling individual image uploads
   const [imageForm, setImageForm] = useState({
     file: null,
-    fileName: ''
+    fileName: '',
   })
 
   const [showForm, setShowForm] = useState(false)
@@ -73,7 +78,7 @@ const ServiceList = () => {
     if (file) {
       setImageForm({
         file: file,
-        fileName: file.name
+        fileName: file.name,
       })
 
       // Read and display the image preview
@@ -81,7 +86,7 @@ const ServiceList = () => {
       reader.onloadend = () => {
         setFormData({
           ...formData,
-          image_url: reader.result // This will be used only for preview
+          image_url: reader.result, // This will be used only for preview
         })
       }
       reader.readAsDataURL(file)
@@ -94,12 +99,16 @@ const ServiceList = () => {
     // Validate the form
     let formErrors = {}
     if (!formData.nombre.trim()) {
-      formErrors.nombre = t('validation.required', { field: t('form.name.label') })
+      formErrors.nombre = t('validation.required', {
+        field: t('form.name.label'),
+      })
     }
 
     // Check for image when creating new service
     if (!imageForm.file && !editingId) {
-      formErrors.image = t('validation.required', { field: t('form.image.label') })
+      formErrors.image = t('validation.required', {
+        field: t('form.image.label'),
+      })
     }
 
     if (Object.keys(formErrors).length > 0) {
@@ -108,7 +117,8 @@ const ServiceList = () => {
     }
 
     setLoading(true)
-      try {      // Create FormData for sending both the image file and other data
+    try {
+      // Create FormData for sending both the image file and other data
       const serviceData = new FormData()
 
       // Always append nombre
@@ -120,7 +130,7 @@ const ServiceList = () => {
       if (imageForm.file) {
         serviceData.append('image', imageForm.file)
       }
-        if (editingId) {
+      if (editingId) {
         await updateService(editingId, serviceData, true) // true para indicar que es FormData
       } else {
         await createService(serviceData, true) // true para indicar que es FormData
@@ -133,7 +143,7 @@ const ServiceList = () => {
       })
       setImageForm({
         file: null,
-        fileName: ''
+        fileName: '',
       })
       setShowForm(false)
       setShowList(true)
@@ -160,7 +170,7 @@ const ServiceList = () => {
     })
     setImageForm({
       file: null,
-      fileName: ''
+      fileName: '',
     })
     setEditingId(null)
   }
@@ -174,7 +184,7 @@ const ServiceList = () => {
   }
 
   const [editingId, setEditingId] = useState(null)
-    const handleEditClick = (id) => {
+  const handleEditClick = (id) => {
     const serviceToEdit = services.find((service) => service.id === id)
     if (serviceToEdit) {
       setFormData({
@@ -206,10 +216,10 @@ const ServiceList = () => {
       <h3>{t('links.services')}</h3>
       <div className="user__buttons">
         <button className="form__submit --noArrow" onClick={handleShowList}>
-          {t('actions.servicesRead', 'Ver Servicios')}
+          {t('actions.servicesRead')}
         </button>
         <button className="form__submit --noArrow" onClick={handleShowForm}>
-          {t('actions.servicesCreate', 'Crear Servicio')}
+          {t('actions.servicesCreate')}
         </button>
       </div>
       {showList && (
@@ -235,12 +245,14 @@ const ServiceList = () => {
                     </div>
                     <div className="card__text">
                       <p>
-                        <span className="span--bold">{t('form.name.label')}: </span>
+                        <span className="span--bold">
+                          {t('form.name.label')}:{' '}
+                        </span>
                         {service.nombre}
                       </p>
                     </div>
                     <div className="card__actions">
-                        <button
+                      <button
                         className="button button--small"
                         onClick={() => handleEditClick(service.id)}
                       >
@@ -275,7 +287,9 @@ const ServiceList = () => {
                 {currentPage} / {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 <img src={arrow} className="arrow--right" />
@@ -289,9 +303,13 @@ const ServiceList = () => {
             </div>
           )}
         </div>
-      )}      {showForm && (
+      )}{' '}
+      
+      {showForm && (
         <div className="admin__container">
-          <h4>{editingId ? t('common.editService') : t('common.addService')}</h4>
+          <h4>
+            {editingId ? t('common.editService') : t('common.addService')}
+          </h4>
           <form onSubmit={handleSubmit} className="form">
             <div className="form__group">
               <label htmlFor="nombre">{t('form.name.label')}:</label>
@@ -303,9 +321,11 @@ const ServiceList = () => {
                 onChange={handleChange}
                 className={errors.nombre ? 'input--error' : ''}
               />
-              {errors.nombre && <p className="error-message">{errors.nombre}</p>}
+              {errors.nombre && (
+                <p className="error-message">{errors.nombre}</p>
+              )}
             </div>
-              <div className="form__group">
+            <div className="form__group">
               <label htmlFor="image">{t('form.image.label')}:</label>
               <input
                 type="file"
@@ -331,11 +351,7 @@ const ServiceList = () => {
             )}
 
             <div className="form__group">
-              <button
-                type="submit"
-                className="button"
-                disabled={loading}
-              >
+              <button type="submit" className="button" disabled={loading}>
                 {loading ? t('buttons.saving') : t('buttons.save')}
               </button>
             </div>
