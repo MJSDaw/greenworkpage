@@ -42,12 +42,11 @@ const SpaceList = () => {
   const perPage = 3
   const [services, setServices] = useState([])
   const [selectedServices, setSelectedServices] = useState([])
-
-  const fetchSpaces = async () => {
+  const fetchSpaces = async (page = currentPage) => {
     setLoading(true)
     setError(null)
     try {
-      const response = await getSpaces()
+      const response = await getSpaces(page, perPage)
       // Check if the data is paginated and extract the spaces from the "data" property
       if (
         response &&
@@ -56,6 +55,7 @@ const SpaceList = () => {
       ) {
         setSpaces(response.data) // Set only the spaces array from the paginated data
         setTotalPages(response.last_page || 1) // Set total pages from the pagination metadata
+        setCurrentPage(response.current_page || page) // Update current page from response
       } else if (Array.isArray(response)) {
         setSpaces(response) // Fallback to the original behavior if data is not paginated
         setTotalPages(1)
@@ -88,16 +88,15 @@ const SpaceList = () => {
       setServices([])
     }
   }
-
   useEffect(() => {
     if (showForm || showList) {
-      fetchSpaces()
+      fetchSpaces(currentPage)
     }
     // Cargar servicios cuando se muestra el formulario
     if (showForm) {
       fetchServices()
     }
-  }, [showForm, showList])
+  }, [showForm, showList, currentPage])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
