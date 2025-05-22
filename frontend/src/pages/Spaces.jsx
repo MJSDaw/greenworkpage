@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -7,10 +7,12 @@ import coworking1 from '../assets/img/coworking1.webp'
 import coworking2 from '../assets/img/coworking2.webp'
 import coworking3 from '../assets/img/coworking3.webp'
 import { useTranslation } from 'react-i18next'
+import SpaceCard from '../components/SpaceCard'
+import prueba from '../assets/img/pruebas.webp'
 
 const Spaces = () => {
   const { t } = useTranslation()
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false)
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -23,12 +25,12 @@ const Spaces = () => {
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 1500);
-    };
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
+      setIsMobile(window.innerWidth <= 1500)
+    }
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
 
   const slides = [
     {
@@ -90,16 +92,74 @@ const Spaces = () => {
       top: '-5rem',
       width: '106%',
       left: '-1rem',
-    }
+    },
+    gridBox: {
+      display: 'grid',
+      gap: '3rem',
+      padding: '2rem',
+      maxWidth: '100%',
+      margin: '0 auto',
+    },
+    gridPc: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    gridMb: {
+      gridTemplateColumns: 'repeat(1, 1fr)',
+    },
+    containerPc: {
+      margin: '0 20rem',
+    },
+    containerMb: {
+      margin: '0 2rem',
+    },
   }
+
+  const spaces = [
+    {
+      id: 1,
+      src: prueba,
+      subtitle: 'Oficina Privada',
+      amount: '12',
+      maps: 'Direccion, 31',
+      seats: '20',
+      link: '',
+    },
+    {
+      id: 2,
+      src: prueba,
+      subtitle: 'Oficina Privada',
+      amount: '12',
+      maps: 'Direccion, 31',
+      seats: '20',
+      link: '',
+    },
+    {
+      id: 3,
+      src: prueba,
+      subtitle: 'Oficina Privada',
+      amount: '12',
+      maps: 'Direccion, 31',
+      seats: '20',
+      link: '',
+    },
+    {
+      id: 4,
+      src: prueba,
+      subtitle: 'Oficina Privada',
+      amount: '12',
+      maps: 'Direccion, 31',
+      seats: '20',
+      link: '',
+    },
+  ]
 
   return (
     <div style={{ overflowX: 'hidden' }}>
       <div
         style={{
-                    ...styles.bgBox,
-                    ...(isMobile ? styles.bgMb : styles.bgPc),
-                  }}
+          ...styles.bgBox,
+          ...(isMobile ? styles.bgMb : styles.bgPc),
+        }}
       >
         <Slider {...sliderSettings}>
           {slides.map((slide) => (
@@ -124,7 +184,8 @@ const Spaces = () => {
                   </h2>
                   <p>
                     {slide.description1}
-                    <br /><br />
+                    <br />
+                    <br />
                     {slide.description2}
                   </p>
                 </div>
@@ -133,7 +194,26 @@ const Spaces = () => {
           ))}
         </Slider>
       </div>
-      <h1>SPACES</h1>
+      <section
+        style={{
+          ...styles.containerBox,
+          ...(isMobile ? styles.containerMb : styles.containerPc),
+        }}
+      >
+        <h1>{t('common.ourSpaces')}</h1>
+        <article
+          style={{
+            ...styles.gridBox,
+            ...(isMobile ? styles.gridMb : styles.gridPc),
+          }}
+        >
+          {spaces.map((space) => (
+            <div key={space.id}>
+              <SpaceCard {...space} />
+            </div>
+          ))}
+        </article>
+      </section>
       <ContactUs />
     </div>
   )
