@@ -35,7 +35,9 @@ class SpaceController extends Controller
             'places' => 'required|integer',
             'price' => 'required|numeric',
             'schedule' => 'required|string',
-            'images' => 'required|string',
+            'imageFiles' => 'sometimes|array',
+            'imageFiles.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'sometimes|string',
             'description' => 'required|string',
             'subtitle' => 'required|string',
         ]);
@@ -48,7 +50,19 @@ class SpaceController extends Controller
             ], 422);
         }
 
-        $space = Space::create($request->all());
+        $spaceData = $request->except('imageFiles');
+        
+        // Handle image uploads
+        if ($request->hasFile('imageFiles')) {
+            $imagePaths = [];
+            foreach ($request->file('imageFiles') as $image) {
+                $path = $image->store('spaces', 'public');
+                $imagePaths[] = $path;
+            }
+            $spaceData['images'] = implode('|', $imagePaths);
+        }
+
+        $space = Space::create($spaceData);
 
         // Register the action in the audit
         AuditController::registerAudit(
@@ -95,7 +109,9 @@ class SpaceController extends Controller
             'places' => 'required|integer',
             'price' => 'required|numeric',
             'schedule' => 'required|string',
-            'images' => 'required|string',
+            'imageFiles' => 'sometimes|array',
+            'imageFiles.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'sometimes|string',
             'description' => 'required|string',
             'subtitle' => 'required|string',
         ]);
@@ -113,7 +129,19 @@ class SpaceController extends Controller
         // Save original values for audit
         $oldValues = $space->toArray();
         
-        $space->update($request->all());
+        $spaceData = $request->except('imageFiles');
+        
+        // Handle image uploads
+        if ($request->hasFile('imageFiles')) {
+            $imagePaths = [];
+            foreach ($request->file('imageFiles') as $image) {
+                $path = $image->store('spaces', 'public');
+                $imagePaths[] = $path;
+            }
+            $spaceData['images'] = implode('|', $imagePaths);
+        }
+        
+        $space->update($spaceData);
         
         // Register the action in the audit
         AuditController::registerAudit(

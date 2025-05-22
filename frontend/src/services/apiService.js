@@ -209,15 +209,22 @@ export const getSpaces = async () => {
 
 /**
  * Guarda o actualiza un espacio
- * @param {Object} spaceData - Datos del espacio
+ * @param {Object|FormData} spaceData - Datos del espacio
  * @param {Number|null} spaceId - ID del espacio (null para crear nuevo)
+ * @param {Boolean} isFormData - Indica si los datos son FormData (para subir archivos)
  * @returns {Promise} Respuesta del servidor
  */
-export const saveSpace = async (spaceData, spaceId = null) => {
+export const saveSpace = async (spaceData, spaceId = null, isFormData = false) => {
   const url = spaceId ? `/api/admin/spaces/${spaceId}` : '/api/admin/spaces';
   const method = spaceId ? 'PUT' : 'POST';
   
-  return baseFetch(url, method, spaceData);
+  // Si es PUT pero tenemos FormData, necesitamos agregar el método _method
+  if (isFormData && method === 'PUT') {
+    spaceData.append('_method', 'PUT');
+    return baseFetch(url, 'POST', spaceData, {}, true, true);
+  }
+  
+  return baseFetch(url, method, spaceData, {}, true, isFormData);
 };
 
 // ==================== Reservas ====================

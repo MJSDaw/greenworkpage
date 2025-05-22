@@ -15,7 +15,6 @@ const SpaceList = () => {
     startTime: '',
     endTime: '',
   })
-
   const [formData, setFormData] = useState({
     places: '',
     price: '',
@@ -23,6 +22,13 @@ const SpaceList = () => {
     images: '',
     description: '',
     subtitle: '',
+  })
+  
+  // Nuevo estado para manejar las imágenes individuales
+  const [imageEntries, setImageEntries] = useState([])
+  const [imageForm, setImageForm] = useState({
+    file: null,
+    fileName: ''
   })
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
@@ -62,10 +68,11 @@ const SpaceList = () => {
     if (showList) {
       fetchSpaces()
     }
-  }, [showList, currentPage])
+  }, [showList, currentPage])  
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
+    
     setFormData((prevData) => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
@@ -74,8 +81,24 @@ const SpaceList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
     try {
-      const data = await saveSpace(formData, editingId)
+      // Create FormData object for file uploads
+      const formDataToSend = new FormData()
+      
+      // Add all text fields
+      Object.keys(formData).forEach(key => {
+        formDataToSend.append(key, formData[key])
+      })
+      
+      // Add all image files added individually
+      if (imageEntries.length > 0) {
+        imageEntries.forEach((entry, index) => {
+          formDataToSend.append(`imageFiles[${index}]`, entry.file)
+        })
+      }
+
+      const data = await saveSpace(formDataToSend, editingId, true) // true para indicar que es FormData
 
       if (data && data.status === 'success') {
         if (editingId) {
@@ -94,8 +117,18 @@ const SpaceList = () => {
       setErrors(error.errors || {})
     }
   }
-
   const handleShowForm = () => {
+    // Limpiar formulario y reset estados
+    setFormData({
+      places: '',
+      price: '',
+      schedule: '',
+      images: '',
+      description: '',
+      subtitle: '',
+    })
+    setImageEntries([])
+    setScheduleEntries([])
     setShowForm(true)
     setShowList(false)
   }
@@ -103,6 +136,8 @@ const SpaceList = () => {
   const handleShowList = () => {
     setShowForm(false)
     setShowList(true)
+    // Limpiar el estado de edición si hay alguno activo
+    setEditingId(null)
   }
 
   // Schedule validation and handling functions
@@ -196,8 +231,7 @@ const SpaceList = () => {
     }))
   }
 
-  const [editingId, setEditingId] = useState(null)
-  // TODO: usalo para cargar el resto de atributos pertinentes
+  const [editingId, setEditingId] = useState(null);
   const handleEditClick = (id) => {
     if (editingId === id) {
       setEditingId(null)
@@ -211,9 +245,30 @@ const SpaceList = () => {
             const [day, startTime, endTime] = schedule.split('-')
             return { day, startTime, endTime }
           })
+        : []      // Inicializar las entradas de imagen existentes con nombres de archivo
+      const imageNames = spaceToEdit.images 
+        ? spaceToEdit.images.split('|').map(imagePath => {
+            const fileName = imagePath.split('/').pop() // Obtener solo el nombre del archivo
+              // Construir la URL completa para la vista previa apuntando al puerto 8443
+            let fullPath = '';
+            if (imagePath.startsWith('http')) {
+              // Ya es una URL completa
+              fullPath = imagePath;
+            } else if (imagePath.startsWith('storage/')) {
+              // Ruta relativa desde la raíz
+              fullPath = `https://localhost:8443/${imagePath}`;
+            } else {
+              // Otras rutas (asumiendo que están en storage)
+              fullPath = `https://localhost:8443/storage/${imagePath}`;
+            }
+            
+            return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
+          })
         : []
 
+      setImageEntries(imageNames)
       setScheduleEntries(schedules)
+      
       setFormData({
         places: spaceToEdit.places,
         price: spaceToEdit.price,
@@ -223,6 +278,70 @@ const SpaceList = () => {
         subtitle: spaceToEdit.subtitle,
       })
     }
+  }
+
+  // Funciones para manejar las imágenes
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0]
+      setImageForm({
+        file: file,
+        fileName: file.name
+      })
+    }
+  }
+  const handleAddImage = (e) => {
+    e.preventDefault()
+    const { file, fileName } = imageForm
+
+    if (!file) {
+      setErrors((prev) => ({
+        ...prev,
+        images: ['Image file is required'],
+      }))
+      return
+    }
+
+    // Agregar la nueva entrada a la lista de imágenes
+    setImageEntries((prev) => [...prev, { file, fileName }])
+    
+    // Reiniciar el formulario de imagen
+    setImageForm({
+      file: null,
+      fileName: ''
+    })
+
+    // Resetear el campo de archivo
+    // Convertir la referencia al elemento de entrada de archivo y resetear su valor
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+      input.value = '';
+    });
+
+    // Actualizar el campo images en formData para compatibilidad
+    const imageNamesString = [...imageEntries, { fileName }]
+      .map(entry => entry.fileName)
+      .join('|')
+
+    setFormData((prev) => ({
+      ...prev,
+      images: imageNamesString,
+    }))
+  }
+
+  const handleRemoveImage = (index) => {
+    const newEntries = imageEntries.filter((_, i) => i !== index)
+    setImageEntries(newEntries)
+
+    // Actualizar el campo images en formData para compatibilidad
+    const imageNamesString = newEntries
+      .map(entry => entry.fileName)
+      .join('|')
+
+    setFormData((prev) => ({
+      ...prev,
+      images: imageNamesString,
+    }))
   }
 
   return (
@@ -254,19 +373,19 @@ const SpaceList = () => {
                     <div className="card__text">
                       <p>
                         <span className="span--bold">
-                          {t('form.space.label')}:{' '}
+                          {t('form.space.label')}: {' '}
                         </span>
                         {space.subtitle}
                       </p>
                       <p>
                         <span className="span--bold">
-                          {t('form.amount.label')}:{' '}
+                          {t('form.amount.label')}: {' '}
                         </span>
                         {space.price}€
                       </p>
                       <p>
                         <span className="span--bold">
-                          {t('form.seats.label')}:{' '}
+                          {t('form.seats.label')}: {' '}
                         </span>
                         {space.places} {t('form.seats.label')}
                       </p>
@@ -416,16 +535,55 @@ const SpaceList = () => {
                             </span>
                           ))}
                       </div>
+                      {/* Sección de imágenes en el formulario de edición */}
                       <div className="form__section">
-                        <label htmlFor="images">{t('form.images.label')}</label>
-                        <input
-                          id="images"
-                          name="images"
-                          placeholder={t('form.images.placeholder')}
-                          value={formData.images}
-                          onChange={handleChange}
-                          required
-                        />
+                        <label>{t('form.images.label')}</label>
+                        <div className="schedule-form">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            id="edit-image-input"
+                          />
+                          <button
+                            type="button"
+                            className="form__submit --noArrow"
+                            onClick={handleAddImage}
+                            disabled={!imageForm.file}
+                          >
+                            {t('actions.add')}
+                          </button>
+                        </div>
+                        {imageEntries.length > 0 && (
+                          <div className="schedule-list">
+                            {imageEntries.map((entry, index) => (
+                              <div key={index} className="schedule-item" style={{ display: 'flex', alignItems: 'center' }}>
+                                {console.log(entry)}
+                                <span style={{ flex: 1 }}>
+                                  {entry.fileName}
+                                  {entry.isExisting && (
+                                    <a 
+                                      href={entry.url}
+                                      target="_blank" 
+                                      rel="noopener noreferrer" 
+                                      className="image-preview-link"
+                                      style={{ marginLeft: '10px' }}
+                                    >
+                                      (Ver imagen)
+                                    </a>
+                                  )}
+                                </span>
+                                <button
+                                  type="button"
+                                  className="form__submit --noArrow"
+                                  onClick={() => handleRemoveImage(index)}
+                                >
+                                  {t('actions.remove')}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         {errors.images &&
                           Array.isArray(errors.images) &&
                           errors.images.map((err, idx) => (
@@ -624,16 +782,68 @@ const SpaceList = () => {
                     </span>
                   ))}
               </div>
+              {/* Sección de imágenes en el formulario de creación */}
               <div className="form__section">
-                <label htmlFor="images">{t('form.images.label')}</label>
-                <input
-                  id="images"
-                  name="images"
-                  placeholder={t('form.images.placeholder')}
-                  value={formData.images}
-                  onChange={handleChange}
-                  required
-                />
+                <label>{t('form.images.label')}</label>
+                <div className="schedule-form">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    id="create-image-input"
+                  />
+                  <button
+                    type="button"
+                    className="form__submit --noArrow"
+                    onClick={handleAddImage}
+                    disabled={!imageForm.file}
+                  >
+                    {t('actions.add')}
+                  </button>
+                </div>
+                {imageEntries.length > 0 && (
+                  <div className="schedule-list">
+                    {imageEntries.map((entry, index) => (
+                      <div key={index} className="schedule-item" style={{ display: 'flex', alignItems: 'center' }}>
+                        {entry.isExisting && entry.url && (
+                          <img 
+                            src={entry.url}
+                            alt={entry.fileName}
+                            style={{ 
+                              width: '30px', 
+                              height: '30px', 
+                              objectFit: 'cover',
+                              marginRight: '10px',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px'
+                            }}
+                          />
+                        )}
+                        <span style={{ flex: 1 }}>
+                          {entry.fileName}
+                          {entry.isExisting && (
+                            <a 
+                              href={entry.url}
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="image-preview-link"
+                              style={{ marginLeft: '10px' }}
+                            >
+                              (Ver imagen)
+                            </a>
+                          )}
+                        </span>
+                        <button
+                          type="button"
+                          className="form__submit --noArrow"
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          {t('actions.remove')}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {errors.images &&
                   Array.isArray(errors.images) &&
                   errors.images.map((err, idx) => (
