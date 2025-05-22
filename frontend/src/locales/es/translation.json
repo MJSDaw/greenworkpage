@@ -34,7 +34,9 @@
     "paymentsCreate": "Crear pago",
     "add": "Añadir",
     "remove": "Eliminar",
-    "checkSpace": "Ver espacio"
+    "checkSpace": "Ver espacio",
+    "doBookingTitle": "Hacer una reserva",
+    "doBooking": "Reservar"
   },
   "alt": {
     "logo": "Logo de Greenwork",
