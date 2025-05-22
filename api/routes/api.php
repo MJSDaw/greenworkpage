@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
     Route::get('my-bookings', [ReservationController::class, 'myReservations']);
     Route::get('spaces/{spaceId}/bookings', [ReservationController::class, 'spaceReservations']);
+    Route::delete('users/{id}', [UserController::class, 'destroy']);
     
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);

@@ -181,6 +181,18 @@ export const saveUser = async (userData, userId = null, originalUser = null) => 
   return baseFetch(url, method, userData, {}, isAuthenticated);
 };
 
+/**
+ * Elimina un usuario
+ * @param {Number|null} userId - ID del usuario a eliminar
+ * @returns {Promise} Respuesta del servidor
+ */
+export const deleteUser = async (userId = null,) => {
+  const url = `/api/users/${userId}`;
+  const method = 'DELETE';
+
+  return baseFetch(url, method, null, {}, true);
+};
+
 // ==================== Administrador ====================
 
 /**

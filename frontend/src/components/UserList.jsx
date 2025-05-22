@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { saveUser } from '../services/apiService'
+import { saveUser, deleteUser } from '../services/apiService'
 import { getAuthHeader } from '../services/authService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
@@ -107,6 +107,7 @@ const UserList = () => {
           setError({})
           // Actualizar la lista de usuarios
           fetchUsers()
+          handleShowList()
         }
       } else {
         setError(data.error || {})
@@ -124,6 +125,22 @@ const UserList = () => {
   const handleShowList = () => {
     setShowForm(false)
     setShowList(true)
+  }
+  const handleDelete = async (id) => {
+    if (window.confirm(t('actions.deleteConfirm'))) {
+      try {
+        setLoading(true)
+        const response = await deleteUser(id)
+        // If deletion successful, refresh the user list
+        if (response && response.success) {
+          await fetchUsers() // Refresh the list after successful deletion
+        }
+      } catch (error) {
+        setError(t('actions.deleteError'))
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   const [editingId, setEditingId] = useState(null)
@@ -200,7 +217,7 @@ const UserList = () => {
                       >
                         {t('actions.edit')}
                       </button>
-                      <button className="form__submit --noArrow">
+                      <button className="form__submit --noArrow" onClick={() => handleDelete(user.id)}>
                         {t('actions.delete')}
                       </button>
                     </div>
