@@ -169,7 +169,7 @@ const SpaceList = () => {
     }
   }
   const handleShowForm = () => {
-    // Limpiar formulario y reset estados
+    // Siempre limpiar el formulario al mostrar el formulario de creación
     setFormData({
       places: '',
       price: '',
@@ -182,13 +182,28 @@ const SpaceList = () => {
     setImageEntries([])
     setScheduleEntries([])
     setSelectedServices([])
+    setEditingId(null) // Asegurarnos de que no estamos en modo edición
     setShowForm(true)
     setShowList(false)
+    // Cargar servicios al mostrar el formulario
+    fetchServices()
   }
-
   const handleShowList = () => {
     setShowForm(false)
     setShowList(true)
+    // Limpiar todos los estados
+    setFormData({
+      places: '',
+      price: '',
+      schedule: '',
+      images: '',
+      description: '',
+      subtitle: '',
+      address: '',
+    })
+    setImageEntries([])
+    setScheduleEntries([])
+    setSelectedServices([])
     // Limpiar el estado de edición si hay alguno activo
     setEditingId(null)
   }
@@ -284,67 +299,69 @@ const SpaceList = () => {
     }))
   }
 
-  const [editingId, setEditingId] = useState(null);
-  const handleEditClick = (id) => {
+  const [editingId, setEditingId] = useState(null);  const handleEditClick = (id) => {
+    const spaceToEdit = spaces.find((space) => space.id === id)
+    if (!spaceToEdit) return
+
+    // Si ya estábamos editando este espacio, cerrar el formulario
     if (editingId === id) {
       setEditingId(null)
-    } else {
-      setEditingId(id)
-      const spaceToEdit = spaces.find((space) => space.id === id)
-      
-      // Procesar el horario
-      const schedules = spaceToEdit.schedule
-        ? spaceToEdit.schedule.split('|').map((schedule) => {
-            const [day, startTime, endTime] = schedule.split('-')
-            return { day, startTime, endTime }
-          })
-        : []
-      
-      // Procesar las imágenes
-      const imageNames = spaceToEdit.images 
-        ? spaceToEdit.images.split('|').map(imagePath => {
-            const fileName = imagePath.split('/').pop()
-            let fullPath = ''
-            if (imagePath.startsWith('http')) {
-              fullPath = imagePath
-            } else if (imagePath.startsWith('storage/')) {
-              fullPath = `https://localhost:8443/${imagePath}`
-            } else {
-              fullPath = `https://localhost:8443/storage/${imagePath}`
-            }
-            return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
-          })
-        : []
-        
-      // Procesar los servicios
-      let serviceIds = []
-      if (spaceToEdit.services) {
-        if (typeof spaceToEdit.services === 'string') {
-          // Si es una cadena, dividir por comas y convertir a números
-          serviceIds = spaceToEdit.services.split(',').map(id => parseInt(id, 10))
-        } else if (Array.isArray(spaceToEdit.services)) {
-          // Si ya es un array, usar directamente
-          serviceIds = spaceToEdit.services.map(service => service.id || parseInt(service, 10))
-        }
-      }
-      setSelectedServices(serviceIds)
-      
-      // Configurar el estado del formulario
-      setFormData({
-        places: spaceToEdit.places,
-        price: spaceToEdit.price,
-        schedule: spaceToEdit.schedule,
-        images: spaceToEdit.images,
-        description: spaceToEdit.description,
-        subtitle: spaceToEdit.subtitle,
-        address: spaceToEdit.address || '',
-      })
-      
-      setImageEntries(imageNames)
-      setScheduleEntries(schedules)
-      setShowForm(true)
-      setShowList(false)
+      return
     }
+    
+    // Procesar el horario
+    const schedules = spaceToEdit.schedule
+      ? spaceToEdit.schedule.split('|').map((schedule) => {
+          const [day, startTime, endTime] = schedule.split('-')
+          return { day, startTime, endTime }
+        })
+      : []
+    
+    // Procesar las imágenes
+    const imageNames = spaceToEdit.images 
+      ? spaceToEdit.images.split('|').map(imagePath => {
+          const fileName = imagePath.split('/').pop()
+          let fullPath = ''
+          if (imagePath.startsWith('http')) {
+            fullPath = imagePath
+          } else if (imagePath.startsWith('storage/')) {
+            fullPath = `https://localhost:8443/${imagePath}`
+          } else {
+            fullPath = `https://localhost:8443/storage/${imagePath}`
+          }
+          return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
+        })
+      : []
+        
+    // Procesar los servicios
+    let serviceIds = []
+    if (spaceToEdit.services) {
+      if (typeof spaceToEdit.services === 'string') {
+        // Si es una cadena, dividir por comas y convertir a números
+        serviceIds = spaceToEdit.services.split(',').map(id => parseInt(id, 10))
+      } else if (Array.isArray(spaceToEdit.services)) {
+        // Si ya es un array, usar directamente
+        serviceIds = spaceToEdit.services.map(service => service.id || parseInt(service, 10))
+      }
+    }
+    
+    // Actualizar todos los estados
+    setEditingId(id)
+    setSelectedServices(serviceIds)
+    setFormData({
+      places: spaceToEdit.places || '',
+      price: spaceToEdit.price || '',
+      schedule: spaceToEdit.schedule || '',
+      images: spaceToEdit.images || '',
+      description: spaceToEdit.description || '',
+      subtitle: spaceToEdit.subtitle || '',
+      address: spaceToEdit.address || '',
+    })
+    setImageEntries(imageNames)
+    setScheduleEntries(schedules)
+    
+    // Cargar servicios sin cambiar la vista
+    fetchServices()
   }
 
   // Funciones para manejar las imágenes
@@ -673,11 +690,7 @@ const SpaceList = () => {
                                 width: '120px'
                               }}>
                                 <img 
-                                  src={
-                                    service.image_url.startsWith('http') 
-                                      ? service.image_url 
-                                      : `https://localhost:8443/${service.image_url}`
-                                  }
+                                  src={`https://localhost:8443/storage/${service.image_url}`}
                                   alt={service.nombre}
                                   style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
                                 />
