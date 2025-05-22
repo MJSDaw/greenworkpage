@@ -54,9 +54,11 @@
     "greenwork3": "Greenwork 3",
     "dashboardImg": "Usuario {{id}}",
     "location": "Icono de ubicación",
-    "phone": "Icono de teléfono"
+    "phone": "Icono de teléfono",
+    "peaspeas": "Conjunto de guisantes"
   },
   "common": {
+    "peaspeas": "Guisantes unidos",
     "github": "Logo de Github",
     "instagram": "Logo de Instagram",
     "facebook": "Logo de Facebook",
@@ -271,6 +273,7 @@
       "label": "Descripción",
       "placeholder": "Descripción"
     },
+    "servicesAvailable": "Servicios disponibles",
     "loginRequired": "Por favor, inicia sesión antes de reservar.",
     "adminNoBooking": "No puedes hacer reservas desde espacios siendo administrador."
   },

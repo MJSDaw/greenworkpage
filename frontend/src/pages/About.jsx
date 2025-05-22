@@ -2,6 +2,7 @@ import ContactUs from '../components/ContactUs'
 import { useTranslation } from 'react-i18next'
 
 import coworking from '../assets/img/coworking1.webp'
+import peaspeas from '../assets/img/peaspeas.png'
 
 const About = () => {
   const { t } = useTranslation()
@@ -22,6 +23,7 @@ const About = () => {
         <p>{t('sliders.msg1')} {t('sliders.msg2')}</p>
         <p>{t('sliders.msg3')} {t('sliders.msg4')}</p>
         <p>{t('sliders.msg5')} {t('sliders.msg6')}</p>
+        <img className='about__peas' src={peaspeas} alt={t('alt.peaspeas')} title={t('common.peaspeas')} />
       </main>
       <ContactUs />
     </>

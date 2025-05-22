@@ -24,12 +24,12 @@ const SpaceList = () => {
     subtitle: '',
     address: '',
   })
-  
+
   // Nuevo estado para manejar las imágenes individuales
   const [imageEntries, setImageEntries] = useState([])
   const [imageForm, setImageForm] = useState({
     file: null,
-    fileName: ''
+    fileName: '',
   })
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
@@ -72,7 +72,9 @@ const SpaceList = () => {
       const response = await getServices()
       if (response && response.data) {
         // Manejar tanto respuesta paginada como no paginada
-        const servicesData = Array.isArray(response.data) ? response.data : response.data.data
+        const servicesData = Array.isArray(response.data)
+          ? response.data
+          : response.data.data
         if (Array.isArray(servicesData)) {
           setServices(servicesData)
         } else {
@@ -100,15 +102,15 @@ const SpaceList = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    
+
     if (name.startsWith('service_')) {
       // Handle service checkbox selection
       const serviceId = parseInt(name.split('_')[1])
-      
+
       if (checked) {
-        setSelectedServices(prev => [...prev, serviceId])
+        setSelectedServices((prev) => [...prev, serviceId])
       } else {
-        setSelectedServices(prev => prev.filter(id => id !== serviceId))
+        setSelectedServices((prev) => prev.filter((id) => id !== serviceId))
       }
     } else {
       // Handle other form inputs
@@ -121,16 +123,16 @@ const SpaceList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     try {
       // Create FormData object for file uploads
       const formDataToSend = new FormData()
-      
+
       // Add all text fields
-      Object.keys(formData).forEach(key => {
+      Object.keys(formData).forEach((key) => {
         formDataToSend.append(key, formData[key])
       })
-        // Add selected services
+      // Add selected services
       if (selectedServices.length > 0) {
         // Convert array of IDs to comma-separated string
         formDataToSend.append('services', selectedServices.join(','))
@@ -138,7 +140,7 @@ const SpaceList = () => {
         // Send empty string if no services selected
         formDataToSend.append('services', '')
       }
-      
+
       // Add all image files
       if (imageEntries.length > 0) {
         imageEntries.forEach((entry, index) => {
@@ -298,7 +300,8 @@ const SpaceList = () => {
     }))
   }
 
-  const [editingId, setEditingId] = useState(null);  const handleEditClick = (id) => {
+  const [editingId, setEditingId] = useState(null)
+  const handleEditClick = (id) => {
     const spaceToEdit = spaces.find((space) => space.id === id)
     if (!spaceToEdit) return
 
@@ -307,7 +310,7 @@ const SpaceList = () => {
       setEditingId(null)
       return
     }
-    
+
     // Procesar el horario
     const schedules = spaceToEdit.schedule
       ? spaceToEdit.schedule.split('|').map((schedule) => {
@@ -315,10 +318,10 @@ const SpaceList = () => {
           return { day, startTime, endTime }
         })
       : []
-    
+
     // Procesar las imágenes
-    const imageNames = spaceToEdit.images 
-      ? spaceToEdit.images.split('|').map(imagePath => {
+    const imageNames = spaceToEdit.images
+      ? spaceToEdit.images.split('|').map((imagePath) => {
           const fileName = imagePath.split('/').pop()
           let fullPath = ''
           if (imagePath.startsWith('http')) {
@@ -328,22 +331,32 @@ const SpaceList = () => {
           } else {
             fullPath = `https://localhost:8443/storage/${imagePath}`
           }
-          return { fileName, file: null, path: imagePath, url: fullPath, isExisting: true }
+          return {
+            fileName,
+            file: null,
+            path: imagePath,
+            url: fullPath,
+            isExisting: true,
+          }
         })
       : []
-        
+
     // Procesar los servicios
     let serviceIds = []
     if (spaceToEdit.services) {
       if (typeof spaceToEdit.services === 'string') {
         // Si es una cadena, dividir por comas y convertir a números
-        serviceIds = spaceToEdit.services.split(',').map(id => parseInt(id, 10))
+        serviceIds = spaceToEdit.services
+          .split(',')
+          .map((id) => parseInt(id, 10))
       } else if (Array.isArray(spaceToEdit.services)) {
         // Si ya es un array, usar directamente
-        serviceIds = spaceToEdit.services.map(service => service.id || parseInt(service, 10))
+        serviceIds = spaceToEdit.services.map(
+          (service) => service.id || parseInt(service, 10)
+        )
       }
     }
-    
+
     // Actualizar todos los estados
     setEditingId(id)
     setSelectedServices(serviceIds)
@@ -358,7 +371,7 @@ const SpaceList = () => {
     })
     setImageEntries(imageNames)
     setScheduleEntries(schedules)
-    
+
     // Cargar servicios sin cambiar la vista
     fetchServices()
   }
@@ -369,7 +382,7 @@ const SpaceList = () => {
       const file = e.target.files[0]
       setImageForm({
         file: file,
-        fileName: file.name
+        fileName: file.name,
       })
     }
   }
@@ -387,23 +400,23 @@ const SpaceList = () => {
 
     // Agregar la nueva entrada a la lista de imágenes
     setImageEntries((prev) => [...prev, { file, fileName }])
-    
+
     // Reiniciar el formulario de imagen
     setImageForm({
       file: null,
-      fileName: ''
+      fileName: '',
     })
 
     // Resetear el campo de archivo
     // Convertir la referencia al elemento de entrada de archivo y resetear su valor
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-      input.value = '';
-    });
+    const fileInputs = document.querySelectorAll('input[type="file"]')
+    fileInputs.forEach((input) => {
+      input.value = ''
+    })
 
     // Actualizar el campo images en formData para compatibilidad
     const imageNamesString = [...imageEntries, { fileName }]
-      .map(entry => entry.fileName)
+      .map((entry) => entry.fileName)
       .join('|')
 
     setFormData((prev) => ({
@@ -417,9 +430,7 @@ const SpaceList = () => {
     setImageEntries(newEntries)
 
     // Actualizar el campo images en formData para compatibilidad
-    const imageNamesString = newEntries
-      .map(entry => entry.fileName)
-      .join('|')
+    const imageNamesString = newEntries.map((entry) => entry.fileName).join('|')
 
     setFormData((prev) => ({
       ...prev,
@@ -440,325 +451,376 @@ const SpaceList = () => {
       </div>
       {showList && (
         <>
-        <section className="card__container">
-          {loading && <p>{t('common.spacesLoading')}</p>}
-          {error && <p>{t('common.commonError', { error: error })}</p>}
-          {!loading && !error && spaces.length === 0 && (
-            <p>{t('common.spacesNoSpaces')}</p>
-          )}
-          {!loading &&
-            !error &&
-            spaces.map((space) => (
-              <React.Fragment key={space.id}>
-                <article className="card">
-                  <div className="card__content">
-                    {' '}
-                    <div className="card__text">
-                      <p>
-                        <span className="span--bold">
-                          {t('form.space.label')}: {' '}
-                        </span>
-                        {space.subtitle}
-                      </p>
-                      <p>
-                        <span className="span--bold">
-                          {t('form.amount.label')}: {' '}
-                        </span>
-                        {space.price}€
-                      </p>
-                      <p>
-                        <span className="span--bold">
-                          {t('form.seats.label')}: {' '}
-                        </span>
-                        {space.places} {t('form.seats.label')}
-                      </p>
-                      {space.schedule
-                        .split('|')
-                        .map((schedule) => {
-                          const [day, start, end] = schedule.split('-')
-                          return { day, start, end }
-                        })
-                        .sort((a, b) => {
-                          // Primero ordenar por día
-                          const dayOrder = {
-                            monday: 1,
-                            tuesday: 2,
-                            wednesday: 3,
-                            thursday: 4,
-                            friday: 5,
-                          }
-                          if (dayOrder[a.day] !== dayOrder[b.day]) {
-                            return dayOrder[a.day] - dayOrder[b.day]
-                          }
-                          // Si es el mismo día, ordenar por hora de inicio
-                          return a.start.localeCompare(b.start)
-                        })
-                        .map((schedule, index) => (
-                          <p key={index}>
-                            <span className="span--bold">{t(`form.days.${schedule.day}`)}: </span>
-                            {schedule.start} - {schedule.end}
-                          </p>
-                        ))}
+          <section className="card__container">
+            {loading && <p>{t('common.spacesLoading')}</p>}
+            {error && <p>{t('common.commonError', { error: error })}</p>}
+            {!loading && !error && spaces.length === 0 && (
+              <p>{t('common.spacesNoSpaces')}</p>
+            )}
+            {!loading &&
+              !error &&
+              spaces.map((space) => (
+                <React.Fragment key={space.id}>
+                  <article className="card">
+                    <div className="card__content">
+                      {' '}
+                      <div className="card__text">
+                        <p>
+                          <span className="span--bold">
+                            {t('form.space.label')}:{' '}
+                          </span>
+                          {space.subtitle}
+                        </p>
+                        <p>
+                          <span className="span--bold">
+                            {t('form.amount.label')}:{' '}
+                          </span>
+                          {space.price}€
+                        </p>
+                        <p>
+                          <span className="span--bold">
+                            {t('form.seats.label')}:{' '}
+                          </span>
+                          {space.places} {t('form.seats.label')}
+                        </p>
+                        {space.schedule
+                          .split('|')
+                          .map((schedule) => {
+                            const [day, start, end] = schedule.split('-')
+                            return { day, start, end }
+                          })
+                          .sort((a, b) => {
+                            // Primero ordenar por día
+                            const dayOrder = {
+                              monday: 1,
+                              tuesday: 2,
+                              wednesday: 3,
+                              thursday: 4,
+                              friday: 5,
+                            }
+                            if (dayOrder[a.day] !== dayOrder[b.day]) {
+                              return dayOrder[a.day] - dayOrder[b.day]
+                            }
+                            // Si es el mismo día, ordenar por hora de inicio
+                            return a.start.localeCompare(b.start)
+                          })
+                          .map((schedule, index) => (
+                            <p key={index}>
+                              <span className="span--bold">
+                                {t(`form.days.${schedule.day}`)}:{' '}
+                              </span>
+                              {schedule.start} - {schedule.end}
+                            </p>
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="card__buttons">
-                    <button
-                      className="form__submit --noArrow"
-                      onClick={() => handleEditClick(space.id)}
-                    >
-                      {t('actions.edit')}
-                    </button>
-                    <button className="form__submit --noArrow">
-                      {t('actions.delete')}
-                    </button>
-                  </div>
-                </article>{' '}
-                {editingId === space.id && (
-                  <article className="card--form--edit">
-                    <form onSubmit={handleSubmit}>
-                      <div className="form__section">
-                        <label htmlFor="places">{t('form.seats.label')}</label>
-                        <input
-                          id="places"
-                          name="places"
-                          type="number"
-                          placeholder={t('form.seats.placeholder')}
-                          value={formData.places}
-                          onChange={handleChange}
-                          required
-                          min={1}
-                          onWheel={(e) => e.target.blur()}
-                        />
-                        {errors.places &&
-                          Array.isArray(errors.places) &&
-                          errors.places.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label htmlFor="price">{t('form.amount.label')}</label>
-                        <input
-                          id="price"
-                          name="price"
-                          type="number"
-                          step="0.01"
-                          placeholder={t('form.amount.placeholder')}
-                          value={formData.price}
-                          onChange={handleChange}
-                          required
-                          min={0}
-                          onWheel={(e) => e.target.blur()}
-                        />
-                        {errors.price &&
-                          Array.isArray(errors.price) &&
-                          errors.price.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      <div className="form__section">
-                        <label>{t('form.spaceAvailability.label')}</label>
-                        <div className="schedule-form">
-                          <select
-                            name="day"
-                            value={scheduleForm.day}
-                            onChange={handleScheduleChange}
-                          >
-                            {daysOfWeek.map((day) => (
-                              <option key={day} value={day}>
-                                {t(`form.days.${day}`)}
-                              </option>
+                    <div className="card__buttons">
+                      <button
+                        className="form__submit --noArrow"
+                        onClick={() => handleEditClick(space.id)}
+                      >
+                        {t('actions.edit')}
+                      </button>
+                      <button className="form__submit --noArrow">
+                        {t('actions.delete')}
+                      </button>
+                    </div>
+                  </article>{' '}
+                  {editingId === space.id && (
+                    <article className="card--form--edit">
+                      <form onSubmit={handleSubmit}>
+                        <div className="form__section">
+                          <label htmlFor="places">
+                            {t('form.seats.label')}
+                          </label>
+                          <input
+                            id="places"
+                            name="places"
+                            type="number"
+                            placeholder={t('form.seats.placeholder')}
+                            value={formData.places}
+                            onChange={handleChange}
+                            required
+                            min={1}
+                            onWheel={(e) => e.target.blur()}
+                          />
+                          {errors.places &&
+                            Array.isArray(errors.places) &&
+                            errors.places.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
                             ))}
-                          </select>
-                          <input
-                            type="time"
-                            name="startTime"
-                            value={scheduleForm.startTime}
-                            onChange={handleScheduleChange}
-                            placeholder="Start Time"
-                          />
-                          <input
-                            type="time"
-                            name="endTime"
-                            value={scheduleForm.endTime}
-                            onChange={handleScheduleChange}
-                            placeholder="End Time"
-                          />
-                          <button
-                            type="button"
-                            className="form__submit --noArrow"
-                            onClick={handleAddSchedule}
-                          >
-                            {t('actions.add')}
-                          </button>
                         </div>
-                        {scheduleEntries.length > 0 && (
-                          <div className="schedule-list">
-                            {scheduleEntries.map((entry, index) => (
-                              <div key={index} className="schedule-item">
-                                <span>
-                                  {t(`form.days.${entry.day.toLowerCase()}`)}: {' '}
-                                  {entry.startTime} - {entry.endTime}
-                                </span>
-                                <button
-                                  type="button"
-                                  className="form__submit --noArrow"
-                                  onClick={() => handleRemoveSchedule(index)}
-                                >
-                                  {t('actions.remove')}
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                        {errors.schedule &&
-                          Array.isArray(errors.schedule) &&
-                          errors.schedule.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>
-                      {/* Sección de imágenes en el formulario de edición */}
-                      <div className="form__section">
-                        <label>{t('form.images.label')}</label>
-                        <div className="schedule-form">
+                        <div className="form__section">
+                          <label htmlFor="price">
+                            {t('form.amount.label')}
+                          </label>
                           <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            id="edit-image-input"
+                            id="price"
+                            name="price"
+                            type="number"
+                            step="0.01"
+                            placeholder={t('form.amount.placeholder')}
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                            min={0}
+                            onWheel={(e) => e.target.blur()}
                           />
-                          <button
-                            type="button"
-                            className="form__submit --noArrow"
-                            onClick={handleAddImage}
-                            disabled={!imageForm.file}
-                          >
-                            {t('actions.add')}
-                          </button>
-                        </div>
-                        {imageEntries.length > 0 && (
-                          <div className="schedule-list">
-                            {imageEntries.map((entry, index) => (
-                              <div key={index} className="schedule-item" style={{ display: 'flex', alignItems: 'center' }}>
-                                {console.log(entry)}
-                                <span style={{ flex: 1 }}>
-                                  {entry.fileName}
-                                  {entry.isExisting && (
-                                    <a 
-                                      href={entry.url}
-                                      target="_blank" 
-                                      rel="noopener noreferrer" 
-                                      className="image-preview-link"
-                                      style={{ marginLeft: '10px' }}
-                                    >
-                                      (Ver imagen)
-                                    </a>
-                                  )}
-                                </span>
-                                <button
-                                  type="button"
-                                  className="form__submit --noArrow"
-                                  onClick={() => handleRemoveImage(index)}
-                                >
-                                  {t('actions.remove')}
-                                </button>
-                              </div>
+                          {errors.price &&
+                            Array.isArray(errors.price) &&
+                            errors.price.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
                             ))}
+                        </div>
+                        <div className="form__section">
+                          <label>{t('form.spaceAvailability.label')}</label>
+                          <div className="schedule-form">
+                            <select
+                              name="day"
+                              value={scheduleForm.day}
+                              onChange={handleScheduleChange}
+                            >
+                              {daysOfWeek.map((day) => (
+                                <option key={day} value={day}>
+                                  {t(`form.days.${day}`)}
+                                </option>
+                              ))}
+                            </select>
+                            <input
+                              type="time"
+                              name="startTime"
+                              value={scheduleForm.startTime}
+                              onChange={handleScheduleChange}
+                              placeholder="Start Time"
+                            />
+                            <input
+                              type="time"
+                              name="endTime"
+                              value={scheduleForm.endTime}
+                              onChange={handleScheduleChange}
+                              placeholder="End Time"
+                            />
+                            <button
+                              type="button"
+                              className="form__submit --noArrow"
+                              onClick={handleAddSchedule}
+                            >
+                              {t('actions.add')}
+                            </button>
                           </div>
-                        )}
-                        {errors.images &&
-                          Array.isArray(errors.images) &&
-                          errors.images.map((err, idx) => (
-                            <span className="form__error" key={idx}>
-                              {t(`errors.${err}`)}
-                            </span>
-                          ))}
-                      </div>                      <div className="form__section">
-                        <label>Servicios Disponibles</label>
-                        <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                          {services.length > 0 ? (
-                            services.map((service) => (
-                              <div key={service.id} className="service-checkbox" style={{ 
-                                border: '1px solid #ccc', 
-                                borderRadius: '5px',
-                                padding: '10px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                width: '120px'
-                              }}>
-                                <img 
-                                  src={`https://localhost:8443/storage/${service.image_url}`}
-                                  alt={service.nombre}
-                                  style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
-                                />
-                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
-                                  <input
-                                    type="checkbox"
-                                    id={`edit-service-${service.id}`}
-                                    name={`service_${service.id}`}
-                                    checked={selectedServices.includes(service.id)}
-                                    onChange={handleChange}
-                                    style={{ marginRight: '5px' }}
-                                  />
-                                  <label htmlFor={`edit-service-${service.id}`} style={{ fontSize: '0.9em' }}>
-                                    {service.nombre}
-                                  </label>
+                          {scheduleEntries.length > 0 && (
+                            <div className="schedule-list">
+                              {scheduleEntries.map((entry, index) => (
+                                <div key={index} className="schedule-item">
+                                  <span>
+                                    {t(`form.days.${entry.day.toLowerCase()}`)}:{' '}
+                                    {entry.startTime} - {entry.endTime}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="form__submit --noArrow"
+                                    onClick={() => handleRemoveSchedule(index)}
+                                  >
+                                    {t('actions.remove')}
+                                  </button>
                                 </div>
-                              </div>
-                            ))
-                          ) : (
-                            <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                              ))}
+                            </div>
                           )}
+                          {errors.schedule &&
+                            Array.isArray(errors.schedule) &&
+                            errors.schedule.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
                         </div>
-                      </div>
-                      <input
-                        type="submit"
-                        value={t('actions.edit')}
-                        className="form__submit"
-                      />
-                    </form>
-                  </article>
-                )}
-              </React.Fragment>
-            ))}
-        </section>
-        {!loading && !error && spaces.length > 0 && (
-                <div className="pagination">
-                  <button
-                    onClick={() => setCurrentPage((p) => 1)}
-                    disabled={currentPage === 1}
-                  >
-                    <img src={arrowTopito} className="arrowTopito--left" />
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                  >
-                    <img src={arrow} className="arrow--left" />
-                  </button>
-                  <span>
-                    {currentPage} / {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                  >
-                    <img src={arrow} className="arrow--right" />
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage((p) => totalPages)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <img src={arrowTopito} className="arrowTopito--right" />
-                  </button>
-                </div>
-              )}
+                        {/* Sección de imágenes en el formulario de edición */}
+                        <div className="form__section">
+                          <label>{t('form.images.label')}</label>
+                          <div className="schedule-form">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageChange}
+                              id="edit-image-input"
+                            />
+                            <button
+                              type="button"
+                              className="form__submit --noArrow"
+                              onClick={handleAddImage}
+                              disabled={!imageForm.file}
+                            >
+                              {t('actions.add')}
+                            </button>
+                          </div>
+                          {imageEntries.length > 0 && (
+                            <div className="schedule-list">
+                              {imageEntries.map((entry, index) => (
+                                <div
+                                  key={index}
+                                  className="schedule-item"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  {console.log(entry)}
+                                  <span style={{ flex: 1 }}>
+                                    {entry.fileName}
+                                    {entry.isExisting && (
+                                      <a
+                                        href={entry.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="image-preview-link"
+                                        style={{ marginLeft: '10px' }}
+                                      >
+                                        (Ver imagen)
+                                      </a>
+                                    )}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="form__submit --noArrow"
+                                    onClick={() => handleRemoveImage(index)}
+                                  >
+                                    {t('actions.remove')}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {errors.images &&
+                            Array.isArray(errors.images) &&
+                            errors.images.map((err, idx) => (
+                              <span className="form__error" key={idx}>
+                                {t(`errors.${err}`)}
+                              </span>
+                            ))}
+                        </div>{' '}
+                        <div className="form__section">
+                          <label>{t('form.servicesAvailable')}</label>
+                          <div
+                            className="services-container"
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: '10px',
+                            }}
+                          >
+                            {services.length > 0 ? (
+                              services.map((service) => (
+                                <div
+                                  key={service.id}
+                                  className="service-checkbox"
+                                  style={{
+                                    border: '1px solid #ccc',
+                                    borderRadius: '5px',
+                                    padding: '10px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '120px',
+                                  }}
+                                >
+                                  <img
+                                    src={`https://localhost:8443/storage/${service.image_url}`}
+                                    alt={service.nombre}
+                                    style={{
+                                      width: '80px',
+                                      height: '80px',
+                                      objectFit: 'cover',
+                                      marginBottom: '5px',
+                                    }}
+                                  />
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      marginTop: '5px',
+                                    }}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      id={`edit-service-${service.id}`}
+                                      name={`service_${service.id}`}
+                                      checked={selectedServices.includes(
+                                        service.id
+                                      )}
+                                      onChange={handleChange}
+                                      style={{ marginRight: '5px' }}
+                                    />
+                                    <label
+                                      htmlFor={`edit-service-${service.id}`}
+                                      style={{ fontSize: '0.9em' }}
+                                    >
+                                      {service.nombre}
+                                    </label>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p
+                                style={{
+                                  padding: '10px',
+                                  fontStyle: 'italic',
+                                  color: '#666',
+                                }}
+                              >
+                                No hay servicios
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <input
+                          type="submit"
+                          value={t('actions.edit')}
+                          className="form__submit"
+                        />
+                      </form>
+                    </article>
+                  )}
+                </React.Fragment>
+              ))}
+          </section>
+          {!loading && !error && spaces.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((p) => 1)}
+                disabled={currentPage === 1}
+              >
+                <img src={arrowTopito} className="arrowTopito--left" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <img src={arrow} className="arrow--left" />
+              </button>
+              <span>
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrow} className="arrow--right" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrowTopito} className="arrowTopito--right" />
+              </button>
+            </div>
+          )}
         </>
       )}
       {showForm && (
@@ -849,7 +911,7 @@ const SpaceList = () => {
                     {scheduleEntries.map((entry, index) => (
                       <div key={index} className="schedule-item">
                         <span>
-                          {t(`form.days.${entry.day.toLowerCase()}`)}: {' '}
+                          {t(`form.days.${entry.day.toLowerCase()}`)}:{' '}
                           {entry.startTime} - {entry.endTime}
                         </span>
                         <button
@@ -893,28 +955,32 @@ const SpaceList = () => {
                 {imageEntries.length > 0 && (
                   <div className="schedule-list">
                     {imageEntries.map((entry, index) => (
-                      <div key={index} className="schedule-item" style={{ display: 'flex', alignItems: 'center' }}>
+                      <div
+                        key={index}
+                        className="schedule-item"
+                        style={{ display: 'flex', alignItems: 'center' }}
+                      >
                         {entry.isExisting && entry.url && (
-                          <img 
+                          <img
                             src={entry.url}
                             alt={entry.fileName}
-                            style={{ 
-                              width: '30px', 
-                              height: '30px', 
+                            style={{
+                              width: '30px',
+                              height: '30px',
                               objectFit: 'cover',
                               marginRight: '10px',
                               border: '1px solid #ccc',
-                              borderRadius: '4px'
+                              borderRadius: '4px',
                             }}
                           />
                         )}
                         <span style={{ flex: 1 }}>
                           {entry.fileName}
                           {entry.isExisting && (
-                            <a 
+                            <a
                               href={entry.url}
-                              target="_blank" 
-                              rel="noopener noreferrer" 
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="image-preview-link"
                               style={{ marginLeft: '10px' }}
                             >
@@ -939,8 +1005,9 @@ const SpaceList = () => {
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
                     </span>
-                  ))}              </div>
-              
+                  ))}{' '}
+              </div>
+
               <div className="form__section">
                 <label htmlFor="description">
                   {t('form.description.label')}
@@ -994,28 +1061,47 @@ const SpaceList = () => {
                   errors.address.map((err, idx) => (
                     <span className="form__error" key={idx}>
                       {t(`errors.${err}`)}
-                    </span>                  ))}
+                    </span>
+                  ))}
               </div>
               <div className="form__section">
                 <label>Servicios Disponibles</label>
-                <div className="services-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                <div
+                  className="services-container"
+                  style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}
+                >
                   {services.length > 0 ? (
                     services.map((service) => (
-                      <div key={service.id} className="service-checkbox" style={{ 
-                        border: '1px solid #ccc', 
-                        borderRadius: '5px',
-                        padding: '10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        width: '120px'
-                      }}>
-                        <img 
+                      <div
+                        key={service.id}
+                        className="service-checkbox"
+                        style={{
+                          border: '1px solid #ccc',
+                          borderRadius: '5px',
+                          padding: '10px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          width: '120px',
+                        }}
+                      >
+                        <img
                           src={`https://localhost:8443/storage/${service.image_url}`}
                           alt={service.nombre}
-                          style={{ width: '80px', height: '80px', objectFit: 'cover', marginBottom: '5px' }}
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            objectFit: 'cover',
+                            marginBottom: '5px',
+                          }}
                         />
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginTop: '5px',
+                          }}
+                        >
                           <input
                             type="checkbox"
                             id={`service-${service.id}`}
@@ -1024,14 +1110,25 @@ const SpaceList = () => {
                             onChange={handleChange}
                             style={{ marginRight: '5px' }}
                           />
-                          <label htmlFor={`service-${service.id}`} style={{ fontSize: '0.9em' }}>
+                          <label
+                            htmlFor={`service-${service.id}`}
+                            style={{ fontSize: '0.9em' }}
+                          >
                             {service.nombre}
                           </label>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p style={{ padding: '10px', fontStyle: 'italic', color: '#666' }}>No hay servicios</p>
+                    <p
+                      style={{
+                        padding: '10px',
+                        fontStyle: 'italic',
+                        color: '#666',
+                      }}
+                    >
+                      No hay servicios
+                    </p>
                   )}
                 </div>
               </div>

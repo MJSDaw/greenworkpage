@@ -267,16 +267,13 @@ const Space = () => {
             </div>
           </article>
           <article className="space__services">
-            {services.length > 0 && <h2>{t('common.services')}</h2>}
-            <div className="services__grid">
-              {services.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  src={service.image_url}
-                  title={service.nombre}
-                />
-              ))}
-            </div>
+            {services.map((service) => (
+              <ServiceCard
+                key={service.id}
+                src={service.image_url}
+                title={service.name}
+              />
+            ))}
           </article>
           <article className="space__description">
             <div>
