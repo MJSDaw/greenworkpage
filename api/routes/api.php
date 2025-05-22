@@ -76,6 +76,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     
     // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);
+    Route::delete('spaces/{id}', [SpaceController::class, 'destroy']);
     
     // Routes for audits
     Route::get('audits', [AuditController::class, 'index']);

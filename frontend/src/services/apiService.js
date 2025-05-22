@@ -256,7 +256,20 @@ export const getSpaceById = async (spaceId) => {
     const response = await baseFetch(`/api/spaces/${spaceId}`, 'GET');
     return response;
   } catch (error) {
-    console.error(`Error fetching space with ID ${spaceId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Elimina un espacio específico por su ID
+ * @param {Number} spaceId - ID del espacio a consultar
+ * @returns {Promise} Los datos del espacio
+ */
+export const deleteSpace = async (spaceId) => {
+  try {
+    const response = await baseFetch(`/api/admin/spaces/${spaceId}`, 'DELETE');
+    return response;
+  } catch (error) {
     throw error;
   }
 };
@@ -355,7 +368,16 @@ export const createBooking = async (bookingData) => {
  * @returns {Promise} Respuesta del servidor
  */
 export const updateBooking = async (id, bookingData) => {
-  return baseFetch(`/api/bookings/${id}`, 'PUT', bookingData);
+  return baseFetch(`/api/admin/bookings/${id}`, 'PUT', bookingData);
+};
+
+/**
+ * Elimina una reserva existente
+ * @param {string} id - ID de la reserva
+ * @returns {Promise} Respuesta del servidor
+ */
+export const deleteBooking = async (id) => {
+  return baseFetch(`/api/admin/bookings/${id}`, 'DELETE');
 };
 
 // ==================== Pagos ====================

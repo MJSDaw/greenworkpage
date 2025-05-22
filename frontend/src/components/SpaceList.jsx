@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getSpaces, saveSpace, getServices } from '../services/apiService'
+import { getSpaces, saveSpace, getServices, deleteSpace } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
@@ -425,6 +425,23 @@ const SpaceList = () => {
     }))
   }
 
+  const handleDelete = async (id) => {
+        if (window.confirm(t('actions.deleteConfirm'))) {
+          try {
+            setLoading(true)
+            const response = await deleteSpace(id)
+            // If deletion successful, refresh the user list
+            if (response && response.success) {
+              await fetchSpaces() // Refresh the list after successful deletion
+            }
+          } catch (error) {
+            setError(t('actions.deleteError'))
+          } finally {
+            setLoading(false)
+          }
+        }
+      }
+
   const handleRemoveImage = (index) => {
     const newEntries = imageEntries.filter((_, i) => i !== index)
     setImageEntries(newEntries)
@@ -521,7 +538,7 @@ const SpaceList = () => {
                       >
                         {t('actions.edit')}
                       </button>
-                      <button className="form__submit --noArrow">
+                      <button className="form__submit --noArrow" onClick={() => handleDelete(space.id)}>
                         {t('actions.delete')}
                       </button>
                     </div>
