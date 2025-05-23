@@ -119,6 +119,47 @@ class BookingController extends Controller
             'status' => 'confirmed' // Estado por defecto
         ]);
 
+        try {
+            // Crear el contenido del correo de confirmación
+            $to = $user->email;
+            $subject = 'Confirmación de Reserva';
+            
+            // Crear formato HTML para el correo
+            $htmlMessage = "
+            <html>
+            <body>
+                <h2>Confirmación de Reserva</h2>
+                <p>Hola <strong>{$user->name}</strong>,</p>
+                <p>Tu reserva ha sido confirmada con los siguientes detalles:</p>
+                <ul>
+                    <li><strong>Espacio:</strong> {$booking->space->subtitle}</li>
+                    <li><strong>Inicio:</strong> {$booking->start_time}</li>
+                    <li><strong>Fin:</strong> {$booking->end_time}</li>
+                </ul>
+                <p>¡Gracias por reservar con nosotros!</p>
+            </body>
+            </html>";
+
+            // Registrar en el log el intento de envío
+            $logPath = storage_path('logs/mail_debug.log');
+            file_put_contents($logPath, date('Y-m-d H:i:s') . " - Intentando enviar correo a: {$to}\n", FILE_APPEND);
+            
+            // Usar el servicio PythonMailer en lugar de la función mail()
+            $mailer = new \App\Services\PythonMailer();
+            $result = $mailer->sendMail($to, $subject, $htmlMessage);
+            
+            // Registrar el resultado
+            if ($result['status'] === 'success') {
+                file_put_contents($logPath, date('Y-m-d H:i:s') . " - Correo de confirmación enviado exitosamente.\n", FILE_APPEND);
+            } else {
+                throw new \Exception("Error al enviar correo: " . ($result['message'] ?? 'Sin detalles'));
+            }
+        } catch (\Exception $e) {
+            // Registrar el error
+            $errorMessage = 'Error al enviar el correo: ' . $e->getMessage() . "\n" . $e->getTraceAsString();
+            file_put_contents(storage_path('logs/mail_error.log'), date('Y-m-d H:i:s') . " - $errorMessage\n", FILE_APPEND);
+        }
+
         return response()->json([
             'message' => 'Reserva creada exitosamente',
             'data' => $booking->load(['space', 'user'])
