@@ -6,6 +6,8 @@
 
 import { getAuthHeader, authenticatedFetch } from './authService';
 
+export const API_BASE_URL = 'https://localhost:8443'; // Cambia esto según tu configuración
+
 /**
  * Función base para realizar peticiones a la API
  * @param {string} url - URL completa del endpoint
@@ -45,7 +47,7 @@ export const baseFetch = async (
     }
     
     // Base URL for the API
-    const baseURL = 'https://localhost:8443';  // Make sure this matches your Laravel backend URL
+    const baseURL = API_BASE_URL;  // Make sure this matches your Laravel backend URL
     const apiUrl = url.startsWith('http') ? url : `${baseURL}${url}`;
     
     // Configurar el cuerpo de la petición según el tipo de datos
@@ -65,7 +67,7 @@ export const baseFetch = async (
       body,
       ...options,
     };    // Realizar la petición
-    const response = await fetch('https://localhost:8443' + url, fetchOptions);
+    const response = await fetch(API_BASE_URL + url, fetchOptions);
     
     // Check for 422 status (Unprocessable Entity) - typically expired session or validation error
     if (response.status === 401) {

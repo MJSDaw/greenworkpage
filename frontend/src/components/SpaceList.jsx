@@ -5,6 +5,7 @@ import {
   saveSpace,
   getServices,
   deleteSpace,
+  API_BASE_URL,
 } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
@@ -332,9 +333,9 @@ const SpaceList = () => {
           if (imagePath.startsWith('http')) {
             fullPath = imagePath
           } else if (imagePath.startsWith('storage/')) {
-            fullPath = `https://localhost:8443/${imagePath}`
+            fullPath = `${API_BASE_URL}/${imagePath}`
           } else {
-            fullPath = `https://localhost:8443/storage/${imagePath}`
+            fullPath = `${API_BASE_URL}/storage/${imagePath}`
           }
           return {
             fileName,
@@ -772,7 +773,7 @@ const SpaceList = () => {
                                   }}
                                 >
                                   <img
-                                    src={`https://localhost:8443/storage/${service.image_url}`}
+                                    src={`${API_BASE_URL}/storage/${service.image_url}`}
                                     alt={service.nombre}
                                     style={{
                                       width: '80px',
@@ -1128,7 +1129,7 @@ const SpaceList = () => {
                         }}
                       >
                         <img
-                          src={`https://localhost:8443/storage/${service.image_url}`}
+                          src={`${API_BASE_URL}/storage/${service.image_url}`}
                           alt={service.nombre}
                           style={{
                             width: '80px',

@@ -22,7 +22,7 @@ import { authenticatedFetch } from '../services/authService';
 // Example of a GET request
 const getProfile = async () => {
   try {
-    const response = await authenticatedFetch('https://localhost:8443/api/profile');
+    const response = await authenticatedFetch('${API_BASE_URL}/api/profile');
     const data = await response.json();
     // Handle the response
   } catch (error) {
@@ -33,7 +33,7 @@ const getProfile = async () => {
 // Example of a POST request
 const updateProfile = async (profileData) => {
   try {
-    const response = await authenticatedFetch('https://localhost:8443/api/profile', {
+    const response = await authenticatedFetch('${API_BASE_URL}/api/profile', {
       method: 'POST',
       body: JSON.stringify(profileData)
     });

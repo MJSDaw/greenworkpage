@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { createBackup, updateAdminImage } from '../services/apiService'
+import { createBackup, updateAdminImage, API_BASE_URL } from '../services/apiService'
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
 import BookingList from '../components/BookingList'
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
           setImage(adminData.image)
         } else {
           // If it's a relative path, assume it's from storage
-          setImage(`https://localhost:8443/storage/${adminData.image}`)
+          setImage(`${API_BASE_URL}/storage/${adminData.image}`)
         }
       } else {
         // Si no hay imagen, usar la imagen predeterminada
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
               if (updatedData.image.startsWith('http')) {
                 setImage(updatedData.image)
               } else {
-                setImage(`https://localhost:8443/storage/${updatedData.image}`)
+                setImage(`${API_BASE_URL}/storage/${updatedData.image}`)
               }
             } else {
               // Si no hay imagen en los datos actualizados, usar la predeterminada
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
         // Actualizar la imagen con la ruta devuelta por el servidor
         if (data.data && data.data.image) {
           // Construir la URL correcta para acceder al archivo en el storage público
-          setImage(`https://localhost:8443/storage/${data.data.image}`)
+          setImage(`${API_BASE_URL}/storage/${data.data.image}`)
           // También actualizamos la información del admin en localStorage
           const currentAdminData = getUserData()
           if (currentAdminData) {

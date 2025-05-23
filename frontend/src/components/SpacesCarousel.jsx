@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import SpaceCard from './SpaceCard'
 import prueba from '../assets/img/pruebas.webp'
 import arrow from '../assets/img/arrow.svg'
-import { getSpaces } from '../services/apiService'
+import { getSpaces, API_BASE_URL } from '../services/apiService'
 
 const NextArrow = (props) => {
   const { className, onClick } = props
@@ -54,7 +54,7 @@ const SpacesCarousel = () => {
         if (response && response.data) {
           const spacesData = response.data.slice(0, 4).map(space => ({
             id: space.id,
-            src: `https://localhost:8443/storage/${space.images.split('|')[0]}`,
+            src: `${API_BASE_URL}/storage/${space.images.split('|')[0]}`,
             subtitle: space.subtitle,
             amount: space.price,
             maps: space.address || '',

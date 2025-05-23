@@ -8,8 +8,7 @@ import coworking2 from '../assets/img/coworking2.webp'
 import coworking3 from '../assets/img/coworking3.webp'
 import { useTranslation } from 'react-i18next'
 import SpaceCard from '../components/SpaceCard'
-import prueba from '../assets/img/pruebas.webp'
-import { getSpaces } from '../services/apiService'
+import { getSpaces, API_BASE_URL } from '../services/apiService'
 
 const Spaces = () => {
   const { t } = useTranslation()
@@ -126,7 +125,7 @@ const Spaces = () => {
         if (response && response.data) {
           const spacesData = response.data.map((space) => ({
             id: space.id,
-            src: `https://localhost:8443/storage/${space.images.split('|')[0]}`,
+            src: `${API_BASE_URL}/storage/${space.images.split('|')[0]}`,
             subtitle: space.subtitle,
             amount: space.price,
             maps: space.address || '',

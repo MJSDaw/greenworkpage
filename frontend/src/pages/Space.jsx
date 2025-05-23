@@ -4,7 +4,7 @@ import ContactUs from '../components/ContactUs'
 import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
-import { getServices, createBooking, updateBooking } from '../services/apiService'
+import { getServices, createBooking, API_BASE_URL } from '../services/apiService'
 import {
   isAuthenticated,
   getUserType,
@@ -51,7 +51,7 @@ const Space = () => {
         const response = await getSpaceById(id)
         if (response && response.data) {
           const spacesData = {
-            src: `https://localhost:8443/storage/${response.data.images.split('|')[0]}`,
+            src: `${API_BASE_URL}/storage/${response.data.images.split('|')[0]}`,
             subtitle: response.data.subtitle,
             amount: response.data.price,
             maps: response.data.address || '',

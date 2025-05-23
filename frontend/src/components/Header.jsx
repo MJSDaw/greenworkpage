@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { isAuthenticated, removeAuthToken } from '../services/authService'
 import { getUserProfile } from '../services/authService'
+import { API_BASE_URL } from '../services/apiService'
 import logo from '../assets/img/logo.png'
 import menuHamburger from '../assets/img/menu_hamburguer.svg'
 import leonardo from '../assets/img/leonardo.svg'
@@ -41,7 +42,7 @@ const Header = () => {
                   setUserImage(updatedData.image)
                 } else {
                   setUserImage(
-                    `https://localhost:8443/storage/${updatedData.image}`
+                    `${API_BASE_URL}/storage/${updatedData.image}`
                   )
                 }
               }

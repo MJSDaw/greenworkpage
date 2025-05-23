@@ -4,7 +4,7 @@ import { getUserData, getUserProfile } from '../services/authService'
 import { updateUserImage, getUserBookings, createBooking, updateUserProfile } from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
-import { isAuthenticated, getUserType } from '../services/authService'
+import { isAuthenticated, getUserType, API_BASE_URL } from '../services/authService'
 import { useNavigate } from 'react-router-dom'
 
 const UserDashboard = () => {
@@ -49,7 +49,7 @@ const UserDashboard = () => {
       if (userData.image) {
         const imageUrl = userData.image.startsWith('http')
           ? userData.image
-          : `https://localhost:8443/storage/${userData.image}`
+          : `${API_BASE_URL}/storage/${userData.image}`
         setImage(imageUrl)
       }
 
@@ -73,7 +73,7 @@ const UserDashboard = () => {
             if (updatedData.image) {
               const imageUrl = updatedData.image.startsWith('http')
                 ? updatedData.image
-                : `https://localhost:8443/storage/${updatedData.image}`
+                : `${API_BASE_URL}/storage/${updatedData.image}`
               setImage(imageUrl)
             }
           }
@@ -136,7 +136,7 @@ const UserDashboard = () => {
     try {
       const data = await updateUserImage(userData.id, file)
       if (data?.success && data.data?.image) {
-        const newImage = `https://localhost:8443/storage/${data.data.image}`
+        const newImage = `${API_BASE_URL}/storage/${data.data.image}`
         setImage(newImage)
 
         const currentUserData = getUserData()

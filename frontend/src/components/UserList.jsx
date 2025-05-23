@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { saveUser, deleteUser } from '../services/apiService'
+import { saveUser, deleteUser, API_BASE_URL } from '../services/apiService'
 import { getAuthHeader } from '../services/authService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
@@ -37,7 +37,7 @@ const UserList = () => {
     setError(null)
     try {
       const response = await fetch(
-        `https://localhost:8443/api/admin/users?page=${currentPage}&per_page=${perPage}`,
+        `${API_BASE_URL}/api/admin/users?page=${currentPage}&per_page=${perPage}`,
         {
           method: 'GET',
           headers: {

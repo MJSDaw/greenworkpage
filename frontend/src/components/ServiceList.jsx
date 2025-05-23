@@ -5,6 +5,7 @@ import {
   createService,
   updateService,
   deleteService,
+  API_BASE_URL,
 } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
@@ -238,7 +239,7 @@ const ServiceList = () => {
                     <div className="card__image">
                       {service.image_url && (
                         <img
-                          src={`https://localhost:8443/storage/${service.image_url}`}
+                          src={`${API_BASE_URL}/storage/${service.image_url}`}
                           alt={service.name}
                         />
                       )}
@@ -341,7 +342,7 @@ const ServiceList = () => {
                       src={
                         formData.image_url.startsWith('data:')
                           ? formData.image_url // Si es un data URL (imagen local)
-                          : `https://localhost:8443/storage/${formData.image_url}`
+                          : `${API_BASE_URL}/storage/${formData.image_url}`
                       } // Si es una ruta del servidor
                       alt={t('form.imagePreview.alt')}
                     />
