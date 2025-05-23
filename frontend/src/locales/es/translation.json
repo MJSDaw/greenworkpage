@@ -57,9 +57,11 @@
     "dashboardImg": "Usuario {{id}}",
     "location": "Icono de ubicación",
     "phone": "Icono de teléfono",
-    "peaspeas": "Conjunto de guisantes"
+    "peaspeas": "Conjunto de guisantes",
+    "arrow": "Flecha"
   },
   "common": {
+    "arrow": "Icono de flecha",
     "peaspeas": "Guisantes unidos",
     "github": "Logo de Github",
     "instagram": "Logo de Instagram",
