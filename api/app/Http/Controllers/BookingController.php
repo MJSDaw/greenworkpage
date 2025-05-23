@@ -236,12 +236,42 @@ class BookingController extends Controller
         $user = Auth::user();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
 
+        // Si se pasa un parámetro booking_id, devolver solo esa reserva en formato paginado
+        if ($request->has('booking_id')) {
+            $booking = Booking::with(['space'])
+                ->where('user_id', $user->id)
+                ->where('id', $request->booking_id)
+                ->first();
+            
+            return response()->json([
+                'current_page' => 1,
+                'data' => $booking ? [$booking] : [],
+                'from' => $booking ? 1 : null,
+                'last_page' => 1,
+                'per_page' => 1,
+                'to' => $booking ? 1 : null,
+                'total' => $booking ? 1 : 0,
+            ]);
+        }
+
+        // Obtener todas las reservas del usuario con paginación
         $bookings = Booking::with(['space'])
             ->where('user_id', $user->id)
             ->orderBy('start_time', 'asc')
             ->paginate($perPage);
 
-        return response()->json($bookings);
+        // Asegurar que la respuesta tenga un formato consistente
+        $formattedResponse = [
+            'current_page' => $bookings->currentPage(),
+            'data' => $bookings->items(),
+            'from' => $bookings->firstItem(),
+            'last_page' => $bookings->lastPage(),
+            'per_page' => $bookings->perPage(),
+            'to' => $bookings->lastItem(),
+            'total' => $bookings->total(),
+        ];
+
+        return response()->json($formattedResponse);
     }
 
     /**

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { updateAdminImage } from '../services/apiService'
+import { updateAdminImage, getUserBookings, createBooking } from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
+import { isAuthenticated, getUserType } from '../services/authService'
+import { useNavigate } from 'react-router-dom'
 
 const UserDashboard = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [userName, setUserName] = useState('')
   const [image, setImage] = useState(defaultImage)
   const [formData, setFormData] = useState({
@@ -18,6 +21,11 @@ const UserDashboard = () => {
     password: '',
     passwordConfirm: '',
     termsAndConditions: false,
+    user_id: '',
+    space_id: '', // Se puede setear desde la URL si se accede desde un espacio
+    selected_date: '',
+    start_time: '',
+    end_time: '',
   })
   const [error, setError] = useState({})
   const [loading, setLoading] = useState(false)
@@ -26,12 +34,16 @@ const UserDashboard = () => {
   const [backupMessage, setBackupMessage] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const perPage = 3
+  const [showForm, setShowForm] = useState(false)
+  const isUser = isAuthenticated() && getUserType() === 'user'
 
   useEffect(() => {
     const adminData = getUserData()
 
     if (adminData) {
       setUserName(adminData.name || '')
+      setFormData((prev) => ({ ...prev, user_id: adminData.id }))
 
       if (adminData.image) {
         const imageUrl = adminData.image.startsWith('http')
@@ -57,6 +69,43 @@ const UserDashboard = () => {
       fetchAdminData()
     }
   }, [])
+  const fetchBookings = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await getUserBookings(currentPage, perPage)
+      // Verificar y manejar la estructura de respuesta paginada
+      if (response && response.data) {
+        // Asegurarnos de obtener el array de reservas correctamente
+        const bookingsArray = Array.isArray(response.data)
+          ? response.data
+          : (response.data.data || []);
+
+        setBookings(bookingsArray)
+
+        // Asegurarnos de obtener el número total de páginas
+        const lastPage = response.data.last_page ||
+          (response.last_page) ||
+          Math.ceil((response.data.total || bookingsArray.length) / perPage) ||
+          1;
+
+        setTotalPages(lastPage)
+      } else {
+        setBookings([])
+        setTotalPages(1)
+      }
+    } catch (err) {
+      console.error("Error obteniendo reservas:", err)
+      setError(err.message || 'Error al obtener reservas')
+      setBookings([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchBookings()
+  }, [currentPage])
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
@@ -101,6 +150,38 @@ const UserDashboard = () => {
     }))
   }
 
+  const handleBookingChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault()
+    // Validación básica
+    if (!formData.selected_date || !formData.start_time || !formData.end_time) {
+      setError({ form: [t('common.allFieldsRequired')] })
+      return
+    }
+    try {
+      const bookingData = {
+        user_id: formData.user_id,
+        space_id: formData.space_id,
+        start_time: `${formData.selected_date}T${formData.start_time}:00`,
+        end_time: `${formData.selected_date}T${formData.end_time}:00`,
+        status: 'pending',
+      }
+      const response = await createBooking(bookingData)
+      if (response && response.success) {
+        setShowForm(false)
+        fetchBookings()
+      } else {
+        setError(response.errors || { form: [t('common.commonError')] })
+      }
+    } catch (err) {
+      setError(err.errors || { form: [err.message] })
+    }
+  }
+
   const formatDate = (date) => new Date(date).toLocaleString()
   const getStatusDisplay = (status) => t(`status.${status}`, status)
 
@@ -126,9 +207,9 @@ const UserDashboard = () => {
             <form onSubmit={handleSubmit}>
               {['name', 'surname', 'email'].map((field) => (
                 <div className="form__section" key={field}>
-                  <label htmlFor={field}>{t(`form.${field}.label`)}</label>
+                  <label htmlFor={`user-${field}`}>{t(`form.${field}.label`)}</label>
                   <input
-                    id={field}
+                    id={`user-${field}`}
                     name={field}
                     placeholder={t(`form.${field}.placeholder`)}
                     value={formData[field]}
@@ -169,6 +250,17 @@ const UserDashboard = () => {
 
       <section className="user__section--part">
         <h2>{t('links.bookings')}</h2>
+        {isUser && (
+          <button
+            className="form__submit"
+            onClick={() => {
+              navigate('/spaces');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            {t('actions.bookingsCreate')}
+          </button>
+        )}
         <section className="card__container">
           {loading && <p>{t('common.bookingsLoading')}</p>}
           {!loading && bookings.length === 0 && <p>{t('common.bookingsNoBookings')}</p>}
@@ -203,16 +295,16 @@ const UserDashboard = () => {
                 </div>
               </article>
             ))}
+            {bookings.length > 0 && (
+              <div className="pagination">
 
-          {bookings.length > 0 && (
-            <div className="pagination">
-              <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>«</button>
-              <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>‹</button>
-              <span>{currentPage} / {totalPages}</span>
-              <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>›</button>
-              <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>»</button>
-            </div>
-          )}
+                <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} title={t('pagination.first', { defaultValue: 'Primera página' })}>«</button>
+                <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} title={t('pagination.previous', { defaultValue: 'Página anterior' })}>‹</button>
+                <span>{currentPage} / {totalPages}</span>
+                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages || bookings.length < perPage} title={t('pagination.next', { defaultValue: 'Página siguiente' })}>›</button>
+                <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages || bookings.length < perPage} title={t('pagination.last', { defaultValue: 'Última página' })}>»</button>
+              </div>
+            )}
         </section>
       </section>
 

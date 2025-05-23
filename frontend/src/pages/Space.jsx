@@ -4,7 +4,7 @@ import ContactUs from '../components/ContactUs'
 import { getSpaceById } from '../services/apiService'
 import { useTranslation } from 'react-i18next'
 import ServiceCard from '../components/ServiceCard'
-import { getServices } from '../services/apiService'
+import { getServices, createBooking, updateBooking } from '../services/apiService'
 import {
   isAuthenticated,
   getUserType,
@@ -35,6 +35,9 @@ const Space = () => {
   const [errors, setErrors] = useState({})
   const [spaces, setSpaces] = useState([])
   const [selectedSpace, setSelectedSpace] = useState(null)
+  // --- BOOKINGLIST-LIKE DEPENDENCIES ---
+  const [availableSchedules, setAvailableSchedules] = useState([])
+  const [existingBookings, setExistingBookings] = useState([])
 
   useEffect(() => {
     const userType = getUserType()
@@ -57,8 +60,11 @@ const Space = () => {
             services: response.data.services
               ? response.data.services.split(',').map((id) => parseInt(id, 10))
               : [],
+            id: response.data.id, // <-- Añadimos el id para selectedSpace
+            schedule: response.data.schedule // <-- Añadimos el schedule para selectedSpace
           }
           setSpace(spacesData)
+          setSelectedSpace(spacesData) // <-- Establecemos selectedSpace automáticamente
 
           // Obtener servicios activos del espacio
           if (spacesData.services && spacesData.services.length > 0) {
@@ -78,6 +84,21 @@ const Space = () => {
       }
     }
     fetchSpace()
+  }, [id])
+
+  // Fetch existing bookings for this space and date
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        // getBookings API returns all bookings, filter by space_id
+        const response = await import('../services/apiService').then(m => m.getBookings(1, 100));
+        const bookingsArray = response?.data?.data || response?.data || [];
+        setExistingBookings(bookingsArray.filter(b => b.space_id == id));
+      } catch (err) {
+        setExistingBookings([])
+      }
+    }
+    fetchBookings()
   }, [id])
 
   const handleChange = (e) => {
@@ -206,35 +227,131 @@ const Space = () => {
 
       // Preparar los datos para enviar al backend
       const bookingData = {
-        user_id: formData.user_id,
-        space_id: formData.space_id,
-        start_date: `${formData.selected_date} ${formData.start_time}`,
-        end_date: `${formData.selected_date} ${formData.end_time}`,
+        user_id: Number(formData.user_id),
+        space_id: Number(formData.space_id),
+        start_time: `${formData.selected_date}T${formData.start_time}:00`,
+        end_time: `${formData.selected_date}T${formData.end_time}:00`,
         reservation_period: `${formData.selected_date} ${formData.start_time}-${formData.selected_date} ${formData.end_time}`,
       }
 
       console.log('Sending booking data:', bookingData)
 
-      const data = editingId
-        ? await updateBooking(editingId, bookingData)
-        : await createBooking(bookingData)
+      const data = await createBooking(bookingData)
 
-      if (data && data.success) {
-        if (editingId) {
-          setEditingId(null)
-          setErrors({})
-        } else {
-          setErrors({})
-          setShowForm(false)
-          setShowList(true)
-        }
-        fetchBookings()
+      if (data && (data.success || data.status === 'success')) {
+        setErrors({})
+        setFormData(prev => ({
+          ...prev,
+          start_time: '',
+          end_time: '',
+          selected_date: '',
+          reservation_period: '',
+        }))
+        setAvailableSchedules([])
+        alert('Reserva creada correctamente')
+        // Opcional: recargar reservas o refrescar la página
+        // window.location.reload()
       } else {
-        setErrors(data.errors || {})
+        setErrors(data.errors || { form: ['No se pudo crear la reserva'] })
       }
     } catch (error) {
-      setErrors(error.errors || {})
+      console.error('Booking error:', error);
+      setErrors(error.errors || { form: ['Error al crear la reserva'] })
     }
+  }
+
+  // --- BOOKINGLIST-LIKE HELPERS ---
+  function parseSpaceSchedule(scheduleStr) {
+    if (!scheduleStr) return []
+    return scheduleStr.split('|').map((slot) => {
+      const [day, start, end] = slot.split('-')
+      return { day, start, end }
+    })
+  }
+  function getDayOfWeek(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00Z')
+    const days = [
+      'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
+    ]
+    return days[date.getUTCDay()]
+  }
+  function timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number)
+    return hours * 60 + minutes
+  }
+  function minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+  }
+  function isValidTimeRange(start, end) {
+    return timeToMinutes(start) < timeToMinutes(end)
+  }
+  // Get available slots for a date and space, excluding overlaps
+  function getAvailableSlots(date, spaceId) {
+    const dayOfWeek = getDayOfWeek(date)
+    if (["saturday", "sunday"].includes(dayOfWeek)) return []
+    if (!selectedSpace || !selectedSpace.schedule) return []
+    const schedules = parseSpaceSchedule(selectedSpace.schedule).filter(s => s.day === dayOfWeek)
+    if (!schedules.length) return []
+    // Get bookings for this date and space
+    const dateBookings = existingBookings.filter(b => {
+      if (!b.space_id || b.space_id != spaceId) return false
+      const bookingDate = new Date(b.start_time).toISOString().split('T')[0]
+      return bookingDate === date
+    })
+    // Calculate available time ranges
+    const availableRanges = []
+    schedules.forEach(schedule => {
+      const scheduleStart = timeToMinutes(schedule.start)
+      const scheduleEnd = timeToMinutes(schedule.end)
+      let timePoints = [
+        { time: scheduleStart, type: 'start' },
+        { time: scheduleEnd, type: 'end' }
+      ]
+      dateBookings.forEach(booking => {
+        const startTime = new Date(booking.start_time).toTimeString().substring(0, 5)
+        const endTime = new Date(booking.end_time).toTimeString().substring(0, 5)
+        timePoints.push({ time: timeToMinutes(startTime), type: 'booked-start' })
+        timePoints.push({ time: timeToMinutes(endTime), type: 'booked-end' })
+      })
+      timePoints.sort((a, b) => a.time - b.time)
+      let isAvailable = false
+      let rangeStart = null
+      timePoints.forEach(point => {
+        if (point.type === 'start') {
+          rangeStart = point.time
+          isAvailable = true
+        } else if (point.type === 'booked-start') {
+          if (isAvailable && rangeStart !== null && point.time > rangeStart) {
+            availableRanges.push({ start: minutesToTime(rangeStart), end: minutesToTime(point.time) })
+          }
+          isAvailable = false
+        } else if (point.type === 'booked-end') {
+          rangeStart = point.time
+          isAvailable = true
+        } else if (point.type === 'end') {
+          if (isAvailable && rangeStart !== null && point.time > rangeStart) {
+            availableRanges.push({ start: minutesToTime(rangeStart), end: minutesToTime(point.time) })
+          }
+        }
+      })
+    })
+    return availableRanges
+  }
+
+  // Genera un array de horas libres (en string 'HH:MM') a partir de los availableSchedules
+  function getFreeTimeslots(schedules, step = 60) {
+    const slots = []
+    schedules.forEach(range => {
+      let start = timeToMinutes(range.start)
+      const end = timeToMinutes(range.end)
+      while (start + step <= end) {
+        slots.push(minutesToTime(start))
+        start += step
+      }
+    })
+    return slots
   }
 
   return (
@@ -361,104 +478,46 @@ const Space = () => {
                                 </div>
                               </div>
                               <div className="form__section">
-                                <label htmlFor="start_time">
-                                  {t('form.time.startTime')}:
-                                </label>
+                                <label htmlFor="start_time">{t('form.time.startTime')}:</label>
                                 <select
                                   id="start_time"
                                   name="start_time"
-                                  value={formData.start_time || ''}
+                                  value={formData.start_time}
                                   onChange={handleChange}
                                   required
                                 >
-                                  <option value="">
-                                    {t('form.time.selectStartTime')}
-                                  </option>
-                                  {parseSpaceSchedule(selectedSpace.schedule)
-                                    .filter(
-                                      (s) =>
-                                        s.day ===
-                                        getDayOfWeek(formData.selected_date)
-                                    )
-                                    .map((schedule, index) => {
-                                      const startMinutes = timeToMinutes(
-                                        schedule.start
-                                      )
-                                      const endMinutes = timeToMinutes(
-                                        schedule.end
-                                      )
-                                      const options = []
-                                      for (
-                                        let time = startMinutes;
-                                        time < endMinutes;
-                                        time += 60
-                                      ) {
-                                        const timeStr = minutesToTime(time)
-                                        options.push(
-                                          <option key={timeStr} value={timeStr}>
-                                            {timeStr}
-                                          </option>
-                                        )
-                                      }
-                                      return options
-                                    })}
+                                  <option value="">{t('form.time.selectStartTime')}</option>
+                                  {getFreeTimeslots(availableSchedules).map((time) => (
+                                    <option key={time} value={time}>{time}</option>
+                                  ))}
                                 </select>
                               </div>
-
                               {formData.start_time && (
                                 <div className="form__section">
-                                  <label htmlFor="end_time">Hora de fin:</label>
+                                  <label htmlFor="end_time">{t('form.time.endTime')}:</label>
                                   <select
                                     id="end_time"
                                     name="end_time"
-                                    value={formData.end_time || ''}
+                                    value={formData.end_time}
                                     onChange={handleChange}
                                     required
                                   >
-                                    <option value="">
-                                      Selecciona hora de fin
-                                    </option>
-                                    {parseSpaceSchedule(selectedSpace.schedule)
-                                      .filter(
-                                        (s) =>
-                                          s.day ===
-                                          getDayOfWeek(formData.selected_date)
-                                      )
-                                      .map((schedule, index) => {
-                                        if (
-                                          timeToMinutes(schedule.start) <=
-                                            timeToMinutes(
-                                              formData.start_time
-                                            ) &&
-                                          timeToMinutes(schedule.end) >
-                                            timeToMinutes(formData.start_time)
-                                        ) {
-                                          const startMinutes =
-                                            timeToMinutes(formData.start_time) +
-                                            60
-                                          const endMinutes = timeToMinutes(
-                                            schedule.end
-                                          )
-                                          const options = []
-                                          for (
-                                            let time = startMinutes;
-                                            time <= endMinutes;
-                                            time += 60
-                                          ) {
-                                            const timeStr = minutesToTime(time)
-                                            options.push(
-                                              <option
-                                                key={timeStr}
-                                                value={timeStr}
-                                              >
-                                                {timeStr}
-                                              </option>
-                                            )
-                                          }
-                                          return options
-                                        }
-                                        return null
-                                      })}
+                                    <option value="">Selecciona hora de fin</option>
+                                    {(() => {
+                                      // Buscar el rango donde está el start_time
+                                      const start = formData.start_time
+                                      const range = availableSchedules.find(r => timeToMinutes(start) >= timeToMinutes(r.start) && timeToMinutes(start) < timeToMinutes(r.end))
+                                      if (!range) return null
+                                      const startMin = timeToMinutes(start) + 60
+                                      const endMin = timeToMinutes(range.end)
+                                      const options = []
+                                      for (let t = startMin; t <= endMin; t += 60) {
+                                        options.push(minutesToTime(t))
+                                      }
+                                      return options.map(time => (
+                                        <option key={time} value={time}>{time}</option>
+                                      ))
+                                    })()}
                                   </select>
                                 </div>
                               )}
@@ -498,7 +557,14 @@ const Space = () => {
                           type="submit"
                           value={t('actions.bookingsCreate')}
                           className="form__submit"
-                          disabled={!formData.reservation_period}
+                          disabled={
+                            !formData.user_id ||
+                            !formData.space_id ||
+                            !formData.selected_date ||
+                            !formData.start_time ||
+                            !formData.end_time ||
+                            !isValidTimeRange(formData.start_time, formData.end_time)
+                          }
                         />
                       </form>
                     </article>

@@ -317,10 +317,12 @@ export const createBooking = (bookingData) => {
 /**
  * Obtiene una reserva específica por su ID
  * @param {number} id - ID de la reserva
+ * @param {number} page - Número de página actual (para datos relacionados)
+ * @param {number} perPage - Cantidad de registros por página
  * @returns {Promise} Los datos de la reserva
  */
-export const getBookingById = (id) => {
-  return baseFetch(`/api/bookings/${id}`);
+export const getBookingById = (id, page = 1, perPage = 10) => {
+  return baseFetch(`/api/my-bookings/${id}?page=${page}&per_page=${perPage}`);
 };
 
 /**
