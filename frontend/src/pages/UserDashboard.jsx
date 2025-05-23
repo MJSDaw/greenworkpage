@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { updateAdminImage, getUserBookings, createBooking } from '../services/apiService'
+import { updateAdminImage, getUserBookings, createBooking, updateUserProfile } from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
 import { isAuthenticated, getUserType } from '../services/authService'
@@ -37,36 +37,52 @@ const UserDashboard = () => {
   const perPage = 3
   const [showForm, setShowForm] = useState(false)
   const isUser = isAuthenticated() && getUserType() === 'user'
-
   useEffect(() => {
-    const adminData = getUserData()
+    const userData = getUserData()
 
-    if (adminData) {
-      setUserName(adminData.name || '')
-      setFormData((prev) => ({ ...prev, user_id: adminData.id }))
+    if (userData) {
+      setUserName(userData.name || '')
+      
+      // Establece solo el ID del usuario inicialmente
+      setFormData((prev) => ({ ...prev, user_id: userData.id }))
 
-      if (adminData.image) {
-        const imageUrl = adminData.image.startsWith('http')
-          ? adminData.image
-          : `https://localhost:8443/storage/${adminData.image}`
+      if (userData.image) {
+        const imageUrl = userData.image.startsWith('http')
+          ? userData.image
+          : `https://localhost:8443/storage/${userData.image}`
         setImage(imageUrl)
       }
 
-      const fetchAdminData = async () => {
+      const fetchUserData = async () => {
         try {
           const updatedData = await getUserProfile()
-          if (updatedData?.image) {
-            const imageUrl = updatedData.image.startsWith('http')
-              ? updatedData.image
-              : `https://localhost:8443/storage/${updatedData.image}`
-            setImage(imageUrl)
+          if (updatedData) {
+            // Actualizar el formData con los datos del usuario
+            setFormData((prev) => ({
+              ...prev,
+              id: updatedData.id,
+              name: updatedData.name || '',
+              surname: updatedData.surname || '',
+              email: updatedData.email || '',
+              // No incluimos la contraseña - debe estar vacía inicialmente
+              // No incluimos el DNI ya que normalmente no se modifica
+              // No incluimos la fecha de nacimiento ya que normalmente no se modifica
+            }))
+            
+            // Actualiza la imagen si existe
+            if (updatedData.image) {
+              const imageUrl = updatedData.image.startsWith('http')
+                ? updatedData.image
+                : `https://localhost:8443/storage/${updatedData.image}`
+              setImage(imageUrl)
+            }
           }
         } catch (err) {
-          console.error('Error fetching admin data:', err)
+          console.error('Error fetching user data:', err)
         }
       }
 
-      fetchAdminData()
+      fetchUserData()
     }
   }, [])
   const fetchBookings = async () => {
@@ -134,12 +150,70 @@ const UserDashboard = () => {
       setBackupMessage(t('errors.imageUploadFailed') || 'Error uploading image.')
       setShowBackupMessage(true)
     }
-  }
+  }  
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // Aquí deberías enviar el formData al backend. Este ejemplo no lo incluye.
-    console.log('Form submitted:', formData)
+    setLoading(true)
+    setError({})
+    
+    try {
+      // Crear objeto con solo los campos que queremos actualizar
+      const updateData = {
+        id: formData.id,
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email
+      }
+      
+      // Si se proporcionó una contraseña, incluirla en la actualización
+      if (formData.password) {
+        // Verifica que la contraseña y su confirmación coincidan
+        if (formData.password !== formData.passwordConfirm) {
+          setError({ passwordConfirm: [t('error.passwordMismatchError') || 'Las contraseñas no coinciden'] })
+          setLoading(false)
+          return
+        }
+        updateData.password = formData.password
+      }
+      
+      console.log('Sending update request with data:', updateData)
+      const response = await updateUserProfile(updateData)
+      console.log('Update response:', response)
+      
+      if (response && response.success) {
+        // Actualizar los datos en localStorage
+        const currentUserData = getUserData()
+        if (currentUserData) {
+          currentUserData.name = response.user.name
+          currentUserData.surname = response.user.surname
+          currentUserData.email = response.user.email
+          localStorage.setItem('userData', JSON.stringify(currentUserData))
+        }
+        
+        // Actualizar nombre de usuario en la interfaz
+        setUserName(response.user.name || '')
+        
+        // Mostrar mensaje de éxito
+        setBackupMessage(t('common.profileUpdateSuccess'))
+        setShowBackupMessage(true)
+        
+        // Limpiar campos de contraseña
+        setFormData((prev) => ({
+          ...prev,
+          password: '',
+          passwordConfirm: ''
+        }))
+      } else {
+        // Mostrar errores de validación
+        setError(response?.errors || { general: [t('common.commonError')] })
+      }
+    } catch (err) {
+      console.error('Error updating profile:', err)
+      setError({ form: [err.message || t('common.commonError')] })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -201,9 +275,21 @@ const UserDashboard = () => {
       </section>
 
       <section className="user__section--part">
-        <h2>{t('common.dataModified')}</h2>
-        <section className="card__container">
+        <h2>{t('common.dataModified')}</h2>        <section className="card__container">
           <article className="card--form--edit">
+            {showBackupMessage && (
+              <div className="message--success">
+                <p>{backupMessage}</p>
+              </div>
+            )}
+            {error?.form && (
+              <div className="message--error">
+                {Array.isArray(error.form) &&
+                  error.form.map((err) => (
+                    <p key={err}>{t(`error.${err}`) || err}</p>
+                  ))}
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               {['name', 'surname', 'email'].map((field) => (
                 <div className="form__section" key={field}>
@@ -212,37 +298,57 @@ const UserDashboard = () => {
                     id={`user-${field}`}
                     name={field}
                     placeholder={t(`form.${field}.placeholder`)}
-                    value={formData[field]}
+                    value={formData[field] || ''}
                     onChange={handleChange}
                   />
                   {Array.isArray(error?.[field]) &&
                     error[field].map((err) => (
                       <span className="form__error" key={err}>
-                        {t(`error.${err}`)}
+                        {t(`error.${err}`) || err}
                       </span>
                     ))}
                 </div>
               ))}
-              {['password', 'confirmPassword'].map((field) => (
-                <div className="form__section" key={field}>
-                  <label htmlFor={field}>{t(`form.${field}.label`)}</label>
-                  <input
-                    id={field}
-                    name={field}
-                    type="password"
-                    placeholder={t(`form.${field}.placeholder`)}
-                    value={formData[field]}
-                    onChange={handleChange}
-                  />
-                  {Array.isArray(error?.[field]) &&
-                    error[field].map((err) => (
-                      <span className="form__error" key={err}>
-                        {t(`error.${err}`)}
-                      </span>
-                    ))}
-                </div>
-              ))}
-              <input type="submit" value={t('actions.edit')} className="form__submit" />
+              <div className="form__section">
+                <label htmlFor="password">{t('form.password.label')}</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder={t('form.password.placeholder')}
+                  value={formData.password || ''}
+                  onChange={handleChange}
+                />
+                {Array.isArray(error?.password) &&
+                  error.password.map((err) => (
+                    <span className="form__error" key={err}>
+                      {t(`error.${err}`) || err}
+                    </span>
+                  ))}
+              </div>
+              <div className="form__section">
+                <label htmlFor="passwordConfirm">{t('form.confirmPassword.label')}</label>
+                <input
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  type="password"
+                  placeholder={t('form.confirmPassword.placeholder')}
+                  value={formData.passwordConfirm || ''}
+                  onChange={handleChange}
+                />
+                {Array.isArray(error?.passwordConfirm) &&
+                  error.passwordConfirm.map((err) => (
+                    <span className="form__error" key={err}>
+                      {t(`error.${err}`) || err}
+                    </span>
+                  ))}
+              </div>
+              <input 
+                type="submit" 
+                value={loading ? t('common.loading', { defaultValue: 'Procesando...' }) : t('actions.edit')} 
+                className="form__submit" 
+                disabled={loading}
+              />
             </form>
           </article>
         </section>
@@ -250,17 +356,6 @@ const UserDashboard = () => {
 
       <section className="user__section--part">
         <h2>{t('links.bookings')}</h2>
-        {isUser && (
-          <button
-            className="form__submit"
-            onClick={() => {
-              navigate('/spaces');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          >
-            {t('actions.bookingsCreate')}
-          </button>
-        )}
         <section className="card__container">
           {loading && <p>{t('common.bookingsLoading')}</p>}
           {!loading && bookings.length === 0 && <p>{t('common.bookingsNoBookings')}</p>}

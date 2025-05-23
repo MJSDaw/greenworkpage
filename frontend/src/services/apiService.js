@@ -161,7 +161,7 @@ export const getUsers = async (page = 1, perPage = 3) => {
  * @returns {Promise} Respuesta del servidor
  */
 export const saveUser = async (userData, userId = null, originalUser = null) => {
-  const url = userId ? `/api/admin/users/${userId}` : '/api/register';
+  const url = userId ? `/api/users/${userId}` : '/api/register';
   const method = userId ? 'PUT' : 'POST';
   const isAuthenticated = userId ? true : false;
   // Si es una actualización, mantener los valores originales y actualizar solo los campos modificados
@@ -564,4 +564,20 @@ export const saveService = async (serviceData, id = null) => {
       errors: error.errors || { general: 'Error al guardar el servicio' }
     };
   }
+};
+
+/**
+ * Actualiza el perfil del usuario autenticado
+ * @param {Object} userData - Datos del usuario a actualizar
+ * @returns {Promise} La respuesta del servidor
+ */
+export const updateUserProfile = async (userData) => {
+  // Obtiene el ID del usuario de los datos
+  const userId = userData.id || userData.user_id;
+  if (!userId) {
+    throw new Error('Se requiere el ID del usuario para actualizar el perfil');
+  }
+
+  // Ensure we have authentication for this request
+  return baseFetch(`/api/users/${userId}`, 'PUT', userData, {}, true);
 };
