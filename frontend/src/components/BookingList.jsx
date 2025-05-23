@@ -130,18 +130,33 @@ const BookingList = () => {
       setError(err.message || 'Error al cargar datos');
     }
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setFormData((prevData) => {
       const newData = { ...prevData, [name]: value };
-
-      // When space is selected, reset date/time selections
+      
+      // When space is selected
       if (name === 'space_id') {
         const numericId = Number(value);
         const space = spaces.find((s) => s.id === numericId);
         setSelectedSpace(space);
+        
+        // If we're editing and have a date, reload available slots
+        if (editingId && newData.selected_date) {
+          setTimeout(() => {
+            const slots = getAvailableSlots(newData.selected_date, value, editingId);
+            setAvailableSchedules(slots);
+          }, 0);
+          
+          return {
+            ...newData,
+            start_time: '',
+            end_time: '',
+          };
+        }
+        
+        // If not editing or no date selected, reset date/time selections
         return {
           ...newData,
           selected_date: '',
@@ -149,8 +164,15 @@ const BookingList = () => {
           end_time: '',
         };
       }
-
-      // When date is selected
+      
+      // When user is selected
+      if (name === 'user_id' && editingId && newData.selected_date && newData.space_id) {
+        // Reload available slots when user changes (may affect business logic in some apps)
+        setTimeout(() => {
+          const slots = getAvailableSlots(newData.selected_date, newData.space_id, editingId);
+          setAvailableSchedules(slots);
+        }, 0);
+      }      // When date is selected
       if (name === 'selected_date') {
         const dayOfWeek = getDayOfWeek(value);
 
@@ -164,9 +186,11 @@ const BookingList = () => {
         }
 
         // Find available slots for this date and space
-        const slots = getAvailableSlots(value, newData.space_id);
+        // If we're editing, pass the editingId to exclude the current booking
+        const slots = getAvailableSlots(value, newData.space_id, editingId || null);
         setAvailableSchedules(slots);
         
+        // Always reset time selections when date changes
         return {
           ...newData,
           start_time: '',
@@ -185,9 +209,10 @@ const BookingList = () => {
       return newData;
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log('Submitting form data:', formData, 'Editing ID:', editingId);
     
     try {
       // Validate required fields
@@ -286,17 +311,22 @@ const BookingList = () => {
 
     // Find the space and load available slots
     const space = spaces.find(s => s.id === booking.space_id);
-    setSelectedSpace(space);
-    
-    setFormData({
-      user_id: booking.user_id,
-      space_id: booking.space_id,
+    setSelectedSpace(space);    // Convert IDs to strings to match select element value types
+    const formDataToSet = {
+      user_id: String(booking.user_id),
+      space_id: String(booking.space_id),
       selected_date: formattedDate,
       start_time: startTime,
       end_time: endTime,
-    });
+    };
+    
+    console.log('Setting edit form data:', formDataToSet);
+    console.log('Booking data:', booking);
+    console.log('Space data:', space);
+    
+    setFormData(formDataToSet);
 
-    // Calculate available slots for this date and space
+  // Calculate available slots for this date and space
     if (formattedDate && booking.space_id) {
       const slots = getAvailableSlots(formattedDate, booking.space_id, id);
       setAvailableSchedules(slots);

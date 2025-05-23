@@ -199,7 +199,9 @@ class BookingController extends Controller
         $validator = Validator::make($request->all(), [
             'start_time' => 'date|after_or_equal:now',
             'end_time' => 'date|after:start_time',
-            'status' => 'in:pending,confirmed,cancelled,completed'
+            'status' => 'in:pending,confirmed,cancelled,completed',
+            'space_id' => 'sometimes|exists:spaces,id',
+            'user_id' => 'sometimes|exists:users,id'
         ]);
 
         if ($validator->fails()) {
@@ -214,7 +216,10 @@ class BookingController extends Controller
             $startTime = Carbon::parse($request->start_time);
             $endTime = Carbon::parse($request->end_time);
 
-            $overlapping = Booking::where('space_id', $booking->space_id)
+            // Use the new space_id if provided, otherwise use the existing one
+            $spaceId = $request->has('space_id') ? $request->space_id : $booking->space_id;
+
+            $overlapping = Booking::where('space_id', $spaceId)
                 ->where('id', '!=', $booking->id)
                 ->where(function ($query) use ($startTime, $endTime) {
                     $query->where(function ($q) use ($startTime, $endTime) {
@@ -234,6 +239,16 @@ class BookingController extends Controller
 
             $booking->start_time = $startTime;
             $booking->end_time = $endTime;
+        }
+
+        // Actualizar space_id si está presente
+        if ($request->has('space_id')) {
+            $booking->space_id = $request->space_id;
+        }
+
+        // Actualizar user_id si está presente
+        if ($request->has('user_id')) {
+            $booking->user_id = $request->user_id;
         }
 
         // Actualizar otros campos si están presentes
