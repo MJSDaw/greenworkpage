@@ -230,8 +230,23 @@ textarea {
 }
 
 .home__section {
-  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-image: url('./assets/img/backgroundHome.svg');
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
   width: 100%;
+  height: 80vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  padding: 12rem 20rem;
+  min-height: fit-content;
+  gap: 4rem;
   overflow: hidden;
 }
 
@@ -554,26 +569,6 @@ textarea {
   gap: 4rem;
 }
 
-.home__section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-image: url('./assets/img/backgroundHome.svg');
-  background-size: cover;
-  background-position: top center;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 80vh;
-  position: relative;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  padding: 12rem 20rem;
-  min-height: fit-content;
-  gap: 4rem;
-}
-
 .home__section__content {
   background-color: var(--color4);
   padding: 4rem;
@@ -623,7 +618,7 @@ textarea {
 
 .user__section {
   align-items: center;
-  padding: 12rem 20rem 0 20rem;
+  padding: 12rem 21rem 0 21rem;
 }
 
 .user__img {
@@ -645,11 +640,11 @@ textarea {
 
 .user__section--part {
   flex-direction: column;
-  padding: 0 20rem 3rem 20rem;
+  padding: 0 21rem 3rem 21rem;
 }
 
 .user__section--part:last-child {
-  padding: 0 20rem 12rem 20rem;
+  padding: 0 21rem 12rem 21rem;
 }
 
 .user__buttons {
@@ -1172,6 +1167,18 @@ footer {
 .space-card__content__text {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.space-card__content__text span,
+.space-card__content__text p {
+  flex: 1 1 100%;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .space-card__title {
@@ -1545,6 +1552,10 @@ footer {
   .user__section h1, .user__section--part h2 {
     text-align: center;
     width: 100%;
+  }
+
+  .user__section--part h2 {
+    text-align: left;
   }
 
   .user__section--part, .user__section--part:last-child  {

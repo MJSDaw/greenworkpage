@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const SpaceCard = ({ src, subtitle, amount, maps, seats, link }) => {
   const { t } = useTranslation()
@@ -23,6 +24,15 @@ const SpaceCard = ({ src, subtitle, amount, maps, seats, link }) => {
       </Link>
     </div>
   )
+}
+
+SpaceCard.propTypes = {
+  src: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  maps: PropTypes.string.isRequired,
+  seats: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  link: PropTypes.string.isRequired,
 }
 
 export default SpaceCard
