@@ -182,12 +182,6 @@ const AdminDashboard = () => {
             {t('links.bookings')}
           </button>
           <button
-            className={`form__submit ${activeSection.completedBookings ? 'active' : ''}`}
-            onClick={() => toggleSection('completedBookings')}
-          >
-            {t('links.completedBookings')}
-          </button>
-          <button
             className={`form__submit ${activeSection.services ? 'active' : ''}`}
             onClick={() => toggleSection('services')}
           >
@@ -211,11 +205,6 @@ const AdminDashboard = () => {
             <BookingList />
           </section>
           <section
-            className={`dropdown__container ${activeSection.completedBookings ? 'open' : ''}`}
-          >
-            <CompletedBookingList />
-          </section>
-          <section
             className={`dropdown__container ${activeSection.services ? 'open' : ''}`}
           >
             <ServiceList />
@@ -232,23 +221,13 @@ const AdminDashboard = () => {
           >
             {t('links.pendingPayments')}
           </button>
-          <button
-            className={`form__submit ${activeSection.completedPayments ? 'active' : ''}`}
-            onClick={() => toggleSection('completedPayments')}
-          >
-            {t('links.completedPayments')}
-          </button>
+
         </article>
         <article>
           <section
             className={`dropdown__container ${activeSection.pendingPayments ? 'open' : ''}`}
           >
             <PendingPaymentList />
-          </section>
-          <section
-            className={`dropdown__container ${activeSection.completedPayments ? 'open' : ''}`}
-          >
-            <CompletedPaymentList />
           </section>
         </article>
       </section>
