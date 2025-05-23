@@ -326,6 +326,7 @@
     "msg12": "El usuario tiene el derecho a presentar una reclamación ante la Agencia Española de Protección de Datos si entiende violado, de cualquier forma, su derecho a la protección de datos de carácter personal."
   },
   "errors": {
+    "weekends": "No se puede reservar los fines de semana",
     "required": "Este campo es requerido",
     "nameRequiredError": "El nombre es obligatorio",
     "nameTypeError": "El nombre no es válido",
