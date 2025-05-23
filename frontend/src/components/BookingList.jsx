@@ -139,7 +139,7 @@ const BookingList = () => {
         if (['saturday', 'sunday'].includes(dayOfWeek)) {
           setErrors((prev) => ({
             ...prev,
-            selected_date: ['Weekends are not available for booking'],
+            selected_date: t('errors.weekends'),
           }))
           return newData
         }
