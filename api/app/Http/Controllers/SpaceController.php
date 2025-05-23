@@ -48,7 +48,7 @@ class SpaceController extends Controller
         ], [
             'imageFiles.*.image' => 'The file must be an image',
             'imageFiles.*.mimes' => 'Only jpeg, png, jpg, svg and webp formats are allowed',
-            'imageFiles.*.max' => 'Image size should not exceed 2MB'
+            'imageFiles.*.uploaded' => 'notMore2GB'
         ]);
 
         if ($validator->fails()) {

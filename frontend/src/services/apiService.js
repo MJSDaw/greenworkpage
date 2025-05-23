@@ -68,8 +68,8 @@ export const baseFetch = async (
     const response = await fetch('https://localhost:8443' + url, fetchOptions);
     
     // Check for 422 status (Unprocessable Entity) - typically expired session or validation error
-    if (response.status === 422) {
-      console.log('Session expired or validation error (422). Logging out...');
+    if (response.status === 401) {
+      console.log('Session expired(401). Logging out...');
       // Import directly to avoid circular dependency
       const { removeAuthToken } = await import('./authService');
       removeAuthToken();
