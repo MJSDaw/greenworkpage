@@ -38,6 +38,8 @@ Route::get('services', [ServiceController::class, 'index']);
 Route::get('spaces', [SpaceController::class, 'index']);
 Route::get('spaces/{id}', [SpaceController::class, 'show']);
 
+Route::get('bookings', [BookingController::class, 'index']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
@@ -50,7 +52,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes for services
     // Routes for reservations
-    Route::get('bookings', [BookingController::class, 'index']);
     Route::get('getupcominbookings', [BookingController::class, 'upcomingBookings']);
     Route::get('getpastbookings', [BookingController::class, 'pastBookings']);
     Route::post('bookings/create', [BookingController::class, 'store']);
