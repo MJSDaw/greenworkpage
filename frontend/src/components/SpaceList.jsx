@@ -378,17 +378,25 @@ const SpaceList = () => {
     setScheduleEntries(schedules)
 
     // Cargar servicios sin cambiar la vista
-    fetchServices()
-  }
-
-  // Funciones para manejar las imágenes
+    fetchServices()  }
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0]
-      setImageForm({
-        file: file,
-        fileName: file.name,
-      })
+      
+      // Check if file is SVG, WebP or other image format
+      const fileExtension = file.name.split('.').pop().toLowerCase()
+      if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(fileExtension)) {
+        setImageForm({
+          file: file,
+          fileName: file.name,
+          fileType: fileExtension
+        })
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          images: ['Formato de imagen no soportado. Use JPG, PNG, GIF, SVG o WebP.']
+        }))
+      }
     }
   }
   const handleAddImage = (e) => {
@@ -403,8 +411,31 @@ const SpaceList = () => {
       return
     }
 
-    // Agregar la nueva entrada a la lista de imágenes
-    setImageEntries((prev) => [...prev, { file, fileName }])
+    // Validar el tipo de archivo
+    const fileExtension = fileName.split('.').pop().toLowerCase()
+    if (!['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(fileExtension)) {
+      setErrors((prev) => ({
+        ...prev,
+        images: ['Formato de imagen no soportado. Use JPG, PNG, GIF, SVG o WebP.'],
+      }))
+      return
+    }
+
+    // Agregar la nueva entrada a la lista de imágenes y actualizar el formData en un solo paso
+    setImageEntries((prevEntries) => {
+      const newEntries = [...prevEntries, { file, fileName }];
+      
+      // Actualizar el formData con los nombres de archivo actualizados
+      const imageNamesString = newEntries.map(entry => entry.fileName).join('|');
+      
+      // Update formData in a separate state update to ensure we have the latest data
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        images: imageNamesString || '' // Ensure it's always a string
+      }));
+      
+      return newEntries;
+    });
 
     // Reiniciar el formulario de imagen
     setImageForm({
@@ -412,22 +443,10 @@ const SpaceList = () => {
       fileName: '',
     })
 
-    // Resetear el campo de archivo
-    // Convertir la referencia al elemento de entrada de archivo y resetear su valor
     const fileInputs = document.querySelectorAll('input[type="file"]')
     fileInputs.forEach((input) => {
       input.value = ''
     })
-
-    // Actualizar el campo images en formData para compatibilidad
-    const imageNamesString = [...imageEntries, { fileName }]
-      .map((entry) => entry.fileName)
-      .join('|')
-
-    setFormData((prev) => ({
-      ...prev,
-      images: imageNamesString,
-    }))
   }
 
   const handleDelete = async (id) => {
@@ -667,21 +686,21 @@ const SpaceList = () => {
                         <div className="form__section">
                           <label>{t('form.images.label')}</label>
                           <div className="schedule-form">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              id="edit-image-input"
-                            />
-                            <button
-                              type="button"
-                              className="form__submit --noArrow"
-                              onClick={handleAddImage}
-                              disabled={!imageForm.file}
-                            >
-                              {t('actions.add')}
-                            </button>
-                          </div>
+                  <input
+                    type="file"
+                    accept="image/*, .svg, .webp"
+                    onChange={handleImageChange}
+                    id="edit-image-input"
+                  />
+                  <button
+                    type="button"
+                    className="form__submit --noArrow"
+                    onClick={handleAddImage}
+                    disabled={!imageForm.file}
+                  >
+                    {t('actions.add')}
+                  </button>
+                </div>
                           {imageEntries.length > 0 && (
                             <div className="schedule-list">
                               {imageEntries.map((entry, index) => (
@@ -959,11 +978,10 @@ const SpaceList = () => {
               </div>
               {/* Sección de imágenes en el formulario de creación */}
               <div className="form__section">
-                <label>{t('form.images.label')}</label>
-                <div className="schedule-form">
+                <label>{t('form.images.label')}</label>                <div className="schedule-form">
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/*, .svg, .webp"
                     onChange={handleImageChange}
                     id="create-image-input"
                   />
