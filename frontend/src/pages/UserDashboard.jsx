@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { updateUserImage, getUserBookings, createBooking, updateUserProfile } from '../services/apiService'
+import { updateUserImage, getUserBookings, createBooking, updateUserProfile, API_BASE_URL } from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
-import { isAuthenticated, getUserType, API_BASE_URL } from '../services/authService'
+import { isAuthenticated, getUserType } from '../services/authService'
 import { useNavigate } from 'react-router-dom'
 
 const UserDashboard = () => {
