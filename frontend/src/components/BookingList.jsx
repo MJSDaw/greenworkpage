@@ -161,15 +161,9 @@ const BookingList = () => {
         if (['saturday', 'sunday'].includes(dayOfWeek)) {
           setErrors((prev) => ({
             ...prev,
-<<<<<<< HEAD
-            selected_date: ['No hay disponibilidad los fines de semana'],
-          }));
-          return newData;
-=======
             selected_date: t('errors.weekends'),
           }))
           return newData
->>>>>>> 27f780fc274471b5dba183f1564e2b9005079368
         }
 
         // Find available slots for this date and space
