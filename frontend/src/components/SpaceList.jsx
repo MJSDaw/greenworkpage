@@ -1107,7 +1107,7 @@ const SpaceList = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label>Servicios Disponibles</label>
+                <label>{t('form.servicesAvailable')}</label>
                 <div
                   className="services-container"
                   style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}
