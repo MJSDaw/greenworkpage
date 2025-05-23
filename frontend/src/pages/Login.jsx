@@ -42,7 +42,7 @@ const Login = () => {
         if (data.userType === 'admin') {
           window.location.href = '/admin'
         } else {
-          window.location.href = '/user'
+          window.location.href = '/'
         }
       } else {
         // Handle login failure - set errors from response
