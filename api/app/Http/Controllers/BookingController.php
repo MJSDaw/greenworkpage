@@ -18,11 +18,11 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $bookings = Booking::with(['space', 'user'])
-                    ->orderBy('start_time', 'asc')
-                    ->paginate($perPage);
-        
+            ->orderBy('start_time', 'asc')
+            ->paginate($perPage);
+
         return response()->json($bookings);
     }
 
@@ -33,12 +33,12 @@ class BookingController extends Controller
     {
         $now = Carbon::now();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $pastBookings = Booking::with(['space', 'user'])
-                        ->where('end_time', '<', $now)
-                        ->orderBy('start_time', 'desc')
-                        ->paginate($perPage);
-        
+            ->where('end_time', '<', $now)
+            ->orderBy('start_time', 'desc')
+            ->paginate($perPage);
+
         return response()->json($pastBookings);
     }
 
@@ -49,12 +49,12 @@ class BookingController extends Controller
     {
         $now = Carbon::now();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $upcomingBookings = Booking::with(['space', 'user'])
-                            ->where('start_time', '>', $now)
-                            ->orderBy('start_time', 'asc')
-                            ->paginate($perPage);
-        
+            ->where('start_time', '>', $now)
+            ->orderBy('start_time', 'asc')
+            ->paginate($perPage);
+
         return response()->json($upcomingBookings);
     }
 
@@ -79,7 +79,7 @@ class BookingController extends Controller
 
         // Obtener el usuario autenticado
         $user = Auth::user();
-        
+
         // Convertir fechas a objetos Carbon para manipulación
         $startTime = Carbon::parse($request->start_time);
         $endTime = Carbon::parse($request->end_time);
@@ -94,17 +94,19 @@ class BookingController extends Controller
 
         // Verificar solapamiento con otras reservas
         $overlapping = Booking::where('space_id', $request->space_id)
-            ->where(function($query) use ($startTime, $endTime) {
-                $query->where(function($q) use ($startTime, $endTime) {
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($q) use ($startTime, $endTime) {
                     $q->where('start_time', '<', $endTime)
-                      ->where('end_time', '>', $startTime);
+                        ->where('end_time', '>', $startTime);
                 });
             })
             ->exists();
 
         if ($overlapping) {
             return response()->json([
-                'message' => 'El espacio ya está reservado en ese horario'
+                'errors' => [
+                    'time' => 'timeConflict'
+                ]
             ], 409);
         }
 
@@ -129,7 +131,7 @@ class BookingController extends Controller
     public function show($id)
     {
         $booking = Booking::with(['space', 'user'])->find($id);
-        
+
         if (!$booking) {
             return response()->json([
                 'message' => 'Reserva no encontrada'
@@ -145,7 +147,7 @@ class BookingController extends Controller
     public function update(Request $request, $id)
     {
         $booking = Booking::find($id);
-        
+
         if (!$booking) {
             return response()->json([
                 'message' => 'Reserva no encontrada'
@@ -173,17 +175,19 @@ class BookingController extends Controller
 
             $overlapping = Booking::where('space_id', $booking->space_id)
                 ->where('id', '!=', $booking->id)
-                ->where(function($query) use ($startTime, $endTime) {
-                    $query->where(function($q) use ($startTime, $endTime) {
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->where(function ($q) use ($startTime, $endTime) {
                         $q->where('start_time', '<', $endTime)
-                          ->where('end_time', '>', $startTime);
+                            ->where('end_time', '>', $startTime);
                     });
                 })
                 ->exists();
 
             if ($overlapping) {
                 return response()->json([
-                    'message' => 'El espacio ya está reservado en ese horario'
+                    'errors' => [
+                        'time' => 'timeConflict'
+                    ]
                 ], 409);
             }
 
@@ -210,7 +214,7 @@ class BookingController extends Controller
     public function destroy($id)
     {
         $booking = Booking::find($id);
-        
+
         if (!$booking) {
             return response()->json([
                 'message' => 'Reserva no encontrada'
@@ -231,12 +235,12 @@ class BookingController extends Controller
     {
         $user = Auth::user();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $bookings = Booking::with(['space'])
-                    ->where('user_id', $user->id)
-                    ->orderBy('start_time', 'asc')
-                    ->paginate($perPage);
-        
+            ->where('user_id', $user->id)
+            ->orderBy('start_time', 'asc')
+            ->paginate($perPage);
+
         return response()->json($bookings);
     }
 
@@ -248,13 +252,13 @@ class BookingController extends Controller
         $user = Auth::user();
         $now = Carbon::now();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $pastBookings = Booking::with(['space'])
-                        ->where('user_id', $user->id)
-                        ->where('end_time', '<', $now)
-                        ->orderBy('start_time', 'desc')
-                        ->paginate($perPage);
-        
+            ->where('user_id', $user->id)
+            ->where('end_time', '<', $now)
+            ->orderBy('start_time', 'desc')
+            ->paginate($perPage);
+
         return response()->json($pastBookings);
     }
 
@@ -266,13 +270,13 @@ class BookingController extends Controller
         $user = Auth::user();
         $now = Carbon::now();
         $perPage = $request->per_page ?? 3; // Default 3 items per page
-        
+
         $upcomingBookings = Booking::with(['space'])
-                            ->where('user_id', $user->id)
-                            ->where('start_time', '>', $now)
-                            ->orderBy('start_time', 'asc')
-                            ->paginate($perPage);
-        
+            ->where('user_id', $user->id)
+            ->where('start_time', '>', $now)
+            ->orderBy('start_time', 'asc')
+            ->paginate($perPage);
+
         return response()->json($upcomingBookings);
     }
 }

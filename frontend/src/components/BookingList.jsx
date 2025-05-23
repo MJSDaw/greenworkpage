@@ -4,6 +4,7 @@ import {
   getUpcomingBookings,
   getPastBookings,
   getUserBookings,
+  getBookings,
   getUsers,
   getSpaces,
   createBooking,
@@ -22,8 +23,6 @@ const BookingList = () => {
     selected_date: '',
     start_time: '',
     end_time: '',
-    purpose: '',
-    notes: '',
   })
 
   // State variables for bookings and schedules
@@ -74,7 +73,7 @@ const BookingList = () => {
       }
 
       // Extract the bookings array from the response
-      const bookingsArray = response?.data?.data || [];
+      const bookingsArray = response?.data || [];
       setBookings(bookingsArray);
 
       // Set pagination data
@@ -107,8 +106,6 @@ const BookingList = () => {
         selected_date: '',
         start_time: '',
         end_time: '',
-        purpose: '',
-        notes: '',
       });
       setSelectedSpace(null);
       setAvailableSchedules([]);
@@ -219,8 +216,6 @@ const BookingList = () => {
         // user_id is not needed as it's taken from auth token in backend
         start_time: startDateTime,
         end_time: endDateTime,
-        purpose: formData.purpose || null,
-        notes: formData.notes || null,
         status: 'pending' // Default status
       };
 
@@ -299,8 +294,6 @@ const BookingList = () => {
       selected_date: formattedDate,
       start_time: startTime,
       end_time: endTime,
-      purpose: booking.purpose || '',
-      notes: booking.notes || '',
     });
 
     // Calculate available slots for this date and space
@@ -529,12 +522,6 @@ const BookingList = () => {
                         <span className="span--bold">{t('form.status.label')}: </span>
                         {getStatusDisplay(booking.status)}
                       </p>
-                      {booking.purpose && (
-                        <p>
-                          <span className="span--bold">{t('form.purpose.label')}: </span>
-                          {booking.purpose}
-                        </p>
-                      )}
                     </div>
                   </div>
                   <div className="card__buttons">
@@ -678,32 +665,6 @@ const BookingList = () => {
                           </p>
                         </div>
                       )}
-                      
-                      <div className="form__section">
-                        <label htmlFor="purpose">
-                          {t('form.purpose.label')}:
-                        </label>
-                        <input
-                          type="text"
-                          id="purpose"
-                          name="purpose"
-                          value={formData.purpose}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      
-                      <div className="form__section">
-                        <label htmlFor="notes">
-                          {t('form.notes.label')}:
-                        </label>
-                        <textarea
-                          id="notes"
-                          name="notes"
-                          value={formData.notes}
-                          onChange={handleChange}
-                          rows="3"
-                        ></textarea>
-                      </div>
 
                       {errors.form && errors.form.map((err, idx) => (
                         <span className="form__error" key={idx}>
@@ -889,30 +850,6 @@ const BookingList = () => {
                   </p>
                 </div>
               )}
-              
-              <div className="form__section">
-                <label htmlFor="purpose">{t('form.purpose.label')}: </label>
-                <input
-                  type="text"
-                  id="purpose"
-                  name="purpose"
-                  value={formData.purpose}
-                  onChange={handleChange}
-                  placeholder={t('form.purpose.placeholder')}
-                />
-              </div>
-              
-              <div className="form__section">
-                <label htmlFor="notes">{t('form.notes.label')}: </label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleChange}
-                  rows="3"
-                  placeholder={t('form.notes.placeholder')}
-                ></textarea>
-              </div>
               
               {errors.form && errors.form.map((err, idx) => (
                 <span className="form__error" key={idx}>

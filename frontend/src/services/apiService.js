@@ -307,7 +307,7 @@ export const getPastBookings = (page = 1, perPage = 3) => {
 
 /**
  * Crea una nueva reserva
- * @param {Object} bookingData - Datos para la reserva (space_id, start_time, end_time, purpose, notes, status)
+ * @param {Object} bookingData - Datos para la reserva (space_id, start_time, end_time, status)
  * @returns {Promise} La respuesta del servidor
  */
 export const createBooking = (bookingData) => {
@@ -326,7 +326,7 @@ export const getBookingById = (id) => {
 /**
  * Actualiza una reserva existente
  * @param {number} id - ID de la reserva a actualizar
- * @param {Object} updatedData - Datos actualizados (space_id, start_time, end_time, purpose, notes, status)
+ * @param {Object} updatedData - Datos actualizados (space_id, start_time, end_time, status)
  * @returns {Promise} La respuesta del servidor
  */
 export const updateBooking = (id, updatedData) => {

@@ -19,8 +19,6 @@ return new class extends Migration
                 'cancelled',
                 'completed'
             ])->default('confirmed');
-            $table->text('purpose')->nullable();
-            $table->text('notes')->nullable();
             $table->timestamps();
 
             // Índices para mejorar el rendimiento de las consultas
