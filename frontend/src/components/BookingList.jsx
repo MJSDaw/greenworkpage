@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  getBookings,
+  getUpcomingBookings,
+  getPastBookings,
+  getUserBookings,
   getUsers,
   getSpaces,
   createBooking,
   updateBooking,
+  deleteBooking
 } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
@@ -16,541 +19,454 @@ const BookingList = () => {
   const [formData, setFormData] = useState({
     user_id: '',
     space_id: '',
-    selected_date: '', // To store the selected date
-    selected_day: '', // To store the day of week
-    start_time: '', // To store the start time
-    end_time: '', // To store the end time
-    reservation_period: '', // To store the formatted period for display
+    selected_date: '',
+    start_time: '',
+    end_time: '',
+    purpose: '',
+    notes: '',
   })
 
-  // New state variables for schedule handling
+  // State variables for bookings and schedules
   const [availableSchedules, setAvailableSchedules] = useState([])
   const [existingBookings, setExistingBookings] = useState([])
   const [selectedSpace, setSelectedSpace] = useState(null)
+  const [editingId, setEditingId] = useState(null)
 
+  // UI state
   const [showForm, setShowForm] = useState(false)
   const [showList, setShowList] = useState(true)
+  const [bookingFilter, setBookingFilter] = useState('all') // 'all', 'upcoming', 'past', 'current'
+  
+  // Data state
   const [bookings, setBookings] = useState([])
   const [users, setUsers] = useState([])
   const [spaces, setSpaces] = useState([])
+  
+  // UI feedback state
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [errors, setErrors] = useState({})
+  
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const perPage = 3
   const fetchBookings = async () => {
     setLoading(true)
     setError(null)
+    
     try {
-      const response = await getBookings(currentPage, perPage)
+      let response;
+      
+      switch (bookingFilter) {
+        case 'upcoming':
+          response = await getUpcomingBookings(currentPage, perPage);
+          break;
+        case 'past':
+          response = await getPastBookings(currentPage, perPage);
+          break;
+        case 'my':
+          response = await getUserBookings(currentPage, perPage);
+          break;
+        default:
+          // Por defecto, obtener todas las reservas
+          response = await getBookings(currentPage, perPage);
+      }
 
-      // Extract the bookings array from the paginated response
-      const bookingsArray = response?.data?.data || []
-      setBookings(bookingsArray)
+      // Extract the bookings array from the response
+      const bookingsArray = response?.data?.data || [];
+      setBookings(bookingsArray);
 
       // Set pagination data
-      setTotalPages(response?.data?.last_page || 1)
+      setTotalPages(response?.data?.last_page || 1);
     } catch (err) {
-      setError(err.message || 'Error al obtener reservas')
+      setError(err.message || 'Error al obtener reservas');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     if (showList) {
-      fetchBookings()
-      // Fetch users and spaces for dropdowns
-      fetchUsersAndSpaces()
+      fetchBookings();
+      fetchUsersAndSpaces();
     }
-  }, [showList, currentPage])
-  // Effect to update existingBookings when bookings change
-  useEffect(() => {
-    console.log('Current bookings:', bookings)
-    setExistingBookings(bookings)
-  }, [bookings])
+  }, [showList, currentPage, bookingFilter]);
 
-  // Effect to clear schedule-related state when form is shown/hidden
+  // Update existingBookings when bookings change
+  useEffect(() => {
+    setExistingBookings(bookings);
+  }, [bookings]);
+
+  // Reset form state when showing/hiding form
   useEffect(() => {
     if (showForm) {
       setFormData({
         user_id: '',
         space_id: '',
         selected_date: '',
-        selected_day: '',
-        selected_schedule: '',
-        reservation_period: '',
-      })
-      setSelectedSpace(null)
-      setAvailableSchedules([])
+        start_time: '',
+        end_time: '',
+        purpose: '',
+        notes: '',
+      });
+      setSelectedSpace(null);
+      setAvailableSchedules([]);
+      setErrors({});
     }
-  }, [showForm])
+  }, [showForm]);
 
   const fetchUsersAndSpaces = async () => {
     try {
       const [usersData, spacesData] = await Promise.all([
         getUsers(),
         getSpaces(),
-      ])
+      ]);
 
-      // Asegurarse de manejar tanto la respuesta paginada como la no paginada
-      const usersList =
-        usersData?.data?.data || usersData?.data || usersData || []
-      const spacesList =
-        spacesData?.data?.data || spacesData?.data || spacesData || []
+      // Handle both paginated and non-paginated responses
+      const usersList = usersData?.data?.data || usersData?.data || usersData || [];
+      const spacesList = spacesData?.data?.data || spacesData?.data || spacesData || [];
 
-      setUsers(usersList)
-      setSpaces(spacesList)
+      setUsers(usersList);
+      setSpaces(spacesList);
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Error al cargar datos');
     }
-  }
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target
-    console.log(`handleChange - name: ${name}, value: ${value}`)
+    const { name, value } = e.target;
 
     setFormData((prevData) => {
-      const newData = { ...prevData, [name]: value }
+      const newData = { ...prevData, [name]: value };
 
-      // When space is selected, clear the schedule-related fields
+      // When space is selected, reset date/time selections
       if (name === 'space_id') {
-        console.log('Finding space with id:', value)
-        console.log('Available spaces:', spaces)
-        const numericId = Number(value)
-        const space = spaces.find((s) => s.id === numericId)
-        console.log('Selected space:', space)
-        setSelectedSpace(space)
+        const numericId = Number(value);
+        const space = spaces.find((s) => s.id === numericId);
+        setSelectedSpace(space);
         return {
           ...newData,
           selected_date: '',
-          selected_day: '',
-          selected_schedule: '',
-          reservation_period: '',
-        }
+          start_time: '',
+          end_time: '',
+        };
       }
 
       // When date is selected
       if (name === 'selected_date') {
-        console.log('Date selected:', value)
-        const dayOfWeek = getDayOfWeek(value)
-        console.log('Day of week:', dayOfWeek)
+        const dayOfWeek = getDayOfWeek(value);
 
+        // Check if weekends are available (you could customize this)
         if (['saturday', 'sunday'].includes(dayOfWeek)) {
           setErrors((prev) => ({
             ...prev,
-            selected_date: ['Weekends are not available for booking'],
-          }))
-          return newData
+            selected_date: ['No hay disponibilidad los fines de semana'],
+          }));
+          return newData;
         }
 
         // Find available slots for this date and space
-        console.log(
-          'Getting slots for date:',
-          value,
-          'and space:',
-          newData.space_id
-        )
-        const slots = getAvailableSlots(value, newData.space_id)
-        console.log('Available slots:', slots)
-        setAvailableSchedules(slots)
-
+        const slots = getAvailableSlots(value, newData.space_id);
+        setAvailableSchedules(slots);
+        
         return {
           ...newData,
-          selected_day: dayOfWeek,
-          selected_schedule: '',
-          reservation_period: '',
-        }
-      }
-      // When start time is selected
-      if (name === 'start_time' && value) {
-        console.log('Start time selected:', value)
-        return {
-          ...newData,
-          start_time: value,
+          start_time: '',
           end_time: '',
-          reservation_period: '',
-        }
+        };
       }
 
-      // When end time is selected
-      if (name === 'end_time' && value) {
-        console.log('End time selected:', value)
-        const date = newData.selected_date
-        const start = newData.start_time
-        const end = value
-
-        if (isValidTimeRange(start, end)) {
-          const reservationPeriod = `${date} ${start}-${date} ${end}`
-          console.log('Final reservation period:', reservationPeriod)
-          return {
-            ...newData,
-            end_time: value,
-            reservation_period: reservationPeriod,
-          }
-        } else {
-          setErrors((prev) => ({
-            ...prev,
-            end_time: ['La hora de fin debe ser posterior a la hora de inicio'],
-          }))
-          return {
-            ...newData,
-            end_time: '',
-            reservation_period: '',
-          }
-        }
+      // Reset end_time if start_time changes
+      if (name === 'start_time' && value) {
+        return {
+          ...newData,
+          end_time: '',
+        };
       }
 
-      return newData
-    })
-  }
+      return newData;
+    });
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    
     try {
       // Validate required fields
-      if (
-        !formData.user_id ||
-        !formData.space_id ||
-        !formData.selected_date ||
-        !formData.start_time ||
-        !formData.end_time
-      ) {
+      if (!formData.space_id || !formData.selected_date || !formData.start_time || !formData.end_time) {
         setErrors({
-          form: ['All fields are required'],
-        })
-        return
+          form: ['Todos los campos obligatorios deben ser completados'],
+        });
+        return;
       }
 
       // Validate that start time is before end time
       if (!isValidTimeRange(formData.start_time, formData.end_time)) {
         setErrors({
-          form: ['End time must be after start time'],
-        })
-        return
+          form: ['La hora de fin debe ser posterior a la hora de inicio'],
+        });
+        return;
       }
 
-      // Preparar los datos para enviar al backend
+      // Format date and time for API
+      const startDateTime = `${formData.selected_date}T${formData.start_time}:00`;
+      const endDateTime = `${formData.selected_date}T${formData.end_time}:00`;
+
+      // Prepare data for API
       const bookingData = {
-        user_id: formData.user_id,
         space_id: formData.space_id,
-        start_date: `${formData.selected_date} ${formData.start_time}`,
-        end_date: `${formData.selected_date} ${formData.end_time}`,
-        reservation_period: `${formData.selected_date} ${formData.start_time}-${formData.selected_date} ${formData.end_time}`,
-      }
+        // user_id is not needed as it's taken from auth token in backend
+        start_time: startDateTime,
+        end_time: endDateTime,
+        purpose: formData.purpose || null,
+        notes: formData.notes || null,
+        status: 'pending' // Default status
+      };
 
-      console.log('Sending booking data:', bookingData)
-
-      const data = editingId
-        ? await updateBooking(editingId, bookingData)
-        : await createBooking(bookingData)
-
-      if (data && data.success) {
-        if (editingId) {
-          setEditingId(null)
-          setErrors({})
-        } else {
-          setErrors({})
-          setShowForm(false)
-          setShowList(true)
-        }
-        fetchBookings()
+      let response;
+      if (editingId) {
+        response = await updateBooking(editingId, bookingData);
       } else {
-        setErrors(data.errors || {})
+        response = await createBooking(bookingData);
       }
+
+      if (response) {
+        if (editingId) {
+          setEditingId(null);
+        } else {
+          setShowForm(false);
+          setShowList(true);
+        }
+        setErrors({});
+        fetchBookings();
+      } 
     } catch (error) {
-      setErrors(error.errors || {})
+      const apiErrors = error.response?.data?.errors || {};
+      setErrors(apiErrors);
     }
-  }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm(t('confirm.delete'))) {
+      try {
+        await deleteBooking(id);
+        fetchBookings();
+      } catch (error) {
+        setError(error.message || 'Error al eliminar la reserva');
+      }
+    }
+  };
 
   const handleShowForm = () => {
-    setShowForm(true)
-    setShowList(false)
-  }
+    setShowForm(true);
+    setShowList(false);
+    setEditingId(null);
+  };
 
   const handleShowList = () => {
-    setShowForm(false)
-    setShowList(true)
-  }
-  const [editingId, setEditingId] = useState(null)
-  // Function to handle clicking the edit button for a booking
+    setShowForm(false);
+    setShowList(true);
+  };
+
   const handleEditClick = (id) => {
     if (editingId === id) {
-      setEditingId(null)
-    } else {
-      setEditingId(id)
-      const bookingToEdit = bookings.find((booking) => {
-        const bookingId =
-          booking.id ||
-          `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`
-        return bookingId === id
-      })
-
-      if (!bookingToEdit) {
-        console.error('Booking not found:', id)
-        return
-      }
-
-      console.log('Editing booking:', bookingToEdit)
-
-      let startDate, startTime, endTime
-
-      if (bookingToEdit.start_date) {
-        // Use start_date and end_date if available
-        startDate = bookingToEdit.start_date.split(' ')[0]
-        startTime = bookingToEdit.start_date.split(' ')[1]
-        endTime = bookingToEdit.end_date.split(' ')[1]
-      } else if (bookingToEdit.reservation_period) {
-        // Parse the reservation period as fallback
-        if (bookingToEdit.reservation_period.includes('|')) {
-          const [start, end] = bookingToEdit.reservation_period.split('|')
-          ;[startDate, startTime] = start.split(' ')
-          endTime = end.split(' ')[1]
-        } else {
-          const [start, end] = bookingToEdit.reservation_period.split('-')
-          ;[startDate, startTime] = start.trim().split(' ')
-          endTime = end.trim().split(' ')[1]
-        }
-      }
-
-      // Find the space and trigger available slots calculation
-      const space = spaces.find((s) => s.id === bookingToEdit.space_id)
-      setSelectedSpace(space)
-
-      setFormData({
-        user_id: bookingToEdit.user_id,
-        space_id: bookingToEdit.space_id,
-        selected_date: startDate || '',
-        selected_day: startDate ? getDayOfWeek(startDate) : '',
-        start_time: startTime || '',
-        end_time: endTime || '',
-        reservation_period:
-          startDate && startTime && endTime
-            ? `${startDate} ${startTime}-${startDate} ${endTime}`
-            : '',
-      })
-
-      // Calculate available slots if we have both date and space
-      if (startDate && bookingToEdit.space_id) {
-        const slots = getAvailableSlots(startDate, bookingToEdit.space_id)
-        setAvailableSchedules(slots)
-      }
+      setEditingId(null);
+      return;
     }
-  }
+    
+    setEditingId(id);
+    const booking = bookings.find(b => b.id === id);
+    
+    if (!booking) {
+      console.error('Booking not found:', id);
+      return;
+    }
+    
+    // Format dates for form
+    const startDate = new Date(booking.start_time);
+    const formattedDate = startDate.toISOString().split('T')[0];
+    const startTime = startDate.toTimeString().substring(0, 5);
+    const endTime = new Date(booking.end_time).toTimeString().substring(0, 5);
 
-  // Helper function to get day of week from date
+    // Find the space and load available slots
+    const space = spaces.find(s => s.id === booking.space_id);
+    setSelectedSpace(space);
+    
+    setFormData({
+      user_id: booking.user_id,
+      space_id: booking.space_id,
+      selected_date: formattedDate,
+      start_time: startTime,
+      end_time: endTime,
+      purpose: booking.purpose || '',
+      notes: booking.notes || '',
+    });
+
+    // Calculate available slots for this date and space
+    if (formattedDate && booking.space_id) {
+      const slots = getAvailableSlots(formattedDate, booking.space_id, id);
+      setAvailableSchedules(slots);
+    }
+  };
+  
+  // Helper function to determine day of week from date string
   const getDayOfWeek = (dateStr) => {
-    // Create date using UTC to avoid timezone issues
-    const date = new Date(dateStr + 'T00:00:00Z')
+    const date = new Date(dateStr + 'T00:00:00Z');
     const days = [
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-    ]
-    return days[date.getUTCDay()]
-  }
+      'sunday', 'monday', 'tuesday', 'wednesday', 
+      'thursday', 'friday', 'saturday'
+    ];
+    return days[date.getUTCDay()];
+  };
 
-  // Helper function to parse space schedule
+  // Helper function to parse space schedule format
   const parseSpaceSchedule = (scheduleStr) => {
-    if (!scheduleStr) return []
-    return scheduleStr.split('|').map((slot) => {
-      const [day, start, end] = slot.split('-')
-      return { day, start, end }
-    })
-  }
+    if (!scheduleStr) return [];
+    return scheduleStr.split('|').map(slot => {
+      const [day, start, end] = slot.split('-');
+      return { day, start, end };
+    });
+  };
 
-  // Function to convert time to minutes since midnight
+  // Convert time string to minutes for easier comparisons
   const timeToMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number)
-    return hours * 60 + minutes
-  }
-  // Function to get available time slots for a specific day
-  const getAvailableSlots = (date, spaceId) => {
-    console.log('Getting available slots for:', { date, spaceId })
-    console.log('Current spaces:', spaces)
-    console.log('Editing ID:', editingId)
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
 
-    const numericSpaceId = Number(spaceId)
-    const space = spaces.find((s) => s.id === numericSpaceId)
-
-    if (!space) {
-      console.log('Space not found')
-      return []
-    }
-
-    console.log('Space found:', space)
-
-    const targetDate = new Date(date + 'T00:00:00Z')
-    const dayOfWeek = getDayOfWeek(date)
-
-    if (['saturday', 'sunday'].includes(dayOfWeek)) {
-      return []
-    }
-
-    // Find schedules for this day of week
-    const schedules = parseSpaceSchedule(space.schedule).filter(
-      (s) => s.day === dayOfWeek
-    )
-
-    if (schedules.length === 0) return []
-
-    const formattedDate = targetDate.toISOString().split('T')[0]
-
-    // Get bookings for this date and space, excluding the booking being edited
-    const dateBookings = existingBookings.filter((b) => {
-      if (!b.reservation_period || b.space_id !== numericSpaceId) return false
-
-      // Skip this booking if it's the one being edited
-      const bookingId =
-        b.id || `${b.user_id}-${b.space_id}-${b.reservation_period}`
-      if (editingId === bookingId) {
-        console.log('Excluding current booking:', bookingId)
-        return false
-      }
-
-      // Handle both formats: "date time|date time" and "date time-date time"
-      let bookingDate
-      if (b.reservation_period.includes('|')) {
-        bookingDate = b.reservation_period.split('|')[0].split(' ')[0]
-      } else {
-        bookingDate = b.reservation_period.split('-')[0].trim().split(' ')[0]
-      }
-
-      console.log('Comparing dates:', {
-        bookingDate,
-        formattedDate,
-        fullPeriod: b.reservation_period,
-      })
-
-      return bookingDate === formattedDate
-    })
-
-    // Instead of generating 1-hour slots, we'll return the full available ranges
-    const availableRanges = []
-
-    schedules.forEach((schedule) => {
-      let [startHour] = schedule.start.split(':').map(Number)
-      const [endHour] = schedule.end.split(':').map(Number)
-
-      // Convert schedule times to minutes for comparison
-      const scheduleStartMinutes = timeToMinutes(schedule.start)
-      const scheduleEndMinutes = timeToMinutes(schedule.end)
-
-      // Find gaps between bookings
-      const timePoints = []
-
-      // Add schedule start
-      timePoints.push({
-        time: scheduleStartMinutes,
-        type: 'start',
-      }) // Add booking times
-      dateBookings.forEach((booking) => {
-        // Handle both formats: "date time|date time" and "date time-date time"
-        let bookingStartTime, bookingEndTime
-
-        if (booking.reservation_period.includes('|')) {
-          const [start, end] = booking.reservation_period.split('|')
-          bookingStartTime = start.split(' ')[1]
-          bookingEndTime = end.split(' ')[1]
-        } else {
-          const [bookingStart, bookingEnd] = booking.reservation_period
-            .split('-')
-            .map((part) => part.trim())
-          ;[, bookingStartTime] = bookingStart.split(' ')
-          ;[, bookingEndTime] = bookingEnd.split(' ')
-        }
-
-        console.log('Processing booking:', {
-          period: booking.reservation_period,
-          startTime: bookingStartTime,
-          endTime: bookingEndTime,
-          isCurrentBooking:
-            editingId ===
-            (booking.id ||
-              `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`),
-        })
-
-        // Solo agregamos los puntos de tiempo si no es la reserva que estamos editando
-        if (
-          editingId !==
-          (booking.id ||
-            `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`)
-        ) {
-          timePoints.push({
-            time: timeToMinutes(bookingStartTime),
-            type: 'booked-start',
-          })
-          timePoints.push({
-            time: timeToMinutes(bookingEndTime),
-            type: 'booked-end',
-          })
-        }
-      })
-
-      // Add schedule end
-      timePoints.push({
-        time: scheduleEndMinutes,
-        type: 'end',
-      })
-
-      // Sort time points chronologically
-      timePoints.sort((a, b) => a.time - b.time)
-
-      // Find available ranges
-      let isAvailable = true
-      let rangeStart = null
-
-      timePoints.forEach((point, index) => {
-        if (point.type === 'start') {
-          rangeStart = point.time
-          isAvailable = true
-        } else if (point.type === 'booked-start') {
-          // Si hay un rango que empezó antes, lo guardamos
-          if (rangeStart !== null && point.time > rangeStart) {
-            availableRanges.push({
-              start: minutesToTime(rangeStart),
-              end: minutesToTime(point.time),
-            })
-          }
-          isAvailable = false
-        } else if (point.type === 'booked-end') {
-          rangeStart = point.time
-          isAvailable = true
-        } else if (point.type === 'end') {
-          // Si hay un rango abierto cuando llegamos al final del horario
-          if (rangeStart !== null && point.time > rangeStart) {
-            availableRanges.push({
-              start: minutesToTime(rangeStart),
-              end: minutesToTime(point.time),
-            })
-          }
-        }
-      })
-    })
-
-    return availableRanges
-  }
-
-  // Helper function to convert minutes to time string
+  // Convert minutes back to time string
   const minutesToTime = (minutes) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-  }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  };
 
-  // Helper function to validate time range
+  // Check if time range is valid
   const isValidTimeRange = (start, end) => {
-    const startMinutes = timeToMinutes(start)
-    const endMinutes = timeToMinutes(end)
-    return startMinutes < endMinutes
-  }
+    const startMinutes = timeToMinutes(start);
+    const endMinutes = timeToMinutes(end);
+    return startMinutes < endMinutes;
+  };
+  
+  // Get available time slots for a specific date and space
+  const getAvailableSlots = (date, spaceId, excludeBookingId = null) => {
+    const numericSpaceId = Number(spaceId);
+    const space = spaces.find(s => s.id === numericSpaceId);
+    
+    if (!space) return [];
+    
+    const dayOfWeek = getDayOfWeek(date);
+    
+    // Assuming spaces are not available on weekends
+    if (['saturday', 'sunday'].includes(dayOfWeek)) return [];
+    
+    // Find schedules for this day of week
+    const schedules = parseSpaceSchedule(space.schedule)
+      .filter(s => s.day === dayOfWeek);
+    
+    if (schedules.length === 0) return [];
+    
+    const formattedDate = date;
+    
+    // Get bookings for this date and space, excluding the booking being edited
+    const dateBookings = existingBookings.filter(b => {
+      if (!b.space_id || b.space_id !== numericSpaceId) return false;
+      
+      // Skip the booking being edited
+      if (excludeBookingId && b.id === excludeBookingId) return false;
+      
+      // Extract date from start_time to compare
+      const bookingDate = new Date(b.start_time).toISOString().split('T')[0];
+      return bookingDate === formattedDate;
+    });
+    
+    // Calculate available time ranges
+    const availableRanges = [];
+    
+    schedules.forEach(schedule => {
+      // Convert schedule times to minutes for comparison
+      const scheduleStartMinutes = timeToMinutes(schedule.start);
+      const scheduleEndMinutes = timeToMinutes(schedule.end);
+      
+      // Create time points for analysis
+      const timePoints = [
+        { time: scheduleStartMinutes, type: 'start' },
+        { time: scheduleEndMinutes, type: 'end' }
+      ];
+      
+      // Add booking time points
+      dateBookings.forEach(booking => {
+        const startTime = new Date(booking.start_time).toTimeString().substring(0, 5);
+        const endTime = new Date(booking.end_time).toTimeString().substring(0, 5);
+        
+        timePoints.push({
+          time: timeToMinutes(startTime),
+          type: 'booked-start'
+        });
+        
+        timePoints.push({
+          time: timeToMinutes(endTime),
+          type: 'booked-end'
+        });
+      });
+      
+      // Sort chronologically
+      timePoints.sort((a, b) => a.time - b.time);
+      
+      // Find available ranges
+      let isAvailable = false;
+      let rangeStart = null;
+      
+      timePoints.forEach(point => {
+        if (point.type === 'start') {
+          rangeStart = point.time;
+          isAvailable = true;
+        } else if (point.type === 'booked-start') {
+          if (isAvailable && rangeStart !== null) {
+            availableRanges.push({
+              start: minutesToTime(rangeStart),
+              end: minutesToTime(point.time)
+            });
+          }
+          isAvailable = false;
+        } else if (point.type === 'booked-end') {
+          rangeStart = point.time;
+          isAvailable = true;
+        } else if (point.type === 'end') {
+          if (isAvailable && rangeStart !== null) {
+            availableRanges.push({
+              start: minutesToTime(rangeStart),
+              end: minutesToTime(point.time)
+            });
+          }
+        }
+      });
+    });
+    
+    return availableRanges;
+  };
+
+  // Format date for display
+  const formatDate = (isoString) => {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  };
+
+  // Get status display text
+  const getStatusDisplay = (status) => {
+    const statusMap = {
+      'pending': t('status.pending'),
+      'completed': t('status.completed')
+    };
+    return statusMap[status] || status;
+  };
 
   return (
     <>
       <h3>{t('links.bookings')}</h3>
+      
       <div className="user__buttons">
         <button className="form__submit --noArrow" onClick={handleShowList}>
           {t('actions.bookingsRead')}
@@ -558,395 +474,293 @@ const BookingList = () => {
         <button className="form__submit --noArrow" onClick={handleShowForm}>
           {t('actions.bookingsCreate')}
         </button>
-      </div>{' '}
+      </div>
+      
       {showList && (
         <>
+          <div className="filter__buttons">
+            <button 
+              className={`filter-button ${bookingFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setBookingFilter('all')}>
+              {t('filters.all')}
+            </button>
+            <button 
+              className={`filter-button ${bookingFilter === 'upcoming' ? 'active' : ''}`}
+              onClick={() => setBookingFilter('upcoming')}>
+              {t('filters.upcoming')}
+            </button>
+            <button 
+              className={`filter-button ${bookingFilter === 'past' ? 'active' : ''}`}
+              onClick={() => setBookingFilter('past')}>
+              {t('filters.past')}
+            </button>
+            <button 
+              className={`filter-button ${bookingFilter === 'my' ? 'active' : ''}`}
+              onClick={() => setBookingFilter('my')}>
+              {t('filters.myBookings')}
+            </button>
+          </div>
+          
           <section className="card__container">
             {loading && <p>{t('common.bookingsLoading')}</p>}
             {error && <p>{t('common.commonError', { error: error })}</p>}
             {!loading && !error && bookings.length === 0 && (
               <p>{t('common.bookingsNoBookings')}</p>
             )}
-            {!loading &&
-              !error &&
-              bookings.map((booking) => (
-                <React.Fragment
-                  key={
-                    booking.id ||
-                    `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`
-                  }
-                >
-                                        {console.log(booking)}
-
-                  <article className="card">
-                    <div className="card__content">
-                      <div className="card__text">
+            
+            {!loading && !error && bookings.map((booking) => (
+              <React.Fragment key={booking.id}>
+                <article className="card">
+                  <div className="card__content">
+                    <div className="card__text">
+                      <p>
+                        <span className="span--bold">{t('form.user.label')}: </span>
+                        {booking.user?.name || booking.user_id}
+                      </p>
+                      <p>
+                        <span className="span--bold">{t('form.space.label')}: </span>
+                        {booking.space?.subtitle || booking.space_id}
+                      </p>
+                      <p>
+                        <span className="span--bold">{t('form.period.label')}: </span>
+                        {formatDate(booking.start_time)} - {formatDate(booking.end_time)}
+                      </p>
+                      <p>
+                        <span className="span--bold">{t('form.status.label')}: </span>
+                        {getStatusDisplay(booking.status)}
+                      </p>
+                      {booking.purpose && (
                         <p>
-                          <span className="span--bold">{t('form.user.label')}: </span>
-                          {booking.user?.name || booking.user_id}
+                          <span className="span--bold">{t('form.purpose.label')}: </span>
+                          {booking.purpose}
                         </p>
-                        <p>
-                          <span className="span--bold">{t('form.space.label')}: </span>
-                          {booking.space?.subtitle || booking.space_id}
-                        </p>
-                        <p>
-                          <span className="span--bold">{t('form.period.label')}: </span>
-                          {booking.start_date ||
-                            booking.reservation_period?.split('|')[0]}{' '}
-                          |{' '}
-                          {booking.end_date ||
-                            (booking.reservation_period
-                              ? booking.reservation_period.split('|')[1]
-                              : '')}
-                        </p>
-                      </div>
+                      )}
                     </div>
-                    <div className="card__buttons">
-                      <button
-                        className="form__submit --noArrow"
-                        onClick={() =>
-                          handleEditClick(
-                            booking.id ||
-                              `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`
-                          )
-                        }
-                      >
-                        {t('actions.edit')}
-                      </button>
-                      <button className="form__submit --noArrow">
-                        {t('actions.delete')}
-                      </button>
-                    </div>
-                  </article>
-                  {editingId ===
-                    (booking.id ||
-                      `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`) && (
-                    <article className="card--form--edit">
-                      <form onSubmit={handleSubmit}>
-                        <div className="form__section">
-                          <label htmlFor="user_id">
-                            {t('form.user.label')}:
-                          </label>
-                          <select
-                            id="user_id"
-                            name="user_id"
-                            value={formData.user_id}
-                            onChange={handleChange}
-                            required
-                          >
-                            <option value="">
-                              {t('form.user.placeholder')}
-                            </option>
-                            {users.map((user) => (
-                              <option key={user.id} value={user.id}>
-                                {user.email}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.user_id &&
-                            Array.isArray(errors.user_id) &&
-                            errors.user_id.map((err, idx) => (
-                              <span className="form__error" key={idx}>
-                                {t(`errors.${err}`)}
-                              </span>
-                            ))}
-                        </div>
-
-                        <div className="form__section">
-                          <label htmlFor="space_id">
-                            {t('form.space.label')}:
-                          </label>
-                          <select
-                            id="space_id"
-                            name="space_id"
-                            value={formData.space_id}
-                            onChange={handleChange}
-                            required
-                          >
-                            <option value="">
-                              {t('form.space.placeholder')}
-                            </option>
-                            {spaces.map((space) => (
-                              <option key={space.id} value={space.id}>
-                                {space.subtitle} ({space.price}€ -{' '}
-                                {space.places} {t('form.seats.label')}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.space_id &&
-                            Array.isArray(errors.space_id) &&
-                            errors.space_id.map((err, idx) => (
-                              <span className="form__error" key={idx}>
-                                {t(`errors.${err}`)}
-                              </span>
-                            ))}
-                        </div>
-
-                        {selectedSpace && (
-                          <div className="form__section">
-                            <label>{t('form.spaceAvailability.label')}:</label>
-                            <div className="schedule-display">
-                              {parseSpaceSchedule(selectedSpace.schedule)
-                                .sort((a, b) => {
-                                  const dayOrder = {
-                                    monday: 1,
-                                    tuesday: 2,
-                                    wednesday: 3,
-                                    thursday: 4,
-                                    friday: 5,
-                                  }
-                                  return dayOrder[a.day] !== dayOrder[b.day]
-                                    ? dayOrder[a.day] - dayOrder[b.day]
-                                    : a.start.localeCompare(b.start)
-                                })
-                                .map((schedule, index) => (
-                                  <p key={index}>
-                                    {t(`form.days.${schedule.day}`)}
-                                    : {schedule.start} - {schedule.end}
-                                  </p>
-                                ))}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="form__section">
-                          <label htmlFor="selected_date">
-                            {t('form.date.label')}:
-                          </label>
-                          <input
-                            id="selected_date"
-                            name="selected_date"
-                            type="date"
-                            value={formData.selected_date}
-                            onChange={handleChange}
-                            min={new Date().toISOString().split('T')[0]}
-                            required
-                          />
-                          {errors.selected_date &&
-                            Array.isArray(errors.selected_date) &&
-                            errors.selected_date.map((err, idx) => (
-                              <span className="form__error" key={idx}>
-                                {t(`errors.${err}`)}
-                              </span>
-                            ))}
-                        </div>
-
-                        {formData.selected_date &&
-                          availableSchedules.length > 0 && (
-                            <>
-                              <div className="form__section">
-                                <label>{t('form.date.available')}: </label>
-                                <div className="schedule-display">
-                                  {availableSchedules.map((range, index) => (
-                                    <p key={index}>
-                                      {range.start} - {range.end}
-                                    </p>
-                                  ))}
-                                </div>
-                              </div>
-
-                              <div className="form__section">
-                                <label htmlFor="start_time">
-                                  {t('form.time.startTime')}
-                                </label>
-                                <select
-                                  id="start_time"
-                                  name="start_time"
-                                  value={formData.start_time || ''}
-                                  onChange={handleChange}
-                                  required
-                                >
-                                  <option value="">
-                                    {t('form.time.selectStartTime')}
-                                  </option>
-                                  {parseSpaceSchedule(selectedSpace.schedule)
-                                    .filter(
-                                      (s) =>
-                                        s.day ===
-                                        getDayOfWeek(formData.selected_date)
-                                    )
-                                    .map((schedule, index) => {
-                                      const startMinutes = timeToMinutes(
-                                        schedule.start
-                                      )
-                                      const endMinutes = timeToMinutes(
-                                        schedule.end
-                                      )
-                                      const options = []
-                                      for (
-                                        let time = startMinutes;
-                                        time < endMinutes;
-                                        time += 60
-                                      ) {
-                                        const timeStr = minutesToTime(time)
-                                        options.push(
-                                          <option key={timeStr} value={timeStr}>
-                                            {timeStr}
-                                          </option>
-                                        )
-                                      }
-                                      return options
-                                    })}
-                                </select>
-                              </div>
-
-                              {formData.start_time && (
-                                <div className="form__section">
-                                  <label htmlFor="end_time">{t('form.time.endTime')}</label>
-                                  <select
-                                    id="end_time"
-                                    name="end_time"
-                                    value={formData.end_time || ''}
-                                    onChange={handleChange}
-                                    required
-                                  >
-                                    <option value="">
-                                      {t('form.time.selectEndTime')}
-                                    </option>
-                                    {parseSpaceSchedule(selectedSpace.schedule)
-                                      .filter(
-                                        (s) =>
-                                          s.day ===
-                                          getDayOfWeek(formData.selected_date)
-                                      )
-                                      .map((schedule, index) => {
-                                        if (
-                                          timeToMinutes(schedule.start) <=
-                                            timeToMinutes(
-                                              formData.start_time
-                                            ) &&
-                                          timeToMinutes(schedule.end) >
-                                            timeToMinutes(formData.start_time)
-                                        ) {
-                                          const startMinutes =
-                                            timeToMinutes(formData.start_time) +
-                                            60
-                                          const endMinutes = timeToMinutes(
-                                            schedule.end
-                                          )
-                                          const options = []
-                                          for (
-                                            let time = startMinutes;
-                                            time <= endMinutes;
-                                            time += 60
-                                          ) {
-                                            const timeStr = minutesToTime(time)
-                                            options.push(
-                                              <option
-                                                key={timeStr}
-                                                value={timeStr}
-                                              >
-                                                {timeStr}
-                                              </option>
-                                            )
-                                          }
-                                          return options
-                                        }
-                                        return null
-                                      })}
-                                  </select>
-                                </div>
-                              )}
-                            </>
-                          )}
-
-                        {formData.selected_date &&
-                          availableSchedules.length === 0 && (
-                            <div className="form__section">
-                              <p className="form__error">
-                                {t('form.date.noSlot')}
-                              </p>
-                              {existingBookings
-                                .filter(
-                                  (b) =>
-                                    b.space_id === formData.space_id &&
-                                    b.reservation_period.includes(
-                                      formData.selected_date
-                                    )
-                                )
-                                .map((booking, index) => (
-                                  <p key={index} className="booking-info">
-                                    Reserved:{' '}
-                                    {booking.reservation_period.split(' ')[1]} -{' '}
-                                    {booking.reservation_period.split(' ')[3]}
-                                  </p>
-                                ))}
-                            </div>
-                          )}
-
-                        <input
-                          type="submit"
-                          value={t('actions.edit')}
-                          className="form__submit"
-                          disabled={!formData.reservation_period}
-                        />
-                      </form>
-                    </article>
-                  )}
-                </React.Fragment>
-              ))}
-          </section>
-          {!loading && !error && bookings.length > 0 && (
-                  <div className="pagination">
+                  </div>
+                  <div className="card__buttons">
                     <button
-                      onClick={() => setCurrentPage((p) => 1)}
-                      disabled={currentPage === 1}
+                      className="form__submit --noArrow"
+                      onClick={() => handleEditClick(booking.id)}
                     >
-                      <img src={arrowTopito} className="arrowTopito--left" />
+                      {t('actions.edit')}
                     </button>
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
+                    <button 
+                      className="form__submit --noArrow"
+                      onClick={() => handleDelete(booking.id)}
                     >
-                      <img src={arrow} className="arrow--left" />
-                    </button>
-                    <span>
-                      {currentPage} / {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                    >
-                      <img src={arrow} className="arrow--right" />
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage((p) => totalPages)}
-                      disabled={currentPage === totalPages}
-                    >
-                      <img src={arrowTopito} className="arrowTopito--right" />
+                      {t('actions.delete')}
                     </button>
                   </div>
+                </article>
+                
+                {editingId === booking.id && (
+                  <article className="card--form--edit">
+                    <form onSubmit={handleSubmit}>
+                      <div className="form__section">
+                        <label htmlFor="space_id">
+                          {t('form.space.label')}:
+                        </label>
+                        <select
+                          id="space_id"
+                          name="space_id"
+                          value={formData.space_id}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="">{t('form.space.placeholder')}</option>
+                          {spaces.map((space) => (
+                            <option key={space.id} value={space.id}>
+                              {space.subtitle} ({space.price}€ - {space.places} {t('form.seats.label')})
+                            </option>
+                          ))}
+                        </select>
+                        {errors.space_id && errors.space_id.map((err, idx) => (
+                          <span className="form__error" key={idx}>
+                            {err}
+                          </span>
+                        ))}
+                      </div>
+
+                      {selectedSpace && (
+                        <div className="form__section">
+                          <label>{t('form.spaceAvailability.label')}:</label>
+                          <div className="schedule-display">
+                            {parseSpaceSchedule(selectedSpace.schedule)
+                              .sort((a, b) => {
+                                const dayOrder = {
+                                  monday: 1,
+                                  tuesday: 2,
+                                  wednesday: 3,
+                                  thursday: 4,
+                                  friday: 5,
+                                }
+                                return dayOrder[a.day] !== dayOrder[b.day]
+                                  ? dayOrder[a.day] - dayOrder[b.day]
+                                  : a.start.localeCompare(b.start)
+                              })
+                              .map((schedule, index) => (
+                                <p key={index}>
+                                  {t(`form.days.${schedule.day}`)}
+                                  : {schedule.start} - {schedule.end}
+                                </p>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="form__section">
+                        <label htmlFor="selected_date">
+                          {t('form.date.label')}:
+                        </label>
+                        <input
+                          id="selected_date"
+                          name="selected_date"
+                          type="date"
+                          value={formData.selected_date}
+                          onChange={handleChange}
+                          min={new Date().toISOString().split('T')[0]}
+                          required
+                        />
+                        {errors.selected_date && errors.selected_date.map((err, idx) => (
+                          <span className="form__error" key={idx}>
+                            {err}
+                          </span>
+                        ))}
+                      </div>
+
+                      {formData.selected_date && availableSchedules.length > 0 && (
+                        <>
+                          <div className="form__section">
+                            <label>{t('form.date.available')}: </label>
+                            <div className="schedule-display">
+                              {availableSchedules.map((range, index) => (
+                                <p key={index}>
+                                  {range.start} - {range.end}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="form__section">
+                            <label htmlFor="start_time">
+                              {t('form.time.startTime')}:
+                            </label>
+                            <input
+                              type="time"
+                              id="start_time"
+                              name="start_time"
+                              value={formData.start_time}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+
+                          <div className="form__section">
+                            <label htmlFor="end_time">
+                              {t('form.time.endTime')}:
+                            </label>
+                            <input
+                              type="time"
+                              id="end_time"
+                              name="end_time"
+                              value={formData.end_time}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
+                      
+                      {formData.selected_date && availableSchedules.length === 0 && (
+                        <div className="form__section">
+                          <p className="form__error">
+                            {t('form.date.noSlot')}
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="form__section">
+                        <label htmlFor="purpose">
+                          {t('form.purpose.label')}:
+                        </label>
+                        <input
+                          type="text"
+                          id="purpose"
+                          name="purpose"
+                          value={formData.purpose}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      
+                      <div className="form__section">
+                        <label htmlFor="notes">
+                          {t('form.notes.label')}:
+                        </label>
+                        <textarea
+                          id="notes"
+                          name="notes"
+                          value={formData.notes}
+                          onChange={handleChange}
+                          rows="3"
+                        ></textarea>
+                      </div>
+
+                      {errors.form && errors.form.map((err, idx) => (
+                        <span className="form__error" key={idx}>
+                          {err}
+                        </span>
+                      ))}
+                      
+                      <input
+                        type="submit"
+                        value={t('actions.edit')}
+                        className="form__submit"
+                      />
+                    </form>
+                  </article>
                 )}
+              </React.Fragment>
+            ))}
+          </section>
+          
+          {!loading && !error && bookings.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                <img src={arrowTopito} className="arrowTopito--left" alt="First page" />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <img src={arrow} className="arrow--left" alt="Previous page" />
+              </button>
+              <span>
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrow} className="arrow--right" alt="Next page" />
+              </button>
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <img src={arrowTopito} className="arrowTopito--right" alt="Last page" />
+              </button>
+            </div>
+          )}
         </>
       )}
+      
       {showForm && (
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
-              <div className="form__section">
-                <label htmlFor="user_id">{t('form.user.label')}</label>
-                <select
-                  id="user_id"
-                  name="user_id"
-                  value={formData.user_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">{t('form.user.placeholder')}</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.email}
-                    </option>
-                  ))}
-                </select>
-                {errors.user_id &&
-                  Array.isArray(errors.user_id) &&
-                  errors.user_id.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
-              </div>
               <div className="form__section">
                 <label htmlFor="space_id">{t('form.space.label')}</label>
                 <select
@@ -964,14 +778,13 @@ const BookingList = () => {
                     </option>
                   ))}
                 </select>
-                {errors.space_id &&
-                  Array.isArray(errors.space_id) &&
-                  errors.space_id.map((err, idx) => (
-                    <span className="form__error" key={idx}>
-                      {t(`errors.${err}`)}
-                    </span>
-                  ))}
+                {errors.space_id && errors.space_id.map((err, idx) => (
+                  <span className="form__error" key={idx}>
+                    {err}
+                  </span>
+                ))}
               </div>
+              
               {selectedSpace && (
                 <div className="form__section">
                   <label>{t('form.spaceAvailability.label')}</label>
@@ -986,9 +799,9 @@ const BookingList = () => {
                           friday: 5,
                         }
                         if (dayOrder[a.day] !== dayOrder[b.day]) {
-                          return dayOrder[a.day] - dayOrder[b.day]
+                          return dayOrder[a.day] - dayOrder[b.day];
                         }
-                        return a.start.localeCompare(b.start)
+                        return a.start.localeCompare(b.start);
                       })
                       .map((schedule, index) => (
                         <p key={index}>
@@ -999,6 +812,7 @@ const BookingList = () => {
                   </div>
                 </div>
               )}
+              
               {formData.space_id && (
                 <div className="form__section">
                   <label htmlFor="selected_date">{t('form.date.label')}</label>
@@ -1011,15 +825,14 @@ const BookingList = () => {
                     min={new Date().toISOString().split('T')[0]}
                     required
                   />
-                  {errors.selected_date &&
-                    Array.isArray(errors.selected_date) &&
-                    errors.selected_date.map((err, idx) => (
-                      <span className="form__error" key={idx}>
-                        {t(`errors.${err}`)}
-                      </span>
-                    ))}
+                  {errors.selected_date && errors.selected_date.map((err, idx) => (
+                    <span className="form__error" key={idx}>
+                      {err}
+                    </span>
+                  ))}
                 </div>
-              )}{' '}
+              )}
+              
               {formData.selected_date && availableSchedules.length > 0 && (
                 <>
                   <div className="form__section">
@@ -1032,120 +845,85 @@ const BookingList = () => {
                       ))}
                     </div>
                   </div>
+                  
                   <div className="form__section">
                     <label htmlFor="start_time">{t('form.time.startTime')}: </label>
-                    <select
+                    <input
+                      type="time"
                       id="start_time"
                       name="start_time"
-                      value={formData.start_time || ''}
+                      value={formData.start_time}
                       onChange={handleChange}
                       required
-                    >
-                      <option value="">{t('form.time.selectStartTime')}</option>
-                      {parseSpaceSchedule(selectedSpace.schedule)
-                        .filter(
-                          (s) => s.day === getDayOfWeek(formData.selected_date)
-                        )
-                        .map((schedule, index) => {
-                          const startMinutes = timeToMinutes(schedule.start)
-                          const endMinutes = timeToMinutes(schedule.end)
-                          const options = []
-                          for (
-                            let time = startMinutes;
-                            time < endMinutes;
-                            time += 60
-                          ) {
-                            const timeStr = minutesToTime(time)
-                            options.push(
-                              <option key={timeStr} value={timeStr}>
-                                {timeStr}
-                              </option>
-                            )
-                          }
-                          return options
-                        })}
-                    </select>
+                    />
+                    {errors.start_time && errors.start_time.map((err, idx) => (
+                      <span className="form__error" key={idx}>
+                        {err}
+                      </span>
+                    ))}
                   </div>
 
-                  {formData.start_time && (
-                    <div className="form__section">
-                      <label htmlFor="end_time">Hora de fin:</label>
-                      <select
-                        id="end_time"
-                        name="end_time"
-                        value={formData.end_time || ''}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Selecciona hora de fin</option>
-                        {parseSpaceSchedule(selectedSpace.schedule)
-                          .filter(
-                            (s) =>
-                              s.day === getDayOfWeek(formData.selected_date)
-                          )
-                          .map((schedule, index) => {
-                            if (
-                              timeToMinutes(schedule.start) <=
-                                timeToMinutes(formData.start_time) &&
-                              timeToMinutes(schedule.end) >
-                                timeToMinutes(formData.start_time)
-                            ) {
-                              const startMinutes =
-                                timeToMinutes(formData.start_time) + 60
-                              const endMinutes = timeToMinutes(schedule.end)
-                              const options = []
-                              for (
-                                let time = startMinutes;
-                                time <= endMinutes;
-                                time += 60
-                              ) {
-                                const timeStr = minutesToTime(time)
-                                options.push(
-                                  <option key={timeStr} value={timeStr}>
-                                    {timeStr}
-                                  </option>
-                                )
-                              }
-                              return options
-                            }
-                            return null
-                          })}
-                      </select>
-                    </div>
-                  )}
+                  <div className="form__section">
+                    <label htmlFor="end_time">{t('form.time.endTime')}: </label>
+                    <input
+                      type="time"
+                      id="end_time"
+                      name="end_time" 
+                      value={formData.end_time}
+                      onChange={handleChange}
+                      required
+                    />
+                    {errors.end_time && errors.end_time.map((err, idx) => (
+                      <span className="form__error" key={idx}>
+                        {err}
+                      </span>
+                    ))}
+                  </div>
                 </>
               )}
+              
               {formData.selected_date && availableSchedules.length === 0 && (
                 <div className="form__section">
                   <p className="form__error">
                     {t('form.date.noSlot')}
                   </p>
-                  {existingBookings
-                    .filter(
-                      (b) =>
-                        b.space_id === formData.space_id &&
-                        b.reservation_period.includes(formData.selected_date)
-                    )
-                    .map((booking, index) => (
-                      <p key={index} className="booking-info">
-                        Reserved: {booking.reservation_period.split(' ')[1]} -{' '}
-                        {booking.reservation_period.split(' ')[3]}
-                      </p>
-                    ))}
                 </div>
               )}
-              {errors.form &&
-                Array.isArray(errors.form) &&
-                errors.form.map((err, idx) => (
-                  <span className="form__error" key={idx}>
-                    {t(`errors.${err}`)}
-                  </span>
-                ))}
+              
+              <div className="form__section">
+                <label htmlFor="purpose">{t('form.purpose.label')}: </label>
+                <input
+                  type="text"
+                  id="purpose"
+                  name="purpose"
+                  value={formData.purpose}
+                  onChange={handleChange}
+                  placeholder={t('form.purpose.placeholder')}
+                />
+              </div>
+              
+              <div className="form__section">
+                <label htmlFor="notes">{t('form.notes.label')}: </label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  rows="3"
+                  placeholder={t('form.notes.placeholder')}
+                ></textarea>
+              </div>
+              
+              {errors.form && errors.form.map((err, idx) => (
+                <span className="form__error" key={idx}>
+                  {err}
+                </span>
+              ))}
+              
               <input
                 type="submit"
                 value={t('actions.bookingsCreate')}
                 className="form__submit"
-                disabled={!formData.reservation_period}
               />
             </form>
           </article>

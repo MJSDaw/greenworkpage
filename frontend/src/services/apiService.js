@@ -286,107 +286,80 @@ export const deleteSpace = async (spaceId) => {
 // ==================== Reservas ====================
 
 /**
- * Obtiene la lista de reservas con paginación
- * @param {number} page - Número de página actual
- * @param {number} perPage - Cantidad de registros por página
- * @returns {Promise} Lista de reservas paginada
+ * Obtiene las reservas futuras
+ * @param {number} page - Página actual
+ * @param {number} perPage - Elementos por página
+ * @returns {Promise} Lista de reservas futuras paginada
  */
-export const getBookings = async (page = 1, perPage = 3) => {
-  try {
-    const response = await baseFetch(`/api/getactivebookings?page=${page}&per_page=${perPage}`, 'GET');
-    // Handle the nested pagination structure
-    if (response && typeof response === 'object') {
-      if (response.success && response.data && response.data.data) {
-        // This is the paginated response structure
-        return response;
-      } else if (Array.isArray(response)) {
-        return { success: true, data: { data: response } };
-      } else if (Array.isArray(response.data)) {
-        return { success: true, data: { data: response.data } };
-      }
-    }
-    return { success: true, data: { data: [] } };
-  } catch (error) {
-    console.error('Error fetching bookings:', error);
-    return { success: false, data: { data: [] } };
-  }
+export const getUpcomingBookings = (page = 1, perPage = 3) => {
+  return baseFetch(`/api/getupcominbookings?page=${page}&per_page=${perPage}`);
 };
 
 /**
- * Obtiene la lista de reservas completadas con paginación
- * @param {number} page - Número de página actual
- * @param {number} perPage - Cantidad de registros por página
- * @returns {Promise} Lista de reservas completadas paginada
+ * Obtiene las reservas pasadas
+ * @param {number} page - Página actual
+ * @param {number} perPage - Elementos por página
+ * @returns {Promise} Lista de reservas pasadas paginada
  */
-export const getCompletedBookings = async (page = 1, perPage = 3) => {
-  try {
-    const response = await baseFetch(`/api/getinactivebookings?page=${page}&per_page=${perPage}`, 'GET');
-    // Handle the nested pagination structure
-    if (response && typeof response === 'object') {
-      if (response.success && response.data && response.data.data) {
-        // This is the paginated response structure
-        return response;
-      } else if (Array.isArray(response)) {
-        return { success: true, data: { data: response, last_page: 1, current_page: 1 } };
-      } else if (Array.isArray(response.data)) {
-        return { success: true, data: { data: response.data, last_page: 1, current_page: 1 } };
-      }
-    }
-    return { success: true, data: { data: [], last_page: 1, current_page: 1 } };
-  } catch (error) {
-    console.error('Error fetching completed bookings:', error);
-    return { success: false, data: { data: [], last_page: 1, current_page: 1 } };
-  }
-};
-
-/**
- * Guarda o actualiza una reserva
- * @param {Object} bookingData - Datos de la reserva
- * @param {Number|null} bookingId - ID de la reserva (null para crear nueva)
- * @returns {Promise} Respuesta del servidor
- */
-export const saveBooking = async (bookingData, bookingId = null) => {
-  const url = bookingId ? `/api/bookings/${bookingId}` : '/api/bookings';
-  const method = bookingId ? 'PUT' : 'POST';
-  
-  return baseFetch(url, method, bookingData);
+export const getPastBookings = (page = 1, perPage = 3) => {
+  return baseFetch(`/api/getpastbookings?page=${page}&per_page=${perPage}`);
 };
 
 /**
  * Crea una nueva reserva
- * @param {Object} bookingData - Datos de la reserva
- * @returns {Promise} Respuesta del servidor
+ * @param {Object} bookingData - Datos para la reserva (space_id, start_time, end_time, purpose, notes, status)
+ * @returns {Promise} La respuesta del servidor
  */
-export const createBooking = async (bookingData) => {
-  // Debug log
-  console.log('Creating booking with data:', bookingData);
-  try {
-    const response = await baseFetch('/api/bookings/create', 'POST', bookingData);
-    console.log('Booking creation response:', response);
-    return response;
-  } catch (error) {
-    console.error('Error creating booking:', error);
-    throw error;
-  }
+export const createBooking = (bookingData) => {
+  return baseFetch(`/api/bookings/create`, 'POST', bookingData);
+};
+
+/**
+ * Obtiene una reserva específica por su ID
+ * @param {number} id - ID de la reserva
+ * @returns {Promise} Los datos de la reserva
+ */
+export const getBookingById = (id) => {
+  return baseFetch(`/api/bookings/${id}`);
 };
 
 /**
  * Actualiza una reserva existente
- * @param {string} id - ID de la reserva
- * @param {Object} bookingData - Datos actualizados de la reserva
- * @returns {Promise} Respuesta del servidor
+ * @param {number} id - ID de la reserva a actualizar
+ * @param {Object} updatedData - Datos actualizados (space_id, start_time, end_time, purpose, notes, status)
+ * @returns {Promise} La respuesta del servidor
  */
-export const updateBooking = async (id, bookingData) => {
-  return baseFetch(`/api/admin/bookings/${id}`, 'PUT', bookingData);
+export const updateBooking = (id, updatedData) => {
+  return baseFetch(`/api/bookings/${id}`, 'PUT', updatedData);
 };
 
 /**
- * Elimina una reserva existente
- * @param {string} id - ID de la reserva
- * @returns {Promise} Respuesta del servidor
+ * Elimina una reserva
+ * @param {number} id - ID de la reserva a eliminar
+ * @returns {Promise} La respuesta del servidor
  */
-export const deleteBooking = async (id) => {
-  return baseFetch(`/api/admin/bookings/${id}`, 'DELETE');
+export const deleteBooking = (id) => {
+  return baseFetch(`/api/bookings/${id}`, 'DELETE');
+};
+
+/**
+ * Obtiene todas las reservas del usuario autenticado
+ * @param {number} page - Página actual
+ * @param {number} perPage - Elementos por página
+ * @returns {Promise} Lista de reservas del usuario paginada
+ */
+export const getUserBookings = (page = 1, perPage = 3) => {
+  return baseFetch(`/api/my-bookings?page=${page}&per_page=${perPage}`);
+};
+
+/**
+ * Obtiene todas las reservas (para administradores)
+ * @param {number} page - Página actual
+ * @param {number} perPage - Elementos por página
+ * @returns {Promise} Lista de reservas paginada
+ */
+export const getBookings = (page = 1, perPage = 3) => {
+  return baseFetch(`/api/bookings?page=${page}&per_page=${perPage}`);
 };
 
 // ==================== Pagos ====================

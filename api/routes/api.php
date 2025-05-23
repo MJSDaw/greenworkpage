@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpaceController;
-use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
@@ -43,23 +43,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
     });
-    
+
     Route::post('logout', [AuthController::class, 'logout']);
-    
+
     // Routes for spaces
-    
+
     // Routes for services
     // Routes for reservations
-    Route::get('getactivebookings', [ReservationController::class, 'getActiveReservations']);
-    Route::get('getinactivebookings', [ReservationController::class, 'getInactiveReservations']);
-    Route::post('bookings/create', [ReservationController::class, 'store']);
-    Route::get('bookings/{id}', [ReservationController::class, 'show']);
-    Route::put('bookings/{id}', [ReservationController::class, 'update']);
-    Route::delete('bookings/{id}', [ReservationController::class, 'destroy']);
-    Route::get('my-bookings', [ReservationController::class, 'myReservations']);
-    Route::get('spaces/{spaceId}/bookings', [ReservationController::class, 'spaceReservations']);
+    Route::get('bookings', [BookingController::class, 'index']);
+    Route::get('getupcominbookings', [BookingController::class, 'upcomingBookings']);
+    Route::get('getpastbookings', [BookingController::class, 'pastBookings']);
+    Route::post('bookings/create', [BookingController::class, 'store']);
+    Route::get('bookings/{id}', [BookingController::class, 'show']);
+    Route::put('bookings/{id}', [BookingController::class, 'update']);
+    Route::delete('bookings/{id}', [BookingController::class, 'destroy']);
+    Route::get('my-bookings', [BookingController::class, 'userBookings']);
+
     Route::delete('users/{id}', [UserController::class, 'destroy']);
-    
+
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);
 });
@@ -73,11 +74,11 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('users/filter', [UserController::class, 'filter']); // Route to filter users
     Route::get('users/{id}', [UserController::class, 'show']); // Route to get a specific user
     Route::put('users/{id}', [UserController::class, 'update']); // Route to update a specific user
-    
+
     // Routes for spaces
     Route::apiResource('spaces', SpaceController::class);
     Route::delete('spaces/{id}', [SpaceController::class, 'destroy']);
-    
+
     // Routes for audits
     Route::get('audits', [AuditController::class, 'index']);
     Route::get('audits/filter', [AuditController::class, 'filter']);

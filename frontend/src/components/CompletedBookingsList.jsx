@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getCompletedBookings } from '../services/apiService'
+import { getPastBookings } from '../services/apiService'
 
 import arrowTopito from '../assets/img/arrowTopito.svg'
 import arrow from '../assets/img/arrow.svg'
@@ -18,7 +18,7 @@ const BookingList = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await getCompletedBookings(currentPage, perPage)
+      const response = await getPastBookings(currentPage, perPage)
       // Extract the bookings array from the paginated response
       const bookingsArray = response?.data?.data || []
       setBookings(bookingsArray)

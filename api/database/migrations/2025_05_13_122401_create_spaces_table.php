@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('subtitle');
             $table->string('address')->nullable();
+            $table->string('services')->nullable();
             $table->timestamps();
         });
     }
