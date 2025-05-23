@@ -213,7 +213,7 @@ const BookingList = () => {
       // Prepare data for API
       const bookingData = {
         space_id: formData.space_id,
-        // user_id is not needed as it's taken from auth token in backend
+        user_id: formData.user_id,
         start_time: startDateTime,
         end_time: endDateTime,
         status: 'pending' // Default status
@@ -448,12 +448,15 @@ const BookingList = () => {
   };
 
   // Get status display text
-  const getStatusDisplay = (status) => {
-    const statusMap = {
-      'pending': t('status.pending'),
-      'completed': t('status.completed')
-    };
-    return statusMap[status] || status;
+  const getStatusDisplay = (status, booking) => {
+    // Si la fecha de fin ya pasó, mostrar 'completed', si no, 'pending'
+    const now = new Date();
+    const end = new Date(booking.end_time);
+    if (end < now) {
+      return t('status.completed');
+    } else {
+      return t('status.pending');
+    }
   };
 
   return (
@@ -487,11 +490,6 @@ const BookingList = () => {
               onClick={() => setBookingFilter('past')}>
               {t('filters.past')}
             </button>
-            <button 
-              className={`filter-button ${bookingFilter === 'my' ? 'active' : ''}`}
-              onClick={() => setBookingFilter('my')}>
-              {t('filters.myBookings')}
-            </button>
           </div>
           
           <section className="card__container">
@@ -520,7 +518,7 @@ const BookingList = () => {
                       </p>
                       <p>
                         <span className="span--bold">{t('form.status.label')}: </span>
-                        {getStatusDisplay(booking.status)}
+                        {getStatusDisplay(booking.status, booking)}
                       </p>
                     </div>
                   </div>
@@ -543,6 +541,29 @@ const BookingList = () => {
                 {editingId === booking.id && (
                   <article className="card--form--edit">
                     <form onSubmit={handleSubmit}>
+                      <div className="form__section">
+                        <label htmlFor="user_id">{t('form.user.label')}</label>
+                        <select
+                          id="user_id"
+                          name="user_id"
+                          value={formData.user_id}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="">{t('form.user.placeholder') || 'Selecciona usuario'}</option>
+                          {users.map((user) => (
+                            <option key={user.id} value={user.id}>
+                              {user.name} {user.surname ? user.surname : ''} ({user.email})
+                            </option>
+                          ))}
+                        </select>
+                        {errors.user_id && errors.user_id.map((err, idx) => (
+                          <span className="form__error" key={idx}>
+                            {err}
+                          </span>
+                        ))}
+                      </div>
+
                       <div className="form__section">
                         <label htmlFor="space_id">
                           {t('form.space.label')}:
@@ -722,6 +743,29 @@ const BookingList = () => {
         <section className="card__container--form">
           <article className="card--form">
             <form onSubmit={handleSubmit}>
+              <div className="form__section">
+                <label htmlFor="user_id">{t('form.user.label')}</label>
+                <select
+                  id="user_id"
+                  name="user_id"
+                  value={formData.user_id}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">{t('form.user.placeholder') || 'Selecciona usuario'}</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name} {user.surname ? user.surname : ''} ({user.email})
+                    </option>
+                  ))}
+                </select>
+                {errors.user_id && errors.user_id.map((err, idx) => (
+                  <span className="form__error" key={idx}>
+                    {err}
+                  </span>
+                ))}
+              </div>
+
               <div className="form__section">
                 <label htmlFor="space_id">{t('form.space.label')}</label>
                 <select
