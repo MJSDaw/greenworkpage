@@ -7,6 +7,7 @@ import instagram from '../assets/img/instagramLogo.svg'
 import facebook from '../assets/img/facebookLogo.svg'
 import twitter from '../assets/img/twitterLogo.svg'
 import linkedin from '../assets/img/linkedinLogo.svg'
+import LanguageSelector from './LanguageSelector'
 
 const Footer = () => {
   const { t } = useTranslation()
@@ -92,8 +93,8 @@ const Footer = () => {
               alt={t('common.linkedIn')}
               title={t('actions.goToLinkedIn')}
             />
-          </Link>
-        </article>
+          </Link>        </article>
+        <LanguageSelector />
       </section>
       <section className="footer__content--links">
         <Link
