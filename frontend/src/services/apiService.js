@@ -64,10 +64,19 @@ export const baseFetch = async (
       headers,
       body,
       ...options,
-    };
-
-    // Realizar la petición
+    };    // Realizar la petición
     const response = await fetch('https://localhost:8443' + url, fetchOptions);
+    
+    // Check for 422 status (Unprocessable Entity) - typically expired session or validation error
+    if (response.status === 422) {
+      console.log('Session expired or validation error (422). Logging out...');
+      // Import directly to avoid circular dependency
+      const { removeAuthToken } = await import('./authService');
+      removeAuthToken();
+      // Redirect to login page
+      window.location.href = '/login';
+      throw new Error('Your session has expired. Please log in again.');
+    }
     
     // Procesar la respuesta en formato texto
     const responseText = await response.text();
