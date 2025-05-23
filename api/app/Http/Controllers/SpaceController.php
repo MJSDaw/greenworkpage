@@ -45,13 +45,17 @@ class SpaceController extends Controller
             'description' => 'required|string',
             'subtitle' => 'required|string',
             'address' => 'required|string',
+        ], [
+            'imageFiles.*.image' => 'The file must be an image',
+            'imageFiles.*.mimes' => 'Only jpeg, png, jpg, svg and webp formats are allowed',
+            'imageFiles.*.max' => 'Image size should not exceed 2MB'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
             ], 422);
         }
 
