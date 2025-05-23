@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { updateAdminImage, getUserBookings, createBooking, updateUserProfile } from '../services/apiService'
+import { updateUserImage, getUserBookings, createBooking, updateUserProfile } from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
 import { isAuthenticated, getUserType } from '../services/authService'
@@ -130,19 +130,19 @@ const UserDashboard = () => {
     const url = URL.createObjectURL(file)
     setImage(url)
 
-    const adminData = getUserData()
-    if (!adminData?.id) return
+    const userData = getUserData()
+    if (!userData?.id) return
 
     try {
-      const data = await updateAdminImage(adminData.id, file)
+      const data = await updateUserImage(userData.id, file)
       if (data?.success && data.data?.image) {
         const newImage = `https://localhost:8443/storage/${data.data.image}`
         setImage(newImage)
 
-        const currentAdminData = getUserData()
-        if (currentAdminData) {
-          currentAdminData.image = data.data.image
-          localStorage.setItem('userData', JSON.stringify(currentAdminData))
+        const currentUserData = getUserData()
+        if (currentUserData) {
+          currentUserData.image = data.data.image
+          localStorage.setItem('userData', JSON.stringify(currentUserData))
         }
       }
     } catch (err) {

@@ -218,6 +218,20 @@ export const updateAdminImage = async (adminId, imageFile) => {
   return baseFetch(`/api/admin/${adminId}/updateImage`, 'POST', formData, {}, true, true);
 };
 
+/**
+ * Actualiza la imagen de perfil del administrador
+ * @param {Number} adminId - ID del administrador
+ * @param {File} imageFile - Archivo de imagen
+ * @returns {Promise} Respuesta del servidor
+ */
+export const updateUserImage = async (userId, imageFile) => {
+  // Crear FormData para enviar la imagen
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  
+  return baseFetch(`/api/users/${userId}/updateImage`, 'POST', formData, {}, true, true);
+};
+
 // ==================== Espacios ====================
 
 /**

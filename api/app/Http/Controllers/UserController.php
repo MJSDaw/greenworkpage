@@ -8,9 +8,76 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\AuditController;
+use Illuminate\Support\Facades\Storage;
+
 
 class UserController extends Controller
 {
+    public function updateImage(Request $request, $id)
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:webp,jpeg,png,jpg,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Find the user
+            $user = User::findOrFail($id);
+            
+            // Delete old image if exists
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
+                Storage::disk('public')->delete($user->image);
+            }
+            
+            // Store the new image
+            $image = $request->file('image');
+            $path = $image->store('user-images', 'public');
+            
+            // Update user record
+            $user->image = $path;
+            $user->save();
+            
+            // Create audit record if AuditController exists
+            try {
+                app(AuditController::class)->store([
+                    'user_id' => auth()->guard('user')->id(),
+                    'action' => 'update',
+                    'table_name' => 'users',
+                    'record_id' => $user->id,
+                    'old_values' => json_encode(['image' => $user->getOriginal('image')]),
+                    'new_values' => json_encode(['image' => $path]),
+                ]);
+            } catch (\Exception $e) {
+                // Log the error but don't fail the request
+                \Log::error('Failed to create audit record: ' . $e->getMessage());
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'User image updated successfully',
+                'data' => [
+                    'user' => $user,
+                    'image_url' => Storage::url($path)
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user image',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Display a listing of the resource with filtering and ordering.
      * 

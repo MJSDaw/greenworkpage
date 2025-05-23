@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Protected routes for contacts (only GET)
     Route::get('contacts', [ContactController::class, 'index']);
     Route::put('users/{id}', [UserController::class, 'update']);
+
+    Route::post('users/{id}/updateImage', [UserController::class, 'updateImage']); // Route to update user image
 });
 
 
