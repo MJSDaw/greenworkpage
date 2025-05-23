@@ -1691,6 +1691,14 @@ footer {
   .about__title, .main__about {
     margin: 0 2rem;
   }
+
+  .space__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .space__description {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================
