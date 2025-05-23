@@ -5,10 +5,8 @@ import { createBackup, updateAdminImage, API_BASE_URL } from '../services/apiSer
 import UserList from '../components/UserList'
 import SpaceList from '../components/SpaceList'
 import BookingList from '../components/BookingList'
-import CompletedBookingList from '../components/CompletedBookingsList'
 import AuditList from '../components/AuditList'
 import PendingPaymentList from '../components/PendingPaymentList'
-import CompletedPaymentList from '../components/CompletedPaymentList'
 import ServiceList from '../components/ServiceList'
 
 import defaultImage from '../assets/img/leonardo.svg'
@@ -208,26 +206,6 @@ const AdminDashboard = () => {
             className={`dropdown__container ${activeSection.services ? 'open' : ''}`}
           >
             <ServiceList />
-          </section>
-        </article>
-      </section>
-
-      <section className="user__section--part">
-        <h2>{t('links.payments')}</h2>
-        <article className="user__buttons">
-          <button
-            className={`form__submit ${activeSection.pendingPayments ? 'active' : ''}`}
-            onClick={() => toggleSection('pendingPayments')}
-          >
-            {t('links.pendingPayments')}
-          </button>
-
-        </article>
-        <article>
-          <section
-            className={`dropdown__container ${activeSection.pendingPayments ? 'open' : ''}`}
-          >
-            <PendingPaymentList />
           </section>
         </article>
       </section>
