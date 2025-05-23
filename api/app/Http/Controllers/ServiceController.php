@@ -89,7 +89,7 @@ class ServiceController extends Controller
         
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:services,name,'.$id,
-            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
