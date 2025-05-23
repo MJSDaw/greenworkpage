@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getUserData, getUserProfile } from '../services/authService'
-import { updateUserImage, getUserBookings, createBooking, updateUserProfile, API_BASE_URL } from '../services/apiService'
+import {
+  updateUserImage,
+  getUserBookings,
+  createBooking,
+  updateUserProfile,
+  API_BASE_URL,
+} from '../services/apiService'
 import defaultImage from '../assets/img/leonardo.svg'
 import ContactUs from '../components/ContactUs'
 import { isAuthenticated, getUserType } from '../services/authService'
@@ -42,7 +48,7 @@ const UserDashboard = () => {
 
     if (userData) {
       setUserName(userData.name || '')
-      
+
       // Establece solo el ID del usuario inicialmente
       setFormData((prev) => ({ ...prev, user_id: userData.id }))
 
@@ -68,7 +74,7 @@ const UserDashboard = () => {
               // No incluimos el DNI ya que normalmente no se modifica
               // No incluimos la fecha de nacimiento ya que normalmente no se modifica
             }))
-            
+
             // Actualiza la imagen si existe
             if (updatedData.image) {
               const imageUrl = updatedData.image.startsWith('http')
@@ -95,15 +101,16 @@ const UserDashboard = () => {
         // Asegurarnos de obtener el array de reservas correctamente
         const bookingsArray = Array.isArray(response.data)
           ? response.data
-          : (response.data.data || []);
+          : response.data.data || []
 
         setBookings(bookingsArray)
 
         // Asegurarnos de obtener el número total de páginas
-        const lastPage = response.data.last_page ||
-          (response.last_page) ||
+        const lastPage =
+          response.data.last_page ||
+          response.last_page ||
           Math.ceil((response.data.total || bookingsArray.length) / perPage) ||
-          1;
+          1
 
         setTotalPages(lastPage)
       } else {
@@ -111,7 +118,7 @@ const UserDashboard = () => {
         setTotalPages(1)
       }
     } catch (err) {
-      console.error("Error obteniendo reservas:", err)
+      console.error('Error obteniendo reservas:', err)
       setError(err.message || 'Error al obtener reservas')
       setBookings([])
     } finally {
@@ -147,40 +154,47 @@ const UserDashboard = () => {
       }
     } catch (err) {
       console.error('Error uploading image:', err)
-      setBackupMessage(t('errors.imageUploadFailed') || 'Error uploading image.')
+      setBackupMessage(
+        t('errors.imageUploadFailed') || 'Error uploading image.'
+      )
       setShowBackupMessage(true)
     }
-  }  
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError({})
-    
+
     try {
       // Crear objeto con solo los campos que queremos actualizar
       const updateData = {
         id: formData.id,
         name: formData.name,
         surname: formData.surname,
-        email: formData.email
+        email: formData.email,
       }
-      
+
       // Si se proporcionó una contraseña, incluirla en la actualización
       if (formData.password) {
         // Verifica que la contraseña y su confirmación coincidan
         if (formData.password !== formData.passwordConfirm) {
-          setError({ passwordConfirm: [t('error.passwordMismatchError') || 'Las contraseñas no coinciden'] })
+          setError({
+            passwordConfirm: [
+              t('error.passwordMismatchError') ||
+                'Las contraseñas no coinciden',
+            ],
+          })
           setLoading(false)
           return
         }
         updateData.password = formData.password
       }
-      
+
       console.log('Sending update request with data:', updateData)
       const response = await updateUserProfile(updateData)
       console.log('Update response:', response)
-      
+
       if (response && response.success) {
         // Actualizar los datos en localStorage
         const currentUserData = getUserData()
@@ -190,19 +204,19 @@ const UserDashboard = () => {
           currentUserData.email = response.user.email
           localStorage.setItem('userData', JSON.stringify(currentUserData))
         }
-        
+
         // Actualizar nombre de usuario en la interfaz
         setUserName(response.user.name || '')
-        
+
         // Mostrar mensaje de éxito
         setBackupMessage(t('common.profileUpdateSuccess'))
         setShowBackupMessage(true)
-        
+
         // Limpiar campos de contraseña
         setFormData((prev) => ({
           ...prev,
           password: '',
-          passwordConfirm: ''
+          passwordConfirm: '',
         }))
       } else {
         // Mostrar errores de validación
@@ -257,17 +271,25 @@ const UserDashboard = () => {
   }
 
   const formatDate = (date) => new Date(date).toLocaleString()
-  const getStatusDisplay = (status) => t(`status.${status}`, status)
+  const getStatusDisplay = (status) => t(`form.status.${status}`)
 
   return (
     <>
       <section className="user__background">
         <article className="user__section">
           <div className="user__img__container">
-            <img src={image} className="user__img" alt={t('alt.dashboardImg')} />
+            <img
+              src={image}
+              className="user__img"
+              alt={t('alt.dashboardImg')}
+            />
             <label className="user__edit__btn">
               {t('actions.editImg')}
-              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </label>
           </div>
           <h1>{t('common.greetings', { name: userName || 'Usuario' })}</h1>
@@ -275,7 +297,8 @@ const UserDashboard = () => {
       </section>
 
       <section className="user__section--part">
-        <h2>{t('common.dataModified')}</h2>        <section className="card__container">
+        <h2>{t('common.dataModified')}</h2>{' '}
+        <section className="card__container">
           <article className="card--form--edit">
             {showBackupMessage && (
               <div className="message--success">
@@ -293,7 +316,9 @@ const UserDashboard = () => {
             <form onSubmit={handleSubmit}>
               {['name', 'surname', 'email'].map((field) => (
                 <div className="form__section" key={field}>
-                  <label htmlFor={`user-${field}`}>{t(`form.${field}.label`)}</label>
+                  <label htmlFor={`user-${field}`}>
+                    {t(`form.${field}.label`)}
+                  </label>
                   <input
                     id={`user-${field}`}
                     name={field}
@@ -327,7 +352,9 @@ const UserDashboard = () => {
                   ))}
               </div>
               <div className="form__section">
-                <label htmlFor="passwordConfirm">{t('form.confirmPassword.label')}</label>
+                <label htmlFor="passwordConfirm">
+                  {t('form.confirmPassword.label')}
+                </label>
                 <input
                   id="passwordConfirm"
                   name="passwordConfirm"
@@ -343,10 +370,14 @@ const UserDashboard = () => {
                     </span>
                   ))}
               </div>
-              <input 
-                type="submit" 
-                value={loading ? t('common.loading', { defaultValue: 'Procesando...' }) : t('actions.edit')} 
-                className="form__submit" 
+              <input
+                type="submit"
+                value={
+                  loading
+                    ? t('common.loading', { defaultValue: 'Procesando...' })
+                    : t('actions.edit')
+                }
+                className="form__submit"
                 disabled={loading}
               />
             </form>
@@ -358,31 +389,44 @@ const UserDashboard = () => {
         <h2>{t('links.bookings')}</h2>
         <section className="card__container">
           {loading && <p>{t('common.bookingsLoading')}</p>}
-          {!loading && bookings.length === 0 && <p>{t('common.bookingsNoBookings')}</p>}
+          {!loading && bookings.length === 0 && (
+            <p>{t('common.bookingsNoBookings')}</p>
+          )}
           {!loading &&
             bookings.map((booking) => (
               <article className="card" key={booking.id}>
                 <div className="card__content">
                   <div className="card__text">
                     <p>
-                      <span className="span--bold">{t('form.user.label')}: </span>
+                      <span className="span--bold">
+                        {t('form.user.label')}:{' '}
+                      </span>
                       {booking.user?.name || booking.user_id}
                     </p>
                     <p>
-                      <span className="span--bold">{t('form.space.label')}: </span>
+                      <span className="span--bold">
+                        {t('form.space.label')}:{' '}
+                      </span>
                       {booking.space?.subtitle || booking.space_id}
                     </p>
                     <p>
-                      <span className="span--bold">{t('form.period.label')}: </span>
-                      {formatDate(booking.start_time)} - {formatDate(booking.end_time)}
+                      <span className="span--bold">
+                        {t('form.period.label')}:{' '}
+                      </span>
+                      {formatDate(booking.start_time)} -{' '}
+                      {formatDate(booking.end_time)}
                     </p>
                     <p>
-                      <span className="span--bold">{t('form.status.label')}: </span>
+                      <span className="span--bold">
+                        {t('form.status.label')}:{' '}
+                      </span>
                       {getStatusDisplay(booking.status)}
                     </p>
                     {booking.purpose && (
                       <p>
-                        <span className="span--bold">{t('form.purpose.label')}: </span>
+                        <span className="span--bold">
+                          {t('form.purpose.label')}:{' '}
+                        </span>
                         {booking.purpose}
                       </p>
                     )}
@@ -390,17 +434,44 @@ const UserDashboard = () => {
                 </div>
               </article>
             ))}
-            {bookings.length > 0 && (
-              <div className="pagination">
-
-                <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} title={t('pagination.first', { defaultValue: 'Primera página' })}>«</button>
-                <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} title={t('pagination.previous', { defaultValue: 'Página anterior' })}>‹</button>
-                <span>{currentPage} / {totalPages}</span>
-                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages || bookings.length < perPage} title={t('pagination.next', { defaultValue: 'Página siguiente' })}>›</button>
-                <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages || bookings.length < perPage} title={t('pagination.last', { defaultValue: 'Última página' })}>»</button>
-              </div>
-            )}
         </section>
+        {bookings.length > 0 && (
+          <div className="pagination">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              title={t('pagination.first', { defaultValue: 'Primera página' })}
+            >
+              «
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              title={t('pagination.previous', {
+                defaultValue: 'Página anterior',
+              })}
+            >
+              ‹
+            </button>
+            <span>
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || bookings.length < perPage}
+              title={t('pagination.next', { defaultValue: 'Página siguiente' })}
+            >
+              ›
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || bookings.length < perPage}
+              title={t('pagination.last', { defaultValue: 'Última página' })}
+            >
+              »
+            </button>
+          </div>
+        )}
       </section>
 
       <ContactUs />

@@ -216,7 +216,8 @@
       "label": "Estado",
       "placeholder": "Estado",
       "completed": "Completado",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "confirmed": "Confirmado"
     },
     "user": {
       "label": "Usuario",
