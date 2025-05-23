@@ -576,6 +576,8 @@ const BookingList = () => {
                     `${booking.user_id}-${booking.space_id}-${booking.reservation_period}`
                   }
                 >
+                                        {console.log(booking)}
+
                   <article className="card">
                     <div className="card__content">
                       <div className="card__text">
@@ -590,11 +592,11 @@ const BookingList = () => {
                         <p>
                           <span className="span--bold">{t('form.period.label')}: </span>
                           {booking.start_date ||
-                            booking.reservation_period?.split('-')[0]}{' '}
-                          -{' '}
+                            booking.reservation_period?.split('|')[0]}{' '}
+                          |{' '}
                           {booking.end_date ||
                             (booking.reservation_period
-                              ? booking.reservation_period.split('-')[1]
+                              ? booking.reservation_period.split('|')[1]
                               : '')}
                         </p>
                       </div>
