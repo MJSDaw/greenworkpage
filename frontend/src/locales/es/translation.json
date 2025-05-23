@@ -60,6 +60,9 @@
     "peaspeas": "Conjunto de guisantes",
     "arrow": "Flecha"
   },
+  "confirm": {
+    "delete": "¿Estás seguro de que quieres eliminar?"
+  },
   "common": {
     "dataModified": "Modificación de datos",
     "arrow": "Icono de flecha",
@@ -115,7 +118,7 @@
     "location": "Localización",
     "phone": "Teléfono",
     "profile": "Perfil",
-    "deleteConfirmation": "¿Estás seguro de que quieres eliminar este elemento?"
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar?"
   },
   "links": {
     "home": "Inicio",

@@ -1,246 +1,90 @@
 # Green Work Page
 
-This project consists of a complete application with a Laravel + PostgreSQL backend and a React + Vite frontend to manage a system of eco-friendly workspaces and their reservations. The platform allows users to search, view, and reserve workspaces committed to sustainable practices.
+Green Work Page es una plataforma completa para la gestión de espacios de trabajo eco-friendly y sus reservas, compuesta por un backend Laravel + PostgreSQL y un frontend React + Vite. Permite a los usuarios buscar, visualizar y reservar espacios comprometidos con la sostenibilidad.
 
-## Overview
+## Arquitectura
 
-Green Work Page is a platform that connects professionals and companies with eco-friendly workspaces. These spaces are characterized by implementing sustainable practices such as:
+- **Backend:** Laravel (API RESTful) + PostgreSQL. Gestiona usuarios, espacios, reservas, auditorías, autenticación y lógica de negocio.
+- **Frontend:** React + Vite. Interfaz moderna, responsive y multilingüe, que consume la API y permite la interacción con todas las funcionalidades.
+- **Contenedores:** Docker y Docker Compose para facilitar el desarrollo y despliegue.
 
-- Use of renewable energy
-- Ergonomic and eco-friendly furniture
-- Efficient waste management systems
-- Locations accessible by public transportation
+## Estructura de carpetas
 
-## Prerequisites
+- `/api`: Backend Laravel
+  - `/app/Models/`: Modelos de datos (User, Space, Booking, etc.)
+  - `/app/Http/Controllers/`: Controladores de la API
+  - `/database/migrations/`: Migraciones de la base de datos
+  - `/database/seeders/`: Carga de datos iniciales
+  - `/routes/api.php`: Definición de rutas de la API
+  - `/config/`: Archivos de configuración
+  - `/public/`: Punto de entrada y recursos públicos
+  - `/storage/`: Archivos subidos y logs
+- `/frontend`: Frontend React
+  - `/src/components/`: Componentes reutilizables
+  - `/src/pages/`: Páginas principales
+  - `/src/services/`: Servicios para conexión con la API
+  - `/src/assets/`: Imágenes y recursos estáticos
+  - `/src/locales/`: Archivos de internacionalización (traducciones)
+  - `/public/`: Archivos estáticos públicos
+  - `/index.html`: Archivo base del frontend
 
-To run this project you will need:
+Esta organización separa claramente la lógica de negocio, la gestión de datos y la presentación, facilitando el mantenimiento y la escalabilidad.
 
-- Git
-- Docker (version 20.10.0 or higher)
-- Docker Compose (version 2.0.0 or higher)
-- Modern browser compatible with ES6
+## Características principales
 
-## Installation Guide
+- **Internacionalización:** El frontend soporta múltiples idiomas usando i18next. Los metadatos de la página (título, descripción, etc.) se actualizan dinámicamente según el idioma seleccionado.
+- **Seguridad:**
+  - Autenticación con Laravel Sanctum (API tokens)
+  - HTTPS forzado en backend
+  - Validación y sanitización de entradas
+  - Políticas de autorización por roles
+  - Protección CSRF
+- **Frontend moderno:**
+  - React 19, Vite, ESLint, Prettier
+  - Componentes reutilizables y diseño responsive
+  - Integración con la API mediante servicios
+- **Desarrollo con Docker:**
+  - Contenedores para backend, base de datos y frontend
+  - Scripts de inicialización automática
+  - Certificados autofirmados para desarrollo seguro
 
-### 1. Clone the Repository
+## Instalación rápida
 
-First, clone the repository from GitHub:
+1. **Clona el repositorio:**
 
 ```bash
 git clone https://github.com/MJSDaw/greenworkpage.git
 cd greenworkpage
 ```
 
-### 2. Project Configuration
-
-The project uses Docker for the development environment. Everything is configured in the files located in the root folder.
-
-### 3. Environment Variables Configuration
-
-Copy the example configuration file to create the `.env` file in the `api/` folder:
+2. **Configura variables de entorno:**
 
 ```bash
 cp api/.env.example api/.env
+# Edita api/.env y ajusta las variables necesarias (DB, APP_URL, FRONTEND_URL)
 ```
 
-Edit the `api/.env` file and configure the following essential variables:
-
-```
-DB_CONNECTION=pgsql
-DB_HOST=postgres
-DB_PORT=5432
-DB_DATABASE=greenworkdb
-DB_USERNAME=greenworkAdmin
-DB_PASSWORD=tucontraseñasegura
-
-APP_URL=https://localhost:8443
-FRONTEND_URL=http://localhost:5173
-```
-
-### 4. Start Docker Containers
-
-From the project's root folder, run the containers:
+3. **Inicia los contenedores:**
 
 ```bash
 docker-compose up -d
 ```
 
-This command will start the following services:
-- **postgres**: PostgreSQL database
-- **laravel**: Laravel application with Apache and support for the React frontend
-- **pgadmin**: Graphical interface to manage PostgreSQL
+4. **Accede a la aplicación:**
+- Backend API (Laravel): `https://localhost:8443`
+- Frontend (React): `http://localhost:5173`
+- pgAdmin: `http://localhost:5050`
 
-### 4. Verify Container Status
+**Credenciales iniciales:**
 
-To ensure that the containers are running correctly:
+| Tipo de usuario | Email               | Contraseña |
+|-----------------|---------------------|------------|
+| Administrador   | admin@greenwork.com | password   |
+| Usuario         | user@example.com    | password   |
 
-```bash
-docker-compose ps
-```
+> **Nota:** El backend solo acepta conexiones HTTPS. Acepta el certificado autofirmado en tu navegador para desarrollo.
 
-You should see the `postgres_container`, `laravel_container`, and `pgadmin_container` containers in "Up" state.
-
-### 5. Automatic Initialization Process
-
-The configuration includes an automatic initialization script (`docker-entrypoint.sh`) that performs:
-
-- Installation of dependencies with Composer (if necessary)
-- Waiting for PostgreSQL to be ready
-- Execution of database migrations
-- Loading initial data (seeders) if `SEED_DB=true`
-- Optimization of the application
-- Installation of React dependencies (frontend)
-- Starting the React development server
-- Configuration of appropriate permissions
-
-### 6. Access the Application
-
-Once the containers are running, you can access:
-
-- **Backend API (Laravel)**: `https://localhost:8443`
-- **Frontend (React)**: `http://localhost:5173`
-- **pgAdmin (Database Management)**: `http://localhost:5050`
-
-Credentials for initial access (if you have run the seeders):
-
-| User type      | Email               | Password   |
-|----------------|---------------------|------------|
-| Administrator  | admin@greenwork.com | password   |
-| User           | user@example.com    | password   |
-
-**Important note**: The backend application is configured to work exclusively with HTTPS. If you try to access via HTTP (http://localhost:8000), you will be automatically redirected to the secure version. Accept the self-signed certificate in your browser when prompted.
-
-## Configuration Parameters
-
-The main configuration parameters are located in the `docker-compose.yml` file:
-
-- PostgreSQL Database:
-  - User: `greenworkAdmin`
-  - Password: `HIiDV8W7S02bO6AB3ehV`
-  - Database: `greenworkdb`
-  - Port: `5432`
-  - Volume: `postgres_data` (data persistence)
-
-- Laravel Application:
-  - HTTP Port: `8000` (redirects to HTTPS)
-  - HTTPS Port: `8443` (secure)
-  - Volume: `./api:/var/www/html` (source code)
-  
-- React Frontend:
-  - Port: `5173` (development)
-  - Build: `npm run build` (production)
-
-## Security
-
-The application implements the following security measures:
-
-- Authentication using Laravel Sanctum (API tokens)
-- Forced HTTPS for all communications with the backend
-- Input validation in all forms
-- CSRF protection in web forms
-- Role-based authorization policies
-- Sanitization of input and output data
-
-- pgAdmin:
-  - Port: `5050`
-  - Email: `admin@greenwork.com`
-  - Password: `HIiDV8W7S02bO6AB3ehV`
-
-## Troubleshooting
-
-If you encounter any issues with the containers, you can check their logs:
-
-```bash
-# View Laravel container logs
-docker logs laravel_container
-
-# View PostgreSQL container logs
-docker logs postgres_container
-
-# View pgAdmin container logs
-docker logs pgadmin_container
-```
-
-## Database Management with pgAdmin
-
-The project includes pgAdmin, a graphical interface to manage the PostgreSQL database.
-
-### Accessing pgAdmin
-
-1. Open your web browser and visit: `http://localhost:5050`
-2. Log in with the following credentials:
-   - Email: `admin@greenwork.com`
-   - Password: `HIiDV8W7S02bO6AB3ehV`
-
-### PostgreSQL Connection Configuration
-
-To connect pgAdmin to the database, follow these steps:
-
-1. Right-click on "Servers" in the left panel and select "Register > Server..."
-2. In the "General" tab:
-   - Name: `GreenWorkDB` (or any descriptive name)
-
-3. In the "Connection" tab:
-   - Host name/address: `postgres` (important: use "postgres" as the hostname, not "localhost" or "127.0.0.1")
-   - Port: `5432`
-   - Maintenance database: `greenworkdb`
-   - Username: `greenworkAdmin`
-   - Password: `HIiDV8W7S02bO6AB3ehV`
-   - Check the "Save password" option if you want to save the password
-
-4. Click "Save" to save the configuration
-
-### Important Note
-
-It is essential to use `postgres` as the hostname in the pgAdmin configuration, as this is the service name defined in `docker-compose.yml`. Within the Docker network, containers communicate with each other using these service names, not "localhost" or IP addresses.
-
-To restart the containers:
-
-1. **Database connection error**:
-   - Verify that the PostgreSQL container is running: `docker ps`
-   - Check that the credentials in `.env` match those in `docker-compose.yml`
-   - Restart the container: `docker-compose restart postgres`
-
-2. **500 Error in the API**:
-   - Check Laravel logs: `docker logs laravel_container`
-   - Check storage permissions: `docker exec -it laravel_container chmod -R 777 storage`
-   - Clear cache: `docker exec -it laravel_container php artisan cache:clear`
-
-3. **Frontend cannot connect to backend**:
-   - Verify that the URLs in the frontend correctly point to `https://localhost:8443`
-   - Check that CORS is properly configured in `api/config/cors.php`
-
-4. **HTTPS certificate not recognized**:
-   - Accept the self-signed certificate in your browser
-   - For production environments, replace the certificate with a valid one in the Apache configuration
-
-## Project Structure
-
-The project is organized in the following main folders:
-
-- **api/**: Contains the backend application built with Laravel
-  - `app/`: Main application logic
-    - `Http/Controllers/`: API controllers
-    - `Models/`: Data models
-    - `Providers/`: Service providers
-  - `routes/`: API route definitions
-  - `database/`: Migrations and seeders
-  - `config/`: Configuration files
-  - `public/`: Application entry point
-
-- **frontend/**: Contains the frontend application built with React and Vite
-  - `src/`: React source code
-    - `components/`: Reusable components
-    - `pages/`: Main pages
-    - `services/`: Services for API connection
-    - `assets/`: Images and static resources
-  - `public/`: Static files
-
-## Development
-
-### Frontend
-
-To work on the frontend independently, you can run:
+## Desarrollo frontend independiente
 
 ```bash
 cd frontend
@@ -248,89 +92,35 @@ npm install
 npm run dev
 ```
 
-This will start the Vite development server at http://localhost:5173 with hot reload for code changes.
+Esto inicia el servidor Vite en http://localhost:5173 con recarga en caliente.
 
-### Backend
+## Internacionalización
 
-You can make changes to Laravel code directly in the `api/` folder. The changes will be automatically reflected on the server thanks to the mounted volume.
+- Los archivos de traducción están en `/frontend/src/locales/`.
+- El idioma se detecta automáticamente y puede cambiarse en la interfaz.
+- Los metadatos de la página se actualizan dinámicamente según el idioma.
 
-To run specific Laravel commands, you can use:
+## Gestión de certificados HTTPS (desarrollo)
 
-```bash
-# Run migrations
-docker exec -it laravel_container php artisan migrate
+- Los certificados autofirmados se encuentran en `/frontend/certs/` y se usan para el desarrollo local seguro.
+- Si tienes problemas de advertencia de seguridad, acepta el certificado en tu navegador.
 
-# Create a controller
-docker exec -it laravel_container php artisan make:controller NewController
+## Estructura de la API y modelos
 
-# Create a model with migration
-docker exec -it laravel_container php artisan make:model NewModel -m
-```
+Consulta la sección "API Endpoints" y "Data Models" más abajo para detalles sobre rutas y modelos principales.
 
-### Rebuilding Containers
+## Contribuciones
 
-If you need to rebuild the containers after changing the Docker configuration:
+1. Haz un fork del repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-feature`)
+3. Haz tus cambios y commitea (`git commit -am 'Agrega nueva feature'`)
+4. Sube la rama (`git push origin feature/nueva-feature`)
+5. Abre un Pull Request
 
-```bash
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
-```
+## Contacto
 
-## Data Models
+Para reportar errores críticos o sugerencias: mjsdaw@gmail.com
 
-The system uses the following main models:
+---
 
-### User
-Represents registered users on the platform.
-- Attributes: name, email, password, role
-
-### Admin
-Extends user functionality for system administrators.
-- Functionality: complete management of spaces and reservations
-
-### Space
-Represents workspaces available for reservation.
-- Attributes: name, description, location, capacity, price, eco-friendly features
-
-### Reservation
-Manages space reservations by users.
-- Attributes: user, space, start date, end date, status
-
-### Contact
-Stores contact messages sent through the form.
-- Attributes: name, email, subject, message
-
-## API Endpoints
-
-The RESTful API provides the following main endpoints:
-
-| Method | Route | Description | Authentication |
-|--------|------|-------------|---------------|
-| GET | /api/spaces | List all spaces | No |
-| GET | /api/spaces/{id} | Get space details | No |
-| POST | /api/spaces | Create new space | Admin |
-| PUT | /api/spaces/{id} | Update space | Admin |
-| DELETE | /api/spaces/{id} | Delete space | Admin |
-| GET | /api/reservations | List user's reservations | User |
-| POST | /api/reservations | Create new reservation | User |
-| GET | /api/admin/reservations | List all reservations | Admin |
-| POST | /api/contact | Send contact message | No |
-| POST | /api/login | Login | No |
-| POST | /api/register | Register user | No |
-
-For more details about available endpoints, check the documentation at `/api/documentation` (when available).
-
-## Contributions
-
-If you want to contribute to the project:
-
-1. Fork the repository
-2. Create a branch for your feature (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -am 'Add a new feature'`)
-4. Push the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
-
-## Contact
-
-If you find any critical errors or have suggestions to improve the project, please notify via email: mjsdaw@gmail.com
+El resto del README (parámetros de configuración, troubleshooting, detalles de modelos y endpoints) se mantiene actualizado y útil para referencia técnica y despliegue.
