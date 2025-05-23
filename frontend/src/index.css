@@ -618,7 +618,7 @@ textarea {
 
 .user__section {
   align-items: center;
-  padding: 12rem 20rem 0 20rem;
+  padding: 12rem 21rem 0 21rem;
 }
 
 .user__img {
@@ -640,11 +640,11 @@ textarea {
 
 .user__section--part {
   flex-direction: column;
-  padding: 0 20rem 3rem 20rem;
+  padding: 0 21rem 3rem 21rem;
 }
 
 .user__section--part:last-child {
-  padding: 0 20rem 12rem 20rem;
+  padding: 0 21rem 12rem 21rem;
 }
 
 .user__buttons {
@@ -1552,6 +1552,10 @@ footer {
   .user__section h1, .user__section--part h2 {
     text-align: center;
     width: 100%;
+  }
+
+  .user__section--part h2 {
+    text-align: left;
   }
 
   .user__section--part, .user__section--part:last-child  {
