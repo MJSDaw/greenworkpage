@@ -282,11 +282,20 @@
     "loginRequired": "Por favor, inicia sesión antes de reservar.",
     "adminNoBooking": "No puedes hacer reservas desde espacios siendo administrador."
   },
+  "filters": {
+    "all": "Ver todos",
+    "upcoming": "Ver activos",
+    "past": "Ver pasados"
+  },
   "backup": {
     "success": "Copia de seguridad creada con éxito",
     "error": "Error al crear la copia de seguridad",
     "processing": "Procesando...",
     "create": "Copia de seguridad manual"
+  },
+  "status": {
+    "pending": "Activo",
+    "completed": "Completado"
   },
   "terms": {
     "title1": "Introducción",

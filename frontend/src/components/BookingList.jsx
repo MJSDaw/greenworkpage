@@ -474,19 +474,19 @@ const BookingList = () => {
       
       {showList && (
         <>
-          <div className="filter__buttons">
+          <div className="user__buttons --marginTop">
             <button 
-              className={`filter-button ${bookingFilter === 'all' ? 'active' : ''}`}
+              className={`form__submit --noArrow ${bookingFilter === 'all' ? 'active' : ''}`}
               onClick={() => setBookingFilter('all')}>
               {t('filters.all')}
             </button>
             <button 
-              className={`filter-button ${bookingFilter === 'upcoming' ? 'active' : ''}`}
+              className={`form__submit --noArrow ${bookingFilter === 'upcoming' ? 'active' : ''}`}
               onClick={() => setBookingFilter('upcoming')}>
               {t('filters.upcoming')}
             </button>
             <button 
-              className={`filter-button ${bookingFilter === 'past' ? 'active' : ''}`}
+              className={`form__submit --noArrow ${bookingFilter === 'past' ? 'active' : ''}`}
               onClick={() => setBookingFilter('past')}>
               {t('filters.past')}
             </button>
