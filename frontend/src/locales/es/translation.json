@@ -114,7 +114,8 @@
     "maps": "Ubicación",
     "location": "Localización",
     "phone": "Teléfono",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar este elemento?"
   },
   "links": {
     "home": "Inicio",
