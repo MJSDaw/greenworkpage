@@ -1,0 +1,404 @@
+{
+  "metadata": {
+    "title": "Greenwork - Tu espacio de coworking",
+    "description": "Reserva espacios de coworking flexibles con GreenWork — reservas rápidas, soporte dedicado y herramientas inteligentes para impulsar tu crecimiento diario."
+  },
+  "actions": {
+    "goToHomePage": "Ir a la página de inicio",
+    "goToGithub": "Ir a Github",
+    "goToInstagram": "Ir a Instagram",
+    "goToFacebook": "Ir a Facebook",
+    "goToTwitter": "Ir a Twitter",
+    "goToLinkedIn": "Ir a Linkedin",
+    "goToSpaces": "Ver espacios",
+    "goToAbout": "Ver más sobre nosotros",
+    "goToContact": "Contáctanos",
+    "goToTerms": "Ver términos y condiciones",
+    "goToPrivacy": "Ver política de privacidad",
+    "register": "Ir a registrarme",
+    "login": "Ir a iniciar sesión",
+    "menu": "Abrir el menú",
+    "search": "Buscar",
+    "logout": "Ir a cerrar sesión",
+    "user": "Ir al panel de usuario",
+    "editImg": "Cambiar foto",
+    "usersRead": "Ver usuarios",
+    "usersCreate": "Crear usuario",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "spacesRead": "Ver espacios",
+    "spacesCreate": "Crear espacios",
+    "bookingsRead": "Ver reservas",
+    "bookingsCreate": "Crear reserva",
+    "paymentsRead": "Ver pagos",
+    "paymentsCreate": "Crear pago",
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "checkSpace": "Ver espacio",
+    "doBookingTitle": "Hacer una reserva",
+    "doBooking": "Reservar",
+    "servicesRead": "Ver servicios",
+    "servicesCreate": "Crear servicio",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar?",
+    "deleteError": "No se ha podido eliminar"
+  },
+  "alt": {
+    "logo": "Logo de Greenwork",
+    "logoVariant1": "Logo de Greenwork en blanco",
+    "groupPeas": "Grupo de guisantes",
+    "donatello": "Donatello el guisante",
+    "miguelangel": "Miguel Ángel el guisante",
+    "leonardo": "Leonardo el guisante",
+    "menu": "Menú de navegación",
+    "search": "Icono de búsqueda",
+    "greenwork1": "Greenwork 1",
+    "greenwork2": "Greenwork 2",
+    "greenwork3": "Greenwork 3",
+    "dashboardImg": "Usuario {{id}}",
+    "location": "Icono de ubicación",
+    "phone": "Icono de teléfono",
+    "peaspeas": "Conjunto de guisantes",
+    "arrow": "Flecha"
+  },
+  "confirm": {
+    "delete": "¿Estás seguro de que quieres eliminar?"
+  },
+  "common": {
+    "dataModified": "Modificación de datos",
+    "arrow": "Icono de flecha",
+    "peaspeas": "Guisantes unidos",
+    "github": "Logo de Github",
+    "instagram": "Logo de Instagram",
+    "facebook": "Logo de Facebook",
+    "twitter": "Logo de Twitter",
+    "linkedin": "Logo de Linkedin",
+    "donatello": "Donatello",
+    "miguelangel": "Miguel Ángel",
+    "leonardo": "Leonardo",
+    "groupPeas": "Guisantes",
+    "menu": "Icono de menú",
+    "slogan": "Tu espacio de hoy, tu éxito de mañana",
+    "proximity": "Encuentra nuestros espacios más cercanos a ti",
+    "ourSpaces": "Nuestros espacios",
+    "contactUs": "Contáctanos",
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad",
+    "contact": {
+      "title": "¿Tienes dudas? Estamos para ayudarte",
+      "msg1": "Nuestro equipo de soporte te responderá lo antes posible.",
+      "msg2": "En GreenWork valoramos tu tiempo y estamos comprometidos con darte una solución rápida y clara."
+    },
+    "greenwork1": "Greenwork sofa",
+    "greenwork2": "Greenwork pared",
+    "greenwork3": "Greenwork pantalla",
+    "dashboardImg": "Perfil de usuario {{id}}",
+    "greetings": "Hola {{name}}, ¿En qué trabajamos hoy?",
+    "main": "Principal",
+    "management": "Gestión de la web",
+    "commonError": "Error: {{error}}",
+    "userLoading": "Cargando usuarios...",
+    "userNoUsers": "No hay usuarios disponibles",
+    "spacesLoading": "Cargando espacios...",
+    "spacesNoSpaces": "No hay espacios disponibles",
+    "bookingsLoading": "Cargando reservas...",
+    "bookingsNoBookings": "No hay reservas disponibles",
+    "paymentsLoading": "Cargando pagos...",
+    "paymentsNoPayments": "No hay pagos disponibles",
+    "auditsLoading": "Cargando auditorias...",
+    "auditsNoAudits": "No hay auditorias",
+    "servicesLoading": "Cargando servicios...",
+    "servicesNoServices": "No hay servicios",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "user": "Usuario",
+    "action": "Acción",
+    "table": "Tabla",
+    "features": "Características",
+    "maps": "Ubicación",
+    "location": "Localización",
+    "phone": "Teléfono",
+    "profile": "Perfil",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar?"
+  },
+  "links": {
+    "home": "Inicio",
+    "about": "Nosotros",
+    "spaces": "Espacios",
+    "contact": "Contacto",
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad",
+    "problemSolvers": "Creado por ProblemSolvers con amor 💚",
+    "register": "Registrarme",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "user": "Hola, ",
+    "users": "Usuarios",
+    "bookings": "Reservas",
+    "completedBookings": "Reservas finalizadas",
+    "payments": "Pagos",
+    "suscriptions": "Suscripciones",
+    "completedPayments": "Pagos realizados",
+    "pendingPayments": "Pagos pendientes",
+    "audits": "Auditorias",
+    "backup": "Copia de seguridad manual",
+    "services": "Servicios"
+  },
+  "form":{
+    "name": {
+      "label": "Nombre",
+      "placeholder": "Nombre"
+    },
+    "surname": {
+      "label": "Apellidos",
+      "placeholder": "Apellidos"
+    },
+    "birthday": {
+      "label": "Fecha de nacimiento",
+      "placeholder": "Fecha de nacimiento"
+    },
+    "nif": {
+      "label": "NIF/NIE",
+      "placeholder": "NIF/NIE"
+    },
+    "email": {
+      "label": "Correo electrónico",
+      "placeholder": "Correo electrónico"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Contraseña"
+    },
+    "confirmPassword": {
+      "label": "Confirmar contraseña",
+      "placeholder": "Confirma tu contraseña"
+    },
+    "checkbox": {
+      "register": {
+        "msg1": "Al registrarte, aceptas nuestros ",
+        "msg2": "y nuestra "
+      },
+      "contact": {
+        "msg1": "Al enviarnos un mensaje, aceptas nuestra ",
+        "msg2": "y nuestra "
+      }
+    },
+    "postalCode": {
+      "label": "Código postal",
+      "placeholder": "Código postal"
+    },
+    "message": {
+      "label": "Mensaje",
+      "placeholder": "Escribe tu mensaje aquí"
+    },
+    "span": {
+      "msg1": "¿Ya tienes una cuenta? ",
+      "msg2": "¿No tienes una cuenta? "
+    },    "submitButton": {
+      "text": "Registrarme"
+    },
+    "submitting": "Enviando...",
+    "success": "Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible.",
+    "amount": {
+      "label": "Precio",
+      "placeholder": "Precio"
+    },
+    "paymentMethod": {
+      "label": "Método de pago",
+      "placeholder": "Método de pago",
+      "creditCard": "Tarjeta",
+      "cash": "Efectivo"
+    },
+    "datePayment": {
+      "label": "Fecha de pago",
+      "placeholder": "Fecha de pago"
+    },
+    "status": {
+      "label": "Estado",
+      "placeholder": "Estado",
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "confirmed": "Confirmado"
+    },
+    "user": {
+      "label": "Usuario",
+      "placeholder": "Usuario"
+    },
+    "reservation": {
+      "label": "Reserva",
+      "placeholder": "Reserva"
+    },
+    "space": {
+      "label": "Espacio",
+      "placeholder": "Espacio"
+    },
+    "period": {
+      "label": "Periodo",
+      "placeholder": "Periodo"
+    },
+    "startDate": {
+      "label": "Fecha de inicio",
+      "placeholder": "Fecha de inicio"
+    },
+    "endDate": {
+      "label": "Fecha de finalización",
+      "placeholder": "Fecha de finalización"
+    },
+    "date": {
+      "label": "Fecha",
+      "placeholder": "Fecha",
+      "noSlot": "Esta fecha no está disponible",
+      "available": "Rangos de tiempo disponibles"
+    },
+    "time": {
+      "label": "Hora",
+      "placeholder": "Hora",
+      "startTime": "Hora de inicio",
+      "selectStartTime": "Selecciona una hora de inicio",
+      "endTime": "Hora de finalización",
+      "selectEndTime": "Selecciona una hora de finalización"
+    },
+    "seats": {
+      "label": "Puestos",
+      "placeholder": "Puestos"
+    },
+    "spaceAvailability": {
+      "label": "Horarios de servicio",
+      "placeholder": "Horarios de servicio"
+    },
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "weekdays": "Días laborales"
+    },
+    "images": {
+      "label": "Imágenes",
+      "placeholder": "Imágenes"
+    },
+    "description": {
+      "label": "Descripción",
+      "placeholder": "Descripción"
+    },
+    "servicesAvailable": "Servicios disponibles",
+    "loginRequired": "Por favor, inicia sesión antes de reservar.",
+    "adminNoBooking": "No puedes hacer reservas desde espacios siendo administrador."
+  },
+  "filters": {
+    "all": "Ver todos",
+    "upcoming": "Ver activos",
+    "past": "Ver pasados"
+  },
+  "backup": {
+    "success": "Copia de seguridad creada con éxito",
+    "error": "Error al crear la copia de seguridad",
+    "processing": "Procesando...",
+    "create": "Copia de seguridad manual"
+  },
+  "status": {
+    "pending": "Activo",
+    "completed": "Completado"
+  },
+  "terms": {
+    "title1": "Introducción",
+    "msg1": "greenwork.com es un portal web de titularidad de GREENWORK, que contiene un directorio de espacios de coworking, centros de negocio, business centers, oficinas compartidas y espacios similares de toda España y el resto del mundo, a través del cual los usuarios podrán insertar anuncios publicitando estos espacios, publicar logos, su ubicación, teléfono de contacto, descripción de los distintos espacios, tarifas, etc.<br><br>Los usuarios pueden buscar y solicitar información e incluso reservar espacios publicitados en la web coworkingspain.es, cumplimentando un formulario en el que se recogen los datos de los solicitantes. Tales datos podrán ser entregados a los usuarios que gestionan dichos espacios publicitados en la web.<br><br>Las presentes Condiciones de Uso regulan el acceso y la utilización del servicio alojado con el nombre de dominio www.greenwork.com así como de todos los contenidos que se muestran en el mismo o se pongan a disposición de los usuarios. En el momento en que se accede al sitio web, el usuario manifiesta que ha leído y que acepta cumplir con estas Condiciones de Uso.<br><br>GREENWORK se reserva el derecho de revisar y modificar estas Condiciones de Uso, por motivos legales, técnicos o de estrategia corporativa.<br><br>Por otro lado, la recogida y tratamiento de los datos personales de los usuarios, así como el ejercicio de sus derechos sobre los mismos, se regirán por estas Condiciones de Uso, y por la Política de Privacidad descrita con anterioridad.",
+    "title2": "Acceso al servicio y responsabilidades",
+    "msg2": "El acceso al servicio está permitido a todos los usuarios titulares de centros de coworking que acepten las presentes Condiciones de Uso.<br><br>Al acceder a este servicio, el usuario tiene que facilitar a greenwork.com los siguientes datos personales: nombre del titular del centro o de los demandantes de espacios, teléfono y dirección de correo electrónico, cuyo tratamiento se desarrollará de conformidad con lo señalado en nuestra Política de Privacidad.<br><br>Desde greenwork.es se ofrecen diversos servicios relacionados con el uso de espacios de coworking, incluyendo, sin carácter limitativo, la publicación de anuncios por parte de los usuarios relacionados con su actividad, contactos con anunciantes, etc.<br><br>Mediante la aceptación de las presentes Condiciones de Uso, los usuarios manifiestan y garantizan que la información publicada es lícita, veraz y que cuentan con las autorizaciones pertinentes, cuando sean necesarias para dicha publicación. En caso contrario, GREENWORK no se responsabiliza de la licitud o veracidad de la información publicada por los usuarios.<br><br>En aquellos supuestos en que un usuario decida libremente contactar con otro usuario, lo hará por su propia cuenta y riesgo, excluyendo a GREENWORK de cualquier responsabilidad derivada de la relación entre ambos usuarios.<br><br>El acceso al servicio implica el compromiso del usuario de hacer un uso correcto del mismo, con observancia a las presentes Condiciones de Uso y a la legalidad vigente, así como a los principios de buena fe y orden público. En todo caso, el usuario está obligado a hacer un uso razonable del servicio, según los fines para los que está concebido.<br><br>En especial, GREENWORK no podrá ser considerado responsable editorial, para lo cual manifiesta expresamente que no se identifica con ninguna de las opiniones que los usuarios puedan emitir a través del servicio.<br><br>En cualquier caso, queda expresamente prohibida la difusión de contenidos u opiniones que resulten xenófobos, difamatorios, discriminatorios, sexistas, pornográficos o que, de cualquier modo, resulten contrarios a la legalidad vigente.<br><br>Asimismo, queda prohibido:<br>● Alojar, almacenar, divulgar o distribuir cualquier contenido que pueda ser considerado como una vulneración de los derechos fundamentales al honor, imagen e intimidad personal.<br>● Usar el servicio para injuriar, difamar, intimidar, violar la propia imagen o acosar a otros usuarios.<br>● Introducir virus informáticos, archivos defectuosos o alojar, almacenar distribuir o compartir material o programas informáticos que pueda provocar daños o alteraciones en los contenidos, programas o sistemas de GREENWORK.<br>● Alojar, almacenar, divulgar, publicar, distribuir o facilitar publicidad no solicitada o no autorizada, correo basura, spam, o comunicaciones similares.",
+    "title3": "Propiedad intelectual e industrial del servicio",
+    "msg3": "GREENWORK es una marca registrada.<br><br>GREENWORK es el titular de todos los derechos de propiedad industrial e intelectual relativos al servicio.<br><br>Por las presentes Condiciones de Uso, GREENWORK concede una licencia limitada, revocable y no sub-licenciable para usar el servicio de forma estrictamente personal.<br><br>El usuario no podrá explotar comercialmente ninguno de los contenidos de greenwork.com sin la autorización expresa y por escrito de GREENWORK.",
+    "title4": "Ley aplicable y jurisdicción",
+    "msg4": "Estas Condiciones de Uso se rigen en su totalidad por la legislación española, y para aquellos casos en que la normativa lo permita, las partes se someten voluntariamente a los Juzgados y Tribunales de Ficticias (Barcelona).",
+    "title5": "Política de ventas",
+    "msg5": "El usuario podrá contratar en la web suscripciones y servicios.<br><br>Las suscripciones se tratan como pagos recurrentes facturados mensual, trimestral o anualmente, a elección del usuario.<br><br>Los servicios se tratan como pagos únicos.<br><br>Los pagos podrán realizarse mediante:<br>● Nuestro TPV virtual utilizando las tarjetas VISA y MASTERCARD.<br>● En el espacio reservado mediante tarjeta o efectivo.<br><br>Una vez realizado el pago, el usuario recibirá una notificación y un comprobante de pago.<br><br>Todas las suscripciones recurrentes que no hayan sido abonadas en un plazo de dos días serán anuladas.",
+    "title6": "Política de devolución",
+    "msg6": "El usuario tiene derecho a la devolución del importe de las suscripciones y/o servicios en los términos y en las condiciones siguientes:<br><br>1. Las cancelaciones de las suscripciones se pueden realizar 5 días antes de la renovación de la suscripción, de las siguientes formas:<br>● A través del panel de control del usuario, dentro de la web.<br>● Escribiendo un email en el formulario de contacto, con el inicio del mensaje siendo 'baja de suscripción'.<br><br>2. No se aceptan cancelaciones comunicadas por ninguna otra vía."
+  },
+  "privacy": {
+    "title1": "¿Quién es el Responsable del Tratamiento de sus datos?",
+    "msg1": "Identidad: GreenWork, S.L. (en adelante, GREENWORK)<br><br>NIF: B12345678<br><br>Domicilio social: Calle Ficticia 123, 08001 Barcelona – Barcelona.<br><br>Teléfono: 912345678<br><br>Correo electrónico: hello@greenwork.com",
+    "title2": "¿Con qué finalidad tratamos sus datos personales?",
+    "msg2": "En GREENWORK tratamos la información que nos facilitan los usuarios con el fin de gestionar y mantener nuestra relación comercial, prestarles los servicios solicitados, enviarles la información que nos solicite, así como ofertas de productos y servicios de su interés y mejorar su experiencia de usuario, para lo que elaboraremos un 'perfil comercial', en base a la información facilitada. No se tomarán decisiones automatizadas en base a dicho perfil.<br><br>La recogida y tratamiento de datos personales de los usuarios se realiza con completa sujeción a lo establecido en el Reglamento (UE) 2016/679, del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos y por el que se deroga la Directiva 95/46/CE (Reglamento General de Protección de Datos, RGPD en adelante) y al resto del ordenamiento jurídico que resulte de aplicación.",
+    "title3": "¿Qué datos tratamos?",
+    "msg3": "Información provista por el usuario: Datos que el usuario provee a través de los formularios de contacto o al suscribirse, utilizar o contratar cualquiera de los servicios puestos a su disposición por GREENWORK, tales como: nombre, apellidos, email, teléfono de contacto, dirección, datos de facturación, etc.",
+    "title4": "¿Cómo hemos obtenido sus datos?",
+    "msg4": "Los datos personales que tratamos en GREENWORK proceden de nuestros usuarios.<br><br>Las categorías de datos que se tratan son:<br>● Datos de identificación<br>● Códigos o claves de identificación<br>● Direcciones postales o electrónicas<br>● Datos económicos<br><br>No se tratan datos especialmente protegidos.",
+    "title5": "¿Durante cuánto tiempo conservaremos sus datos?",
+    "msg5": "GREENWORK no almacenará los datos personales recabados por un periodo mayor del necesario para cumplir con las finalidades arriba indicadas. En todo caso, en los supuestos en que los datos hayan sido recabados para la ejecución de la prestación de un servicio, se conservarán durante la vigencia del contrato y la relación comercial entre las Partes. Una vez resuelto el Contrato, los datos personales se conservarán, de conformidad con lo exigido en la normativa vigente y con vistas a una futura relación comercial, en tanto el CLIENTE no decida proceder a su cancelación.",
+    "title6": "¿Cuál es la legitimación para el tratamiento de sus datos?",
+    "msg6": "La base legal para el tratamiento de sus datos es la materialización de la relación comercial y/o la ejecución del contrato/acuerdo de relación comercial entre usted y el interés legítimo de GREENWORK.",
+    "title7": "¿Qué medidas de seguridad adoptamos?",
+    "msg7": "GREENWORK tiene un firme compromiso con la seguridad de los datos que trata, por lo que ha adoptado las medidas organizativas y técnicas necesarias para evitar la alteración, pérdida y acceso no autorizado.<br><br>Específicamente, GREENWORK ha delimitado las atribuciones para el acceso a los datos, permitiendo dicho acceso, exclusivamente, con identificación y contraseña. Además de ello, GREENWORK realiza copias de seguridad y las custodia de manera segura, entre otras medidas.",
+    "title8": "¿Está dirigido este portal a menores de edad?",
+    "msg8": "Este portal, su información, contenidos, servicios y/o productos que se ofrezcan a su través NO están dirigidos a menores de 13 años.<br><br>Si GREENWORK tiene constancia o sospecha del registro de un menor de 13 años, procederá a cancelar de inmediato dicho registro y a impedir el acceso o utilización de los productos, servicios o contenidos correspondientes a dicha persona.",
+    "title9": "¿A qué destinatarios se cederán sus datos?",
+    "msg9": "GREENWORK podrá ceder a terceros colaboradores los datos personales que recoge y trata para lo que el usuario otorga su consentimiento inequívoco y expreso al aceptar esta política de privacidad. Esta cesión se realizará únicamente para cumplir con las finalidades antes expuestas.<br><br>Se entenderá como terceros a empresas del Grupo GREENWORK y sus sociedades participadas, con la finalidad de que, eventualmente, puedan ser tratados para la prestación de otros suministros y/o servicios de su potencial interés.<br><br>Usted podrá negarse de forma explícita a la cesión de sus datos personales dirigiendo un escrito a los datos de contacto indicados.<br><br>Al compartir sus datos personales con terceros, COWORKING SPAIN exige explícitamente que cumplan con la legislación antedicha en materia de protección de datos y con nuestra Política de Privacidad.",
+    "title10": "¿Enlazamos nuestras páginas con las de terceros?",
+    "msg10": "GREENWORK puede poner a disposición de los usuarios enlaces a páginas o portales de terceros. Las políticas de privacidad y el tratamiento efectivo que de los datos personales realicen estos terceros es completamente ajeno a GREENWORK y el usuario deberá extremar la precaución al navegar por dichos portales y/o contratar los productos y servicios que ofrezcan. Igualmente es responsabilidad del usuario aceptar tales políticas.",
+    "title11": "¿Cuáles son sus derechos cuando nos facilita sus datos?",
+    "msg11": "Cualquier persona tiene derecho a obtener confirmación sobre si en GREENWORK estamos tratando datos personales que les conciernan, o no.<br><br>Las personas interesadas tienen derecho a acceder a sus datos personales, así como a solicitar la rectificación de los datos inexactos o, en su caso, solicitar su supresión, cuando, entre otros motivos, los datos ya no sean necesarios para los fines para los que fueron recogidos.<br><br>En determinadas circunstancias, los interesados podrán solicitar la limitación del tratamiento de sus datos, en cuyo caso únicamente se conservarán para el ejercicio o la defensa de reclamaciones.<br><br>En determinadas circunstancias, y por motivos relacionados con su situación particular, los interesados podrán oponerse al tratamiento de sus datos. GREENWORK dejará de tratar los datos, salvo por motivos legítimos o el ejercicio o la defensa de posibles reclamaciones.<br><br>Todos estos derechos puede ejercerlos en la dirección indicada al principio de esta Política de Privacidad.",
+    "title12": "¿Puede presentar una reclamación ante la AEPD?",
+    "msg12": "El usuario tiene el derecho a presentar una reclamación ante la Agencia Española de Protección de Datos si entiende violado, de cualquier forma, su derecho a la protección de datos de carácter personal."
+  },
+  "errors": {
+    "weekends": "No se puede reservar los fines de semana",
+    "required": "Este campo es requerido",
+    "nameRequiredError": "El nombre es obligatorio",
+    "nameTypeError": "El nombre no es válido",
+    "nameLengthError": "El nombre excede el número máximo de caracteres permitidos (255)",
+    "nameFormatError": "El nombre no tiene un formato válido",
+    "nameContainsNumbersError": "El nombre no puede contener números",
+    "nameContainsSpecialCharsError": "El nombre no puede contener caracteres especiales no permitidos",
+    "surnameRequiredError": "El apellido es obligatorio",
+    "surnameTypeError": "El apellido no es válido",
+    "surnameLengthError": "El apellido excede el número máximo de caracteres permitidos (255)",
+    "surnameFormatError": "El apellido no tiene un formato válido",
+    "surnameContainsNumbersError": "El apellido no puede contener números",
+    "surnameContainsSpecialCharsError": "El apellido no puede contener caracteres especiales no permitidos",
+    "emailRequiredError": "El correo electrónico es obligatorio",
+    "emailTypeError": "El correo electrónico no es válido",
+    "emailLengthError": "El correo electrónico excede el número máximo de caracteres permitidos (255)",
+    "emailFormatError": "El correo electrónico no tiene un formato válido",
+    "emailDuplicateError": "El correo electrónico ya está en uso",
+    "nifRequiredError": "El NIF/NIE es obligatorio",
+    "nifTypeError": "El NIF/NIE no es válido",
+    "nifLengthError": "El NIF/NIE excede el número máximo de caracteres permitidos (20)",
+    "nifFormatError": "El NIF/NIE no tiene un formato válido",
+    "nifDuplicateError": "El NIF/NIE ya está en uso",
+    "nifTooShortError": "El NIF/NIE es demasiado corto",
+    "birthdateRequiredError": "La fecha de nacimiento es obligatoria",
+    "birthdateTypeError": "La fecha de nacimiento no es válida",
+    "birthdateInvalidError": "La fecha de nacimiento no es válida",
+    "birthdateFormatError": "La fecha de nacimiento no tiene un formato válido",
+    "birthdateAgeError": "No puedes registrarte si eres menor de 13 años",
+    "passwordRequiredError": "La contraseña es obligatoria",
+    "passwordTypeError": "La contraseña no es válida",
+    "passwordMinNumCharsError": "La contraseña debe tener al menos 8 caracteres",
+    "passwordMissingUppercaseCharError": "La contraseña debe contener al menos una letra mayúscula",
+    "passwordMissingLowercaseCharError": "La contraseña debe contener al menos una letra minúscula",
+    "passwordMissingNumberError": "La contraseña debe contener al menos un número",
+    "passwordMissingSpecialCharError": "La contraseña debe contener al menos un carácter especial",
+    "passwordComplexityError": "La contraseña no cumple con los requisitos de complejidad",
+    "passwordConfirmRequiredError": "La confirmación de la contraseña es obligatoria",
+    "passwordMismatchError": "Las contraseñas no coinciden",
+    "termsRequiredError": "Debes aceptar los términos y condiciones",
+    "termsTypeError": "Los términos y condiciones no son válidos",
+    "termsNotAcceptedError": "Debes aceptar los términos y condiciones",
+    "invalidCredentialsError": "Credenciales inválidas",
+    "invalidAdminCredentialsError": "Credenciales de administrador inválidas",
+    "wait24hours": "Ya has mandado un mensaje en las últimas 24 horas. Inténtalo más tarde."
+  },
+  "sliders": {
+    "title1": "Tu espacio a tan solo un click",
+    "msg1": "En GreenWork, trabajamos cada día con un objetivo claro: que todas las personas puedan acceder a un espacio de coworking cómodo, accesible y cerca de donde estén.",
+    "msg2": "Con tecnología, cercanía y una red en expansión, en GreenWork queremos que encuentres el lugar perfecto para crear, trabajar y crecer, estés donde estés.",
+    "title2": "Flexibilidad que se adapta a ti",
+    "msg3": "Olvídate de contratos rígidos y horarios inflexibles. En GreenWork ofrecemos soluciones adaptables a tus necesidades reales.",
+    "msg4": "Desde horas sueltas hasta membresías mensuales, con acceso a todas nuestras ubicaciones y servicios premium diseñados para potenciar tu productividad.",
+    "title3": "Más que un espacio, una comunidad",
+    "msg5": "Conecta con profesionales de diversos sectores en un entorno colaborativo diseñado para inspirar.",
+    "msg6": "GreenWork no solo te proporciona un lugar para trabajar, sino oportunidades para networking, eventos exclusivos y el ecosistema perfecto para hacer crecer tu negocio."
+  }
+}

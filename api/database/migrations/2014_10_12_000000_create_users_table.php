@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('surname');
+            $table->string('dni')->unique();
             $table->string('email')->unique();
+            $table->date('birthdate');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('dni')->unique();
+            $table->boolean('termsAndConditions')->default(false);
+            $table->string('image')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

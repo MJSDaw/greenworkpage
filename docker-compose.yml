@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: greenworkAdmin
+      POSTGRES_PASSWORD: HIiDV8W7S02bO6AB3ehV
+      POSTGRES_DB: greenworkdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_container
+    restart: always
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: greenworkdb
+      DB_USERNAME: greenworkAdmin
+      DB_PASSWORD: HIiDV8W7S02bO6AB3ehV
+      SEED_DB: "true"  # Set to "true" to run seeders
+    ports:
+      - "8000:80"   # Maps container port 80 to host port 8000 (redirection)
+      - "8443:443"  # Maps container port 443 to host port 8443 (HTTPS)
+      - "5173:5173" # Maps port 5173 of the React server
+    depends_on:
+      - postgres
+    volumes:
+      - ./api:/var/www/html
+      - laravel_vendor:/var/www/html/vendor
+      - laravel_storage:/var/www/html/storage
+      - ./frontend:/var/www/frontend
+      - ./frontend/node_modules:/var/www/frontend/node_modules:delegated
+      - ./backups:/var/www/html/backups
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@greenwork.com
+      PGADMIN_DEFAULT_PASSWORD: HIiDV8W7S02bO6AB3ehV
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  laravel_vendor:
+  laravel_storage:
+  pgadmin_data:
